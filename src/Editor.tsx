@@ -10,7 +10,9 @@ import StarterKit from "@tiptap/starter-kit";
 // define your extension array
 const extensions = [StarterKit];
 
-const content = "<p>Hello World!</p>";
+const content = `
+Test
+`;
 
 const Editor = () => {
   const editor = useEditor({

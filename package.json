@@ -2,6 +2,7 @@
   "name": "onyx-editor",
   "private": true,
   "version": "0.0.0",
+  "packageManager": "yarn@1.22.22",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -19,6 +20,8 @@
     "@capacitor/ios": "6.1.0",
     "@capacitor/keyboard": "6.0.1",
     "@capacitor/status-bar": "6.0.0",
+    "@ionic/react": "^8.2.3",
+    "@ionic/react-router": "^8.2.3",
     "@tiptap/pm": "^2.4.0",
     "@tiptap/react": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
