@@ -1,0 +1,7 @@
+{
+  "name": "onyx-editor",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}
