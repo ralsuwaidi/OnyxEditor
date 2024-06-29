@@ -33,7 +33,7 @@ function App() {
 
   useEffect(() => {
     const updateMaxHeight = () => {
-      const offset = 50; // Replace with your desired offset value
+      const offset = 110;
       setMaxHeight(`calc(100vh - ${offset}px)`);
     };
 

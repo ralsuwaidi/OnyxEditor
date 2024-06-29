@@ -21,7 +21,7 @@ const Editor = () => {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl  focus:outline-none",
+          "prose prose-sm sm:prose p-4 lg:prose-lg xl:prose-2xl  focus:outline-none",
       },
     },
   });
