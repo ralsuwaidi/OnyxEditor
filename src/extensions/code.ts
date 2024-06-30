@@ -8,28 +8,7 @@ const CustomCode = Code.extend({
         const { from, to, empty } = editor.state.selection;
 
         if (empty) {
-          const { from } = editor.state.selection;
-          const text = editor.state.doc.textBetween(
-            0,
-            editor.state.doc.content.size,
-            " "
-          );
-          const startBacktick = text.lastIndexOf("`", from);
-
-          if (startBacktick !== -1) {
-            return editor
-              .chain()
-              .focus()
-              .deleteRange({ from: startBacktick + 2, to: startBacktick + 3 })
-              .setTextSelection({ from: startBacktick + 2, to: from })
-              .toggleCode()
-              .setTextSelection({ from: to, to: to })
-              .toggleCode()
-              .insertContent(" ")
-              .run();
-          }
-
-          return editor.chain().focus().insertContent("`").run();
+          return false;
         }
 
         editor
@@ -38,7 +17,6 @@ const CustomCode = Code.extend({
           .toggleCode()
           .setTextSelection({ from: from, to: to })
           .run();
-
         return true;
       },
     };

@@ -11,40 +11,8 @@ const CustomHighlight = Highlight.extend({
         const textBefore = editor.state.doc.textBetween(from - 1, from, " ");
         const textAfter = editor.state.doc.textBetween(to, to + 1, " ");
 
-        console.log(textBefore, textAfter);
-
         if (empty) {
-          const { from, to } = editor.state.selection;
-          const text = editor.state.doc.textBetween(
-            0,
-            editor.state.doc.content.size,
-            " "
-          );
-          const startHighlight = text.lastIndexOf("==", from);
-          const characterBefore = editor.state.doc.textBetween(to - 1, to);
-
-          if (startHighlight !== -1 && characterBefore == "=") {
-            return editor
-              .chain()
-              .focus()
-              .setTextSelection({ from: startHighlight + 1, to: to })
-              .toggleHighlight()
-              .setTextSelection({
-                from: startHighlight + 1,
-                to: startHighlight + 3,
-              })
-              .deleteSelection()
-              .setTextSelection({
-                from: to - 2,
-                to: to - 3,
-              })
-              .deleteSelection()
-              .toggleHighlight()
-              .insertContent(" ")
-              .run();
-          }
-
-          return editor.chain().focus().insertContent("=").run();
+          return false;
         }
 
         if (textBefore === "=" && textAfter === "=") {
@@ -72,16 +40,16 @@ const CustomHighlight = Highlight.extend({
       Space: ({ editor }) => {
         const { from, to } = editor.state.selection;
         const textBefore = editor.state.doc.textBetween(from - 1, from, " ");
-        const isHighlighted = editor.isActive("highlight"); // Check if the current text is highlighted
+        const isHighlighted = editor.isActive("highlight");
 
         if (textBefore === " " && isHighlighted) {
           editor
             .chain()
             .focus()
-            .deleteRange({ from: from - 1, to }) // Adjusted to delete the range including the two spaces
+            .deleteRange({ from: from - 1, to })
             .unsetHighlight()
             .insertContent(" ")
-            .setTextSelection(from + 1) // Adjusted to correctly position the cursor after the new space
+            .setTextSelection(from + 1)
             .run();
           return true;
         }
