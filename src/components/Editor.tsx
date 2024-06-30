@@ -12,7 +12,6 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import Document from "@tiptap/extension-document";
 import Bold from "@tiptap/extension-bold";
-import Code from "@tiptap/extension-code";
 import Focus from "@tiptap/extension-focus";
 import Italic from "@tiptap/extension-italic";
 import Strike from "@tiptap/extension-strike";
@@ -25,7 +24,6 @@ import Dropcursor from "@tiptap/extension-dropcursor";
 import Placeholder from "@tiptap/extension-placeholder";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import LinkExtension from "../extensions/Link";
-import CodeEnclosing from "../extensions/CodeEnclosing";
 import TaskList from "@tiptap/extension-task-list";
 import CodeBlock from "@tiptap/extension-code-block";
 import TaskItem from "@tiptap/extension-task-item";
@@ -35,13 +33,13 @@ import BubbleMenu from "./BubbleMenu";
 import FloatingMenu from "./FloatingMenu";
 import { useSetLink } from "../hooks/useSetLink";
 import CustomHighlight from "../extensions/highlight";
+import CustomCode from "../extensions/code";
 
 const extensions = [
   Paragraph,
   Document,
   Text,
   Bold,
-  Code,
   CodeBlock,
   Italic,
   Placeholder.configure({
@@ -85,6 +83,7 @@ const extensions = [
       class: "dark:bg-highlight-dark bg-highlight p-1 rounded",
     },
   }),
+  CustomCode,
   BulletList,
   MarkdownPaste,
   LinkExtension.configure({
@@ -92,7 +91,6 @@ const extensions = [
     autolink: true,
     linkOnPaste: true,
   }),
-  CodeEnclosing,
 ];
 
 const content = `

@@ -36,8 +36,9 @@ const CustomHighlight = Highlight.extend({
       Space: ({ editor }) => {
         const { from, to } = editor.state.selection;
         const textBefore = editor.state.doc.textBetween(from - 1, from, " ");
+        const isHighlighted = editor.isActive("highlight"); // Check if the current text is highlighted
 
-        if (textBefore === " ") {
+        if (textBefore === " " && isHighlighted) {
           editor
             .chain()
             .focus()
