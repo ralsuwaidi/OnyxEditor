@@ -21,10 +21,6 @@ const CodeEnclosing = Extension.create({
 
   addKeyboardShortcuts() {
     return {
-      "=": ({ editor }: { editor: Editor }) => {
-        handleEnclosingCharacters(editor, "=");
-        return true;
-      },
       "`": ({ editor }: { editor: Editor }) => {
         handleEnclosingCharacters(editor, "`");
         return true;

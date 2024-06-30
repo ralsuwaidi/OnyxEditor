@@ -1,24 +1,17 @@
-import { Extension } from "@tiptap/core";
+import Highlight from "@tiptap/extension-highlight";
 
-const HighlightExtension = Extension.create({
-  name: "customEqualKey",
-
+// 2. Overwrite the keyboard shortcuts
+const CustomHighlight = Highlight.extend({
   addKeyboardShortcuts() {
     return {
       "=": ({ editor }) => {
         const { from, to } = editor.state.selection;
-
-        if (from === to) {
-          // If there is no selection, just add an equal sign
-          return editor.chain().focus().insertContent("=").run();
-        }
 
         const selectedText = editor.state.doc.textBetween(from, to, " ");
         const textBefore = editor.state.doc.textBetween(from - 1, from, " ");
         const textAfter = editor.state.doc.textBetween(to, to + 1, " ");
 
         if (textBefore === "=" && textAfter === "=") {
-          // If text is already wrapped with equal signs, remove them and apply highlight
           editor
             .chain()
             .focus()
@@ -28,7 +21,6 @@ const HighlightExtension = Extension.create({
             .setHighlight()
             .run();
         } else {
-          // Otherwise, add equal signs
           editor
             .chain()
             .focus()
@@ -40,8 +32,26 @@ const HighlightExtension = Extension.create({
 
         return true;
       },
+      "Mod-Shift-h": () => this.editor.commands.toggleHighlight(),
+      Space: ({ editor }) => {
+        const { from, to } = editor.state.selection;
+        const textBefore = editor.state.doc.textBetween(from - 1, from, " ");
+
+        if (textBefore === " ") {
+          editor
+            .chain()
+            .focus()
+            .deleteRange({ from: from - 1, to }) // Adjusted to delete the range including the two spaces
+            .unsetHighlight()
+            .insertContent(" ")
+            .setTextSelection(from + 1) // Adjusted to correctly position the cursor after the new space
+            .run();
+          return true;
+        }
+        return false;
+      },
     };
   },
 });
 
-export { HighlightExtension as CustomEqualKeyExtension };
+export default CustomHighlight;

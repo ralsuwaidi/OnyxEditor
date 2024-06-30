@@ -49,6 +49,7 @@ export default function EditorPage() {
               />
             </IonToolbar>
           </IonHeader>
+
           <Editor />
         </div>
       </IonContent>
