@@ -105,7 +105,7 @@ const Editor = () => {
     editorProps: {
       attributes: {
         class:
-          "prose dark:prose-invert prose-sm sm:prose p-4 lg:prose-lg xl:prose-2xl  focus:outline-none",
+          "prose dark:prose-invert prose-sm sm:prose p-4 lg:prose-lg xl:prose-2xl focus:outline-none",
       },
     },
     onUpdate: ({ editor }) => {

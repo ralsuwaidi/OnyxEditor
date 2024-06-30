@@ -4,12 +4,14 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  IonInput,
 } from "@ionic/react";
 import Editor from "../../components/Editor";
 import { useEffect, useState } from "react";
 
 export default function EditorPage() {
   const [maxHeight, setMaxHeight] = useState("calc(100vh - 100px)");
+  const [title, setTitle] = useState("Header");
 
   useEffect(() => {
     const updateMaxHeight = () => {
@@ -24,11 +26,12 @@ export default function EditorPage() {
       window.removeEventListener("resize", updateMaxHeight);
     };
   }, []);
+
   return (
     <IonPage>
       <IonHeader translucent={false}>
         <IonToolbar>
-          <IonTitle>Header</IonTitle>
+          <IonTitle>{title}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent scrollY={false} fullscreen={false}>
@@ -38,7 +41,12 @@ export default function EditorPage() {
         >
           <IonHeader collapse="condense">
             <IonToolbar>
-              <IonTitle size="large">Header</IonTitle>
+              <IonInput
+                className="ml-3 text-3xl font-extrabold"
+                value={title}
+                placeholder="Enter Title"
+                onIonChange={(e) => setTitle(e.detail.value!)}
+              />
             </IonToolbar>
           </IonHeader>
           <Editor />
