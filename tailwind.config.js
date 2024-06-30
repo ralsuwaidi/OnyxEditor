@@ -2,7 +2,14 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        highlight: {
+          DEFAULT: "rgb(219, 253, 173)",
+          dark: "rgb(46, 80, 115)",
+        },
+      },
+    },
   },
   darkMode: "media",
   plugins: [require("@tailwindcss/typography")],

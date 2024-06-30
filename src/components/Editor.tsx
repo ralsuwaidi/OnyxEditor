@@ -25,10 +25,7 @@ import Dropcursor from "@tiptap/extension-dropcursor";
 import Placeholder from "@tiptap/extension-placeholder";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import LinkExtension from "../extensions/Link";
-import {
-  CustomEqualKeyExtension,
-  HighlightMark,
-} from "../extensions/Highlight";
+import { CustomEqualKeyExtension } from "../extensions/Highlight";
 import CodeEnclosing from "../extensions/CodeEnclosing";
 import TaskList from "@tiptap/extension-task-list";
 import CodeBlock from "@tiptap/extension-code-block";
@@ -66,7 +63,11 @@ const extensions = [
   Underline,
   Focus,
   HorizontalRule,
-  Highlight,
+  Highlight.configure({
+    HTMLAttributes: {
+      class: "dark:bg-highlight-dark bg-highlight p-1 rounded",
+    },
+  }),
   Table.configure({
     resizable: true,
   }),
@@ -82,7 +83,7 @@ const extensions = [
 
   // custom
   // BulletListExtension,
-  HighlightMark,
+  // HighlightMark,
   BulletList,
   MarkdownPaste,
   LinkExtension.configure({
