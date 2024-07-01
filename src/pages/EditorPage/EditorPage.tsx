@@ -5,9 +5,13 @@ import {
   IonTitle,
   IonToolbar,
   IonInput,
+  IonButtons,
+  IonButton,
+  IonIcon,
 } from "@ionic/react";
 import Editor from "../../components/Editor";
 import { useEffect, useState } from "react";
+import { chevronBack, ellipsisVertical } from "ionicons/icons";
 
 export default function EditorPage() {
   const [maxHeight, setMaxHeight] = useState("calc(100vh - 100px)");
@@ -31,7 +35,25 @@ export default function EditorPage() {
     <IonPage>
       <IonHeader translucent={false}>
         <IonToolbar>
+          <IonButtons slot="secondary">
+            <IonButton>
+              <IonIcon
+                className=" text-gray-300"
+                slot="icon-only"
+                icon={chevronBack}
+              ></IonIcon>
+            </IonButton>
+          </IonButtons>
           <IonTitle>{title}</IonTitle>
+          <IonButtons slot="primary">
+            <IonButton>
+              <IonIcon
+                className=" text-gray-300"
+                slot="icon-only"
+                icon={ellipsisVertical}
+              ></IonIcon>
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent scrollY={false} fullscreen={false}>
@@ -49,7 +71,6 @@ export default function EditorPage() {
               />
             </IonToolbar>
           </IonHeader>
-
           <Editor />
         </div>
       </IonContent>

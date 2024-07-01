@@ -33,61 +33,79 @@ import { useSetLink } from "../hooks/useSetLink";
 import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
+// import {
+//   getHierarchicalIndexes,
+//   TableOfContents,
+// } from "@tiptap-pro/extension-table-of-contents";
+// import { ToC } from "./ToC";
+// import React, { useState } from "react";
 
-const extensions = [
-  Paragraph,
-  Document,
-  Text,
-  Bold,
-  CodeBlock,
-  Italic,
-  ListItem,
-  TaskList,
-  TaskItem.configure({
-    nested: true,
-  }),
-  Typography,
-  Strike,
-  Image.configure({ allowBase64: true, HTMLAttributes: { class: "rounded" } }),
-  Underline,
-  Focus,
-  HorizontalRule,
-  Table.configure({
-    resizable: true,
-  }),
-  TableRow,
-  TableHeader,
-  Dropcursor,
-  OrderedList,
-  TableCell,
-  HardBreak,
-  Heading.configure({
-    levels: [1, 2, 3, 4, 5],
-  }),
-
-  // custom
-  // BulletListExtension,
-  // HighlightMark,
-  CustomHighlight.configure({
-    HTMLAttributes: {
-      class: "dark:bg-highlight-dark bg-highlight p-1 rounded dark:text-white",
-    },
-  }),
-  CustomCode,
-  BulletList,
-  MarkdownPaste,
-  Link.configure({
-    openOnClick: true,
-    autolink: true,
-    linkOnPaste: true,
-  }),
-];
-
-const content = `
-Test
-`;
+// const MemorizedToC = React.memo(ToC);
 
 const Editor = () => {
+  // const [items, setItems] = useState<any>([]);
+
+  const content = `
+  Test
+  `;
+
+  const extensions = [
+    Paragraph,
+    Document,
+    Text,
+    Bold,
+    CodeBlock,
+    Italic,
+    ListItem,
+    TaskList,
+    TaskItem.configure({
+      nested: true,
+    }),
+    Typography,
+    Strike,
+    Image.configure({
+      allowBase64: true,
+      HTMLAttributes: { class: "rounded" },
+    }),
+    Underline,
+    Focus,
+    HorizontalRule,
+    Table.configure({
+      resizable: true,
+    }),
+    TableRow,
+    TableHeader,
+    Dropcursor,
+    OrderedList,
+    TableCell,
+    HardBreak,
+    Heading.configure({
+      levels: [1, 2, 3, 4, 5],
+    }),
+    // TableOfContents.configure({
+    //   getIndex: getHierarchicalIndexes,
+    //   onUpdate(content) {
+    //     setItems(content);
+    //   },
+    // }),
+
+    // custom
+    CustomHighlight.configure({
+      HTMLAttributes: {
+        class:
+          "dark:bg-highlight-dark bg-highlight p-1 rounded dark:text-white",
+      },
+    }),
+    CustomCode,
+    BulletList,
+    MarkdownPaste,
+    Link.configure({
+      openOnClick: true,
+      autolink: true,
+      linkOnPaste: true,
+    }),
+  ];
+
   const editor = useEditor({
     extensions,
     content,
@@ -111,7 +129,11 @@ const Editor = () => {
 
   return (
     <>
+      {/* <div className="table-of-contents">
+        <MemorizedToC editor={editor} items={items} />
+      </div> */}
       <EditorContent editor={editor} />
+
       {editor && <BubbleMenu editor={editor} setLink={setLink} />}
       {editor && <FloatingMenu editor={editor} />}
     </>
