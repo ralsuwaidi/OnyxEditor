@@ -18,7 +18,6 @@ import Image from "@tiptap/extension-image";
 import Strike from "@tiptap/extension-strike";
 import Underline from "@tiptap/extension-underline";
 import ListItem from "@tiptap/extension-list-item";
-import { saveEditorContent } from "../libs/saveToFirebase";
 import Typography from "@tiptap/extension-typography";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
@@ -33,6 +32,7 @@ import { useSetLink } from "../hooks/useSetLink";
 import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
+import FirestoreService from "../services/FirestoreService";
 // import {
 //   getHierarchicalIndexes,
 //   TableOfContents,
@@ -121,7 +121,11 @@ const Editor = ({ title, setTitle }: EditorProps) => {
       },
     },
     onUpdate: ({ editor }) => {
-      saveEditorContent(editor.getJSON(), title);
+      FirestoreService.updateContentWithDebounce(
+        "single-page-document",
+        editor.getJSON(),
+        title
+      );
     },
   });
 
