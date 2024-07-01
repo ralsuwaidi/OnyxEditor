@@ -10,6 +10,11 @@ import {
   IonIcon,
   IonMenu,
   IonMenuToggle,
+  IonRefresher,
+  // IonAlert,
+  useIonAlert,
+  // IonRefresherContent,
+  RefresherEventDetail,
 } from "@ionic/react";
 import Editor from "../../components/Editor";
 import { useEffect, useState } from "react";
@@ -18,6 +23,7 @@ import { chevronBack, ellipsisVertical } from "ionicons/icons";
 export default function EditorPage() {
   const [maxHeight, setMaxHeight] = useState("calc(100vh - 100px)");
   const [title, setTitle] = useState("Header");
+  const [presentAlert] = useIonAlert();
 
   useEffect(() => {
     const updateMaxHeight = () => {
@@ -32,6 +38,16 @@ export default function EditorPage() {
       window.removeEventListener("resize", updateMaxHeight);
     };
   }, []);
+
+  function handleAlert(event: CustomEvent<RefresherEventDetail>) {
+    presentAlert({
+      header: "Alert",
+      subHeader: "Pull Action",
+      message: "You pulled to refresh!",
+      buttons: ["OK"],
+    });
+    event.detail.complete();
+  }
 
   return (
     <>
@@ -52,7 +68,7 @@ export default function EditorPage() {
               <IonMenuToggle>
                 <IonButton>
                   <IonIcon
-                    className=" text-gray-300"
+                    className="text-gray-300"
                     slot="icon-only"
                     icon={chevronBack}
                   ></IonIcon>
@@ -63,7 +79,7 @@ export default function EditorPage() {
             <IonButtons slot="primary">
               <IonButton>
                 <IonIcon
-                  className=" text-gray-300"
+                  className="text-gray-300"
                   slot="icon-only"
                   size="small"
                   icon={ellipsisVertical}
@@ -74,9 +90,16 @@ export default function EditorPage() {
         </IonHeader>
         <IonContent scrollY={false} fullscreen={false}>
           <div
-            className="ion-content-scroll-host  overflow-auto overscroll-contain"
+            className="ion-content-scroll-host overflow-auto overscroll-contain"
             style={{ maxHeight }}
           >
+            <IonRefresher
+              slot="fixed"
+              pullFactor={0.5}
+              pullMin={100}
+              pullMax={200}
+              onIonRefresh={handleAlert}
+            ></IonRefresher>
             <IonHeader collapse="condense">
               <IonToolbar>
                 <IonInput
