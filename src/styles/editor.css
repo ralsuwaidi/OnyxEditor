@@ -131,3 +131,7 @@
 .table-of-contents a::before {
   content: attr(data-item-index) ".";
 }
+
+ion-menu {
+  --min-width: 100%;
+}
