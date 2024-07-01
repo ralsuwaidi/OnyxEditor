@@ -11,19 +11,28 @@ import {
   IonMenuToggle,
   IonRefresher,
   // IonAlert,
-  useIonAlert,
+  // useIonAlert,
   // IonRefresherContent,
+  useIonModal,
   RefresherEventDetail,
 } from "@ionic/react";
 import Editor from "../../components/Editor";
 import { useEffect, useState } from "react";
 import { chevronBack, ellipsisVertical } from "ionicons/icons";
 import NotesListPage from "../NotesListPage/NotesListPage";
+import SearchModal from "../../components/SearchModal";
+import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 
 export default function EditorPage() {
   const [maxHeight, setMaxHeight] = useState("calc(100vh - 100px)");
   const [title, setTitle] = useState("Header");
-  const [presentAlert] = useIonAlert();
+  // const [presentAlert] = useIonAlert();
+  const [present, dismiss] = useIonModal(SearchModal, {
+    dismiss: (data: string, role: string) => dismiss(data, role),
+  });
+  const [message, setMessage] = useState(
+    "This modal example uses the modalController to present and dismiss modals."
+  );
 
   useEffect(() => {
     const updateMaxHeight = () => {
@@ -39,14 +48,16 @@ export default function EditorPage() {
     };
   }, []);
 
-  function handleAlert(event: CustomEvent<RefresherEventDetail>) {
-    presentAlert({
-      header: "Alert",
-      subHeader: "Pull Action",
-      message: "You pulled to refresh!",
-      buttons: ["OK"],
+  function openModal(event: CustomEvent<RefresherEventDetail>) {
+    present({
+      onWillDismiss: (ev: CustomEvent<OverlayEventDetail>) => {
+        if (ev.detail.role === "confirm") {
+          setMessage(`Hello, ${ev.detail.data}!`);
+          console.log(message);
+        }
+        event.detail.complete(); // Complete the refresh action
+      },
     });
-    event.detail.complete();
   }
 
   return (
@@ -89,7 +100,7 @@ export default function EditorPage() {
               pullFactor={0.5}
               pullMin={100}
               pullMax={200}
-              onIonRefresh={handleAlert}
+              onIonRefresh={openModal}
             ></IonRefresher>
             <IonHeader collapse="condense">
               <IonToolbar>
