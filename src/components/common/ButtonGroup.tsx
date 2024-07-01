@@ -26,7 +26,7 @@ const ButtonGroup: React.FC<ButtonGroupProps> = ({
 
   const variantClasses = {
     default:
-      "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+      "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-300",
     primary:
       "bg-indigo-600 text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500",
     secondary:
@@ -50,12 +50,12 @@ const ButtonGroup: React.FC<ButtonGroupProps> = ({
         <button
           key={index}
           type="button"
-          className={classNames(buttonClass, {
-            "rounded-l-md": index === 0,
-            "-ml-px": index !== 0,
-            "rounded-r-md": index === buttons.length - 1,
-            "bg-indigo-600 text-white": button.active, // Changed to a better color
-          })}
+          className={`
+         ${buttonClass}
+         ${index === 0 ? "rounded-l-md" : "-ml-px"}
+         ${index === buttons.length - 1 ? "rounded-r-md" : ""}
+         ${button.active ? "bg-gray-200 text-black" : ""}
+       `}
           onClick={button.onClick}
         >
           {button.label}

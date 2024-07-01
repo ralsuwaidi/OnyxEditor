@@ -1,7 +1,7 @@
 import { Link as TiptapLink } from "@tiptap/extension-link";
 import { markInputRule } from "@tiptap/core";
 
-const linkInputRegex = /\[(.*?)\]\((.*?)\)$/;
+const linkInputRegex = /(?<!!)\[(.*?)\]\((.*?)\)$/;
 
 const LinkExtension = TiptapLink.extend({
   addInputRules() {
@@ -10,8 +10,8 @@ const LinkExtension = TiptapLink.extend({
         find: linkInputRegex,
         type: this.type,
         getAttributes: (match) => {
-          const [, , href] = match;
-          return { href };
+          const [, text, href] = match;
+          return { href, text };
         },
       }),
     ];

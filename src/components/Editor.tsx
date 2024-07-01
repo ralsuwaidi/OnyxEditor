@@ -14,16 +14,14 @@ import Document from "@tiptap/extension-document";
 import Bold from "@tiptap/extension-bold";
 import Focus from "@tiptap/extension-focus";
 import Italic from "@tiptap/extension-italic";
+import Image from "@tiptap/extension-image";
 import Strike from "@tiptap/extension-strike";
 import Underline from "@tiptap/extension-underline";
-import Image from "@tiptap/extension-image";
 import ListItem from "@tiptap/extension-list-item";
 import { saveEditorContent } from "../libs/editorPreferences";
 import Typography from "@tiptap/extension-typography";
 import Dropcursor from "@tiptap/extension-dropcursor";
-import Placeholder from "@tiptap/extension-placeholder";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
-import LinkExtension from "../extensions/Link";
 import TaskList from "@tiptap/extension-task-list";
 import CodeBlock from "@tiptap/extension-code-block";
 import TaskItem from "@tiptap/extension-task-item";
@@ -34,6 +32,7 @@ import FloatingMenu from "./FloatingMenu";
 import { useSetLink } from "../hooks/useSetLink";
 import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
+import Link from "@tiptap/extension-link";
 
 const extensions = [
   Paragraph,
@@ -42,15 +41,6 @@ const extensions = [
   Bold,
   CodeBlock,
   Italic,
-  Placeholder.configure({
-    placeholder: ({ node }) => {
-      if (node.type.name === "heading") {
-        return "What's the title?";
-      }
-
-      return "Can you add some further context?";
-    },
-  }),
   ListItem,
   TaskList,
   TaskItem.configure({
@@ -58,7 +48,7 @@ const extensions = [
   }),
   Typography,
   Strike,
-  Image,
+  Image.configure({ allowBase64: true, HTMLAttributes: { class: "rounded" } }),
   Underline,
   Focus,
   HorizontalRule,
@@ -80,13 +70,13 @@ const extensions = [
   // HighlightMark,
   CustomHighlight.configure({
     HTMLAttributes: {
-      class: "dark:bg-highlight-dark bg-highlight p-1 rounded",
+      class: "dark:bg-highlight-dark bg-highlight p-1 rounded dark:text-white",
     },
   }),
   CustomCode,
   BulletList,
   MarkdownPaste,
-  LinkExtension.configure({
+  Link.configure({
     openOnClick: true,
     autolink: true,
     linkOnPaste: true,
