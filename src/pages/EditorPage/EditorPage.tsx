@@ -8,7 +8,6 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
-  IonMenu,
   IonMenuToggle,
   IonRefresher,
   // IonAlert,
@@ -19,6 +18,7 @@ import {
 import Editor from "../../components/Editor";
 import { useEffect, useState } from "react";
 import { chevronBack, ellipsisVertical } from "ionicons/icons";
+import NotesListPage from "../NotesListPage/NotesListPage";
 
 export default function EditorPage() {
   const [maxHeight, setMaxHeight] = useState("calc(100vh - 100px)");
@@ -51,16 +51,7 @@ export default function EditorPage() {
 
   return (
     <>
-      <IonMenu contentId="main-content" type="push">
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Menu Content</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          This is the menu content.
-        </IonContent>
-      </IonMenu>
+      <NotesListPage contentId="main-content" />
       <IonPage id="main-content">
         <IonHeader translucent={false}>
           <IonToolbar>
