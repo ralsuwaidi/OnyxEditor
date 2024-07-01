@@ -1,10 +1,8 @@
 import {
-  IonAvatar,
   IonButton,
   IonButtons,
   IonContent,
   IonHeader,
-  IonImg,
   IonItem,
   IonLabel,
   IonList,
@@ -13,15 +11,38 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const SearchNotesModal = ({
   dismiss,
 }: {
   dismiss: (data?: string | null | undefined | number, role?: string) => void;
 }) => {
+  const data = [
+    "Amsterdam",
+    "Buenos Aires",
+    "Cairo",
+    "Geneva",
+    "Hong Kong",
+    "Istanbul",
+    "London",
+    "Madrid",
+    "New York",
+    "Panama City",
+  ];
+
+  let [results, setResults] = useState([...data]);
+
   const inputRef = useRef<HTMLIonInputElement>(null);
   const modal = useRef<HTMLIonModalElement>(null);
+
+  const handleInput = (ev: Event) => {
+    let query = "";
+    const target = ev.target as HTMLIonSearchbarElement;
+    if (target) query = target.value!.toLowerCase();
+
+    setResults(data.filter((d) => d.toLowerCase().indexOf(query) > -1));
+  };
 
   return (
     <IonPage>
@@ -45,46 +66,20 @@ const SearchNotesModal = ({
       </IonHeader>
       <IonContent className="ion-padding">
         <IonSearchbar
+          debounce={1000}
+          onIonInput={(ev) => handleInput(ev)}
           onClick={() => modal.current?.setCurrentBreakpoint(0.75)}
           placeholder="Search"
         ></IonSearchbar>
         <IonList>
-          <IonItem>
-            <IonAvatar slot="start">
-              <IonImg src="https://i.pravatar.cc/300?u=b" />
-            </IonAvatar>
-            <IonLabel>
-              <h2>Connor Smith</h2>
-              <p>Sales Rep</p>
-            </IonLabel>
-          </IonItem>
-          <IonItem>
-            <IonAvatar slot="start">
-              <IonImg src="https://i.pravatar.cc/300?u=a" />
-            </IonAvatar>
-            <IonLabel>
-              <h2>Daniel Smith</h2>
-              <p>Product Designer</p>
-            </IonLabel>
-          </IonItem>
-          <IonItem>
-            <IonAvatar slot="start">
-              <IonImg src="https://i.pravatar.cc/300?u=d" />
-            </IonAvatar>
-            <IonLabel>
-              <h2>Greg Smith</h2>
-              <p>Director of Operations</p>
-            </IonLabel>
-          </IonItem>
-          <IonItem>
-            <IonAvatar slot="start">
-              <IonImg src="https://i.pravatar.cc/300?u=e" />
-            </IonAvatar>
-            <IonLabel>
-              <h2>Zoey Smith</h2>
-              <p>CEO</p>
-            </IonLabel>
-          </IonItem>
+          {results.map((result) => (
+            <IonItem>
+              <IonLabel>
+                <h2>{result}</h2>
+                <p>New Message</p>
+              </IonLabel>
+            </IonItem>
+          ))}
         </IonList>
       </IonContent>
     </IonPage>

@@ -26,7 +26,6 @@ import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-com
 export default function EditorPage() {
   const [maxHeight, setMaxHeight] = useState("calc(100vh - 100px)");
   const [title, setTitle] = useState("Header");
-  // const [presentAlert] = useIonAlert();
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
   });
