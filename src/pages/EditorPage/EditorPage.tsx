@@ -29,9 +29,6 @@ export default function EditorPage() {
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
   });
-  const [message, setMessage] = useState(
-    "This modal example uses the modalController to present and dismiss modals."
-  );
 
   useEffect(() => {
     const updateMaxHeight = () => {
@@ -51,10 +48,9 @@ export default function EditorPage() {
     present({
       onWillDismiss: (ev: CustomEvent<OverlayEventDetail>) => {
         if (ev.detail.role === "confirm") {
-          setMessage(`Hello, ${ev.detail.data}!`);
-          console.log(message);
+          console.log("confirmed");
         }
-        event.detail.complete(); // Complete the refresh action
+        event.detail.complete();
       },
     });
   }
@@ -111,7 +107,7 @@ export default function EditorPage() {
                 />
               </IonToolbar>
             </IonHeader>
-            <Editor />
+            <Editor title={title} setTitle={setTitle} />
           </div>
         </IonContent>
       </IonPage>

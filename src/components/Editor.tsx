@@ -18,7 +18,7 @@ import Image from "@tiptap/extension-image";
 import Strike from "@tiptap/extension-strike";
 import Underline from "@tiptap/extension-underline";
 import ListItem from "@tiptap/extension-list-item";
-import { saveEditorContent } from "../libs/editorPreferences";
+import { saveEditorContent } from "../libs/saveToFirebase";
 import Typography from "@tiptap/extension-typography";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
@@ -26,7 +26,7 @@ import TaskList from "@tiptap/extension-task-list";
 import CodeBlock from "@tiptap/extension-code-block";
 import TaskItem from "@tiptap/extension-task-item";
 import MarkdownPaste from "../extensions/MarkdownPaste";
-import { useLoadEditorContent } from "../hooks/useLoadEditorContent";
+import { useLoadEditorContent } from "../hooks/useLoadFirestore";
 import BubbleMenu from "./BubbleMenu";
 import FloatingMenu from "./FloatingMenu";
 import { useSetLink } from "../hooks/useSetLink";
@@ -42,7 +42,12 @@ import Link from "@tiptap/extension-link";
 
 // const MemorizedToC = React.memo(ToC);
 
-const Editor = () => {
+interface EditorProps {
+  title: string;
+  setTitle: (title: string) => void;
+}
+
+const Editor = ({ title, setTitle }: EditorProps) => {
   // const [items, setItems] = useState<any>([]);
 
   const content = `
@@ -116,14 +121,13 @@ const Editor = () => {
       },
     },
     onUpdate: ({ editor }) => {
-      const json = editor.getJSON();
-      saveEditorContent(JSON.stringify(json));
+      saveEditorContent(editor.getJSON(), title);
     },
   });
 
   useKeyboardSetup();
 
-  useLoadEditorContent(editor);
+  useLoadEditorContent(editor, setTitle, "single-page-document");
 
   const setLink = useSetLink(editor);
 
