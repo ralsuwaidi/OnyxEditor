@@ -13,8 +13,11 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonMenuToggle,
-  IonRippleEffect,
   IonSearchbar,
+  IonItemSliding,
+  IonItemOptions,
+  IonItemOption,
+  IonToast,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import FirestoreService from "../../services/FirestoreService";
@@ -36,7 +39,9 @@ export interface Note {
 export default function NotesListPage({ contentId }: NotesListPageProps) {
   const { notes, loadNotes, setSelectedNoteId } = useNoteContext();
   const [results, setResults] = useState<Note[]>([]);
+  const [showToast, setShowToast] = useState<string | null>(null);
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
+  const slidingRef = useRef<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     setResults(notes);
@@ -54,8 +59,26 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     menuRef.current?.close();
   };
 
+  const handleDeleteNote = async (id: string) => {
+    try {
+      await FirestoreService.deleteNote(id);
+      await loadNotes();
+      setShowToast("Note deleted successfully");
+    } catch (error) {
+      console.error("Failed to delete note:", error);
+      setShowToast("Failed to delete note");
+    }
+  };
+
   const handleSelectNote = (id: string) => {
-    setSelectedNoteId(id);
+    if (!slidingRef.current[id]) {
+      setSelectedNoteId(id);
+    }
+    slidingRef.current[id] = false;
+  };
+
+  const handleSliding = (id: string) => {
+    slidingRef.current[id] = true;
   };
 
   const formatDateWithoutYear = (date: any) => {
@@ -73,6 +96,8 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
       notes.filter((note) => note.title.toLowerCase().includes(query))
     );
   };
+
+  const sortedNotes = results.length > 0 ? results : notes;
 
   return (
     <>
@@ -99,50 +124,48 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
             <IonRefresherContent />
           </IonRefresher>
           <IonList>
-            {results.length > 0
-              ? results
-                  .sort(
-                    (a, b) =>
-                      new Date(b.updatedAt.toDate()).getTime() -
-                      new Date(a.updatedAt.toDate()).getTime()
-                  )
-                  .map((note) => (
-                    <IonMenuToggle key={note.id} className="hover:bg-gray-50">
-                      <IonItem
-                        button={true}
-                        onClick={() => handleSelectNote(note.id)}
-                      >
-                        <IonLabel>
-                          <h2>{note.title}</h2>
-                          <p>{formatDateWithoutYear(note.updatedAt)}</p>
-                        </IonLabel>
-                        <IonRippleEffect></IonRippleEffect>
-                      </IonItem>
-                    </IonMenuToggle>
-                  ))
-              : notes
-                  .sort(
-                    (a, b) =>
-                      new Date(b.updatedAt.toDate()).getTime() -
-                      new Date(a.updatedAt.toDate()).getTime()
-                  )
-                  .map((note) => (
-                    <IonMenuToggle
-                      key={note.id}
-                      className="hover:bg-gray-50 ion-activatable"
+            {sortedNotes
+              .sort(
+                (a, b) =>
+                  new Date(b.updatedAt.toDate()).getTime() -
+                  new Date(a.updatedAt.toDate()).getTime()
+              )
+              .map((note) => (
+                <IonItemSliding
+                  key={note.id}
+                  onIonDrag={() => handleSliding(note.id)}
+                >
+                  <IonMenuToggle>
+                    <IonItem
+                      button={true}
+                      onClick={() => handleSelectNote(note.id)}
                     >
-                      <IonItem onClick={() => handleSelectNote(note.id)}>
-                        <IonLabel>
-                          <h2>{note.title}</h2>
-                          <p>{formatDateWithoutYear(note.updatedAt)}</p>
-                        </IonLabel>
-                        <IonRippleEffect></IonRippleEffect>
-                      </IonItem>
-                    </IonMenuToggle>
-                  ))}
+                      <IonLabel>
+                        <h2>{note.title}</h2>
+                        <p>{formatDateWithoutYear(note.updatedAt)}</p>
+                      </IonLabel>
+                    </IonItem>
+                  </IonMenuToggle>
+
+                  <IonItemOptions>
+                    <IonItemOption
+                      color="danger"
+                      onClick={() => handleDeleteNote(note.id)}
+                    >
+                      Delete
+                    </IonItemOption>
+                  </IonItemOptions>
+                </IonItemSliding>
+              ))}
           </IonList>
         </IonContent>
       </IonMenu>
+      <IonToast
+        isOpen={!!showToast}
+        message={showToast!}
+        duration={3000}
+        onDidDismiss={() => setShowToast(null)}
+      />
     </>
   );
 }

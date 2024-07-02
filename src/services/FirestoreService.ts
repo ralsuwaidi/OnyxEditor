@@ -11,6 +11,7 @@ import {
   query,
   orderBy,
   limit,
+  deleteDoc,
 } from "firebase/firestore";
 import { DebouncedFunc, debounce } from "lodash";
 import { NoteMetadataType, NoteType } from "../types/NoteType";
@@ -30,6 +31,7 @@ export interface FirestoreServiceInterface {
     title: string
   ): Promise<void>;
   createNewNote(): Promise<string>;
+  deleteNote(noteId: string): Promise<void>;
   getLatestNote(): Promise<Pick<NoteType, "id" | "title" | "updatedAt"> | null>;
   updateNoteTitle(noteId: string, title: string): Promise<void>;
 }
@@ -177,6 +179,11 @@ class FirestoreService implements FirestoreServiceInterface {
       return { id: latestDoc.id, title: data.title, updatedAt: data.updatedAt };
     }
     return null;
+  }
+
+  async deleteNote(noteId: string): Promise<void> {
+    const docRef = doc(this.collectionRef, noteId);
+    await this.handleError(deleteDoc(docRef), "Error deleting note:");
   }
 
   async updateNoteTitle(noteId: string, title: string): Promise<void> {
