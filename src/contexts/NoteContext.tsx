@@ -4,6 +4,8 @@ import React, {
   useState,
   ReactNode,
   useEffect,
+  useCallback,
+  useMemo,
 } from "react";
 import FirestoreService from "../services/FirestoreService";
 
@@ -30,36 +32,48 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   useEffect(() => {
     const initializeNote = async () => {
       setLoading(true);
-      const latestNote = await FirestoreService.getLatestNote();
-      if (latestNote) {
-        setSelectedNoteId(latestNote.id);
-        setTitle(latestNote.title);
+      try {
+        const latestNote = await FirestoreService.getLatestNote();
+        if (latestNote) {
+          setSelectedNoteId(latestNote.id);
+          setTitle(latestNote.title);
+        }
+      } catch (error) {
+        console.error("Failed to initialize note", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     initializeNote();
   }, []);
 
-  const updateNoteTitle = (newTitle: string) => {
-    if (selectedNoteId) {
-      FirestoreService.updateNoteTitle(selectedNoteId, newTitle);
-      setTitle(newTitle);
-    }
-  };
+  const updateNoteTitle = useCallback(
+    (newTitle: string) => {
+      if (selectedNoteId) {
+        FirestoreService.updateNoteTitle(selectedNoteId, newTitle)
+          .then(() => setTitle(newTitle))
+          .catch((error) =>
+            console.error("Failed to update note title", error)
+          );
+      }
+    },
+    [selectedNoteId]
+  );
+
+  const contextValue = useMemo(
+    () => ({
+      selectedNoteId,
+      setSelectedNoteId,
+      title,
+      setTitle,
+      updateNoteTitle,
+      loading,
+    }),
+    [selectedNoteId, title, updateNoteTitle, loading]
+  );
 
   return (
-    <NoteContext.Provider
-      value={{
-        selectedNoteId,
-        setSelectedNoteId,
-        title,
-        setTitle,
-        updateNoteTitle,
-        loading,
-      }}
-    >
-      {children}
-    </NoteContext.Provider>
+    <NoteContext.Provider value={contextValue}>{children}</NoteContext.Provider>
   );
 };
 
