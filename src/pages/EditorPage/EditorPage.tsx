@@ -13,7 +13,6 @@ import {
   IonRefresher,
   useIonModal,
   RefresherEventDetail,
-  // IonSpinner,
 } from "@ionic/react";
 import Editor from "../../components/Editor";
 import { chevronBack, ellipsisVertical } from "ionicons/icons";

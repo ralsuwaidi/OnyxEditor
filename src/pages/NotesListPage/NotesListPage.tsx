@@ -7,7 +7,6 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonSpinner,
   IonButton,
   IonButtons,
   IonIcon,
@@ -15,10 +14,12 @@ import {
   IonRefresherContent,
   IonMenuToggle,
   IonRippleEffect,
+  IonSearchbar,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import FirestoreService from "../../services/FirestoreService";
 import { useNoteContext } from "../../contexts/NoteContext";
+import { useState } from "react";
 
 interface NotesListPageProps {
   contentId: string;
@@ -33,7 +34,8 @@ export interface Note {
 }
 
 export default function NotesListPage({ contentId }: NotesListPageProps) {
-  const { notes, loading, loadNotes, setSelectedNoteId } = useNoteContext();
+  const { notes, loadNotes, setSelectedNoteId } = useNoteContext();
+  const [results, setResults] = useState<Note[]>([]);
 
   const handleRefresh = async (event: CustomEvent) => {
     await loadNotes();
@@ -61,6 +63,14 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     (a, b) => b.updatedAt.toDate() - a.updatedAt.toDate()
   );
 
+  const handleInput = (ev: CustomEvent) => {
+    const query =
+      (ev.target as HTMLIonSearchbarElement).value?.toLowerCase() || "";
+    setResults(
+      notes.filter((note) => note.title.toLowerCase().includes(query))
+    );
+  };
+
   return (
     <>
       <IonMenu contentId={contentId} type="push">
@@ -73,31 +83,49 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
               </IonButton>
             </IonButtons>
           </IonToolbar>
+          <IonToolbar>
+            <IonSearchbar
+              debounce={500}
+              onIonInput={handleInput}
+              placeholder="Search Note"
+            ></IonSearchbar>
+          </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">
           <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
             <IonRefresherContent />
           </IonRefresher>
-          {loading ? (
-            <IonSpinner />
-          ) : (
-            <IonList>
-              {sortedNotes.map((note) => (
-                <IonMenuToggle
-                  key={note.id}
-                  className="hover:bg-gray-50 ion-activatable"
-                >
-                  <IonItem onClick={() => handleSelectNote(note.id)}>
-                    <IonLabel>
-                      <h2>{note.title}</h2>
-                      <p>{formatDateWithoutYear(note.updatedAt)}</p>
-                    </IonLabel>
-                    <IonRippleEffect></IonRippleEffect>
-                  </IonItem>
-                </IonMenuToggle>
-              ))}
-            </IonList>
-          )}
+          <IonList>
+            {results.length > 0
+              ? results.map((note) => (
+                  <IonMenuToggle
+                    key={note.id}
+                    className="hover:bg-gray-50 ion-activatable"
+                  >
+                    <IonItem onClick={() => handleSelectNote(note.id)}>
+                      <IonLabel>
+                        <h2>{note.title}</h2>
+                        <p>{formatDateWithoutYear(note.updatedAt)}</p>
+                      </IonLabel>
+                      <IonRippleEffect></IonRippleEffect>
+                    </IonItem>
+                  </IonMenuToggle>
+                ))
+              : sortedNotes.map((note) => (
+                  <IonMenuToggle
+                    key={note.id}
+                    className="hover:bg-gray-50 ion-activatable"
+                  >
+                    <IonItem onClick={() => handleSelectNote(note.id)}>
+                      <IonLabel>
+                        <h2>{note.title}</h2>
+                        <p>{formatDateWithoutYear(note.updatedAt)}</p>
+                      </IonLabel>
+                      <IonRippleEffect></IonRippleEffect>
+                    </IonItem>
+                  </IonMenuToggle>
+                ))}
+          </IonList>
         </IonContent>
       </IonMenu>
     </>
