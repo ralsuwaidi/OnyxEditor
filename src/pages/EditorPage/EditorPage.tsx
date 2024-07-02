@@ -1,3 +1,4 @@
+// src/pages/EditorPage/EditorPage.tsx
 import {
   IonContent,
   IonHeader,
@@ -12,35 +13,23 @@ import {
   IonRefresher,
   useIonModal,
   RefresherEventDetail,
+  IonSpinner,
 } from "@ionic/react";
 import Editor from "../../components/Editor";
-import { useEffect, useState } from "react";
 import { chevronBack, ellipsisVertical } from "ionicons/icons";
 import NotesListPage from "../NotesListPage/NotesListPage";
 import SearchModal from "../../components/SearchModal";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 import { useNoteContext } from "../../contexts/NoteContext";
+import { useMaxHeight } from "../../hooks/useMaxHeight";
 
 export default function EditorPage() {
-  const { title, updateNoteTitle } = useNoteContext();
-  const [maxHeight, setMaxHeight] = useState("calc(100vh - 100px)");
+  const { title, loading, updateNoteTitle } = useNoteContext();
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
   });
 
-  useEffect(() => {
-    const updateMaxHeight = () => {
-      const offset = 110;
-      setMaxHeight(`calc(100vh - ${offset}px)`);
-    };
-
-    updateMaxHeight();
-    window.addEventListener("resize", updateMaxHeight);
-
-    return () => {
-      window.removeEventListener("resize", updateMaxHeight);
-    };
-  }, []);
+  const maxHeight = useMaxHeight();
 
   function openModal(event: CustomEvent<RefresherEventDetail>) {
     present({
@@ -110,7 +99,7 @@ export default function EditorPage() {
                 />
               </IonToolbar>
             </IonHeader>
-            <Editor />
+            {loading ? <IonSpinner /> : <Editor />}
           </div>
         </IonContent>
       </IonPage>
