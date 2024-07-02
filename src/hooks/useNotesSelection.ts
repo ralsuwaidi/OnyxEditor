@@ -26,7 +26,7 @@ export const useNoteSelection = () => {
 
   useEffect(() => {
     loadNotes();
-  }, [selectedNoteId, setSelectedNoteId]);
+  }, []);
 
   return { notes, loading, loadNotes, setLoading, setSelectedNoteId };
 };

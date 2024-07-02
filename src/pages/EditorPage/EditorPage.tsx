@@ -1,4 +1,4 @@
-// src/pages/EditorPage/EditorPage.tsx
+import { useRef } from "react";
 import {
   IonContent,
   IonHeader,
@@ -30,6 +30,8 @@ export default function EditorPage() {
   });
 
   const maxHeight = useMaxHeight();
+  const contentRef = useRef<HTMLIonContentElement>(null);
+  const scrollHostRef = useRef<HTMLDivElement>(null);
 
   function openModal(event: CustomEvent<RefresherEventDetail>) {
     present({
@@ -45,6 +47,16 @@ export default function EditorPage() {
   const handleTitleChange = (e: CustomEvent) => {
     const newTitle = e.detail.value as string;
     updateNoteTitle(newTitle);
+  };
+
+  const scrollToTop = () => {
+    if (scrollHostRef.current) {
+      console.log("scrolling");
+      scrollHostRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
 
   return (
@@ -64,7 +76,9 @@ export default function EditorPage() {
                 </IonButton>
               </IonMenuToggle>
             </IonButtons>
-            <IonTitle>{title}</IonTitle>
+            <IonTitle onClick={scrollToTop} style={{ cursor: "pointer" }}>
+              {title}
+            </IonTitle>
             <IonButtons slot="primary">
               <IonButton>
                 <IonIcon
@@ -77,8 +91,9 @@ export default function EditorPage() {
             </IonButtons>
           </IonToolbar>
         </IonHeader>
-        <IonContent scrollY={false} fullscreen={false}>
+        <IonContent ref={contentRef} scrollY={false} fullscreen={false}>
           <div
+            ref={scrollHostRef}
             className="ion-content-scroll-host overflow-auto overscroll-contain"
             style={{ maxHeight }}
           >

@@ -47,9 +47,7 @@ const Editor = () => {
   // const [items, setItems] = useState<any>([]);
   const { selectedNoteId, title, setTitle } = useNoteContext();
 
-  const content = `
-  Test
-  `;
+  const content = "";
 
   const extensions = [
     Paragraph,
@@ -127,9 +125,7 @@ const Editor = () => {
   });
 
   useKeyboardSetup();
-
   useLoadSelectedNote(editor, setTitle);
-
   const setLink = useSetLink(editor);
 
   return (
