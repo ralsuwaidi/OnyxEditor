@@ -54,12 +54,24 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     setSelectedNoteId(id);
   };
 
+  const formatDateWithoutYear = (date: any) => {
+    const options: Intl.DateTimeFormatOptions = {
+      month: "short",
+      day: "numeric",
+    };
+    return new Date(date.toDate()).toLocaleDateString(undefined, options);
+  };
+
+  const sortedNotes = [...notes].sort(
+    (a, b) => b.updatedAt.toDate() - a.updatedAt.toDate()
+  );
+
   return (
     <>
       <IonMenu contentId={contentId} type="push">
         <IonHeader>
           <IonToolbar>
-            <IonTitle>Menu Content</IonTitle>
+            <IonTitle>Notes</IonTitle>
             <IonButtons slot="end">
               <IonButton onClick={handleCreateNewNote}>
                 <IonIcon icon={add} />
@@ -75,7 +87,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
             <IonSpinner />
           ) : (
             <IonList>
-              {notes.map((note) => (
+              {sortedNotes.map((note) => (
                 <IonItem
                   key={note.id}
                   className="hover:bg-gray-50"
@@ -83,15 +95,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                 >
                   <IonLabel>
                     <h2>{note.title}</h2>
-                    <p>
-                      {/* Created at: {note.createdAt.toDate().toLocaleString()} */}
-                    </p>
-                    <p>
-                      {/* Updated at: {note.updatedAt.toDate().toLocaleString()} */}
-                    </p>
-                    {note.metadata && (
-                      <p>Metadata: {JSON.stringify(note.metadata)}</p>
-                    )}
+                    <p>{formatDateWithoutYear(note.updatedAt)}</p>
                   </IonLabel>
                 </IonItem>
               ))}

@@ -1,3 +1,5 @@
+// src/services/FirestoreService.ts
+
 import {
   collection,
   doc,
@@ -10,116 +12,118 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
+import { DebouncedFunc, debounce } from "lodash";
+import { NoteType } from "../types/NoteType";
 import firestore from "./firebase";
-import { debounce } from "lodash";
 
-interface EditorData {
-  id: string; // Include the document ID
-  content: object; // No longer stringifying content
-  title: string;
-  createdAt: any; // Using any to allow for Firestore timestamp
-  updatedAt: any; // Using any to allow for Firestore timestamp
-  metadata?: object; // Optional metadata field
+export interface FirestoreServiceInterface {
+  loadContentWithID(documentID: string): Promise<NoteType | null>;
+  loadAllContents(): Promise<NoteType[]>;
+  loadAllDocumentTitles(): Promise<
+    Array<
+      Pick<NoteType, "id" | "title" | "createdAt" | "updatedAt" | "metadata">
+    >
+  >;
+  updateMetadata(documentID: string, metadata: object): Promise<void>;
+  updateContentWithDebounce: DebouncedFunc<
+    (documentID: string, content: object, title: string) => Promise<void>
+  >;
+  updateContent(
+    documentID: string,
+    content: object,
+    title: string
+  ): Promise<void>;
+  createNewNote(): Promise<void>;
+  getLatestNote(): Promise<Pick<NoteType, "id" | "title" | "updatedAt"> | null>;
+  updateNoteTitle(noteId: string, title: string): Promise<void>;
 }
 
-class FirestoreService {
-  private collectionName: string;
+class FirestoreService implements FirestoreServiceInterface {
+  private collectionRef = collection(firestore, "documents");
 
-  constructor() {
-    this.collectionName = "documents";
-  }
-
-  // Load content for a specific document ID
-  async loadContentWithID(documentID: string): Promise<EditorData | null> {
+  private async handleError<T>(
+    promise: Promise<T>,
+    errorMessage: string
+  ): Promise<T | null> {
     try {
-      const docRef = doc(firestore, this.collectionName, documentID);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const savedData = docSnap.data();
-        return {
-          id: docRef.id,
-          content: savedData.content,
-          title: savedData.title,
-          createdAt: savedData.createdAt,
-          updatedAt: savedData.updatedAt,
-          metadata: savedData.metadata || {}, // Load metadata if it exists
-        } as EditorData;
-      } else {
-        return null;
-      }
+      return await promise;
     } catch (error) {
-      console.error("Error loading document:", error);
+      console.error(errorMessage, error);
       return null;
     }
   }
 
-  // Load all documents (for cases where IDs are auto-generated)
-  async loadAllContents(): Promise<Array<EditorData> | []> {
-    try {
-      const querySnapshot = await getDocs(
-        collection(firestore, this.collectionName)
-      );
-      const documents = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          content: data.content, // Content is already an object
-          title: data.title,
-          createdAt: data.createdAt,
-          updatedAt: data.updatedAt,
-          metadata: data.metadata || {}, // Load metadata if it exists
-        } as EditorData;
-      });
-      return documents;
-    } catch (error) {
-      console.error("Error loading documents:", error);
-      return [];
+  async loadContentWithID(documentID: string): Promise<NoteType | null> {
+    const docRef = doc(this.collectionRef, documentID);
+    const docSnap = await this.handleError(
+      getDoc(docRef),
+      "Error loading document:"
+    );
+    if (docSnap && docSnap.exists()) {
+      const savedData = docSnap.data();
+      return {
+        id: docRef.id,
+        content: savedData.content,
+        title: savedData.title,
+        createdAt: savedData.createdAt,
+        updatedAt: savedData.updatedAt,
+        metadata: savedData.metadata || {},
+      } as NoteType;
     }
+    return null;
   }
 
-  // Load all document titles and IDs with timestamps
+  async loadAllContents(): Promise<NoteType[]> {
+    const querySnapshot = await this.handleError(
+      getDocs(this.collectionRef),
+      "Error loading documents:"
+    );
+    if (querySnapshot) {
+      return querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          content: data.content,
+          title: data.title,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt,
+          metadata: data.metadata || {},
+        } as NoteType;
+      });
+    }
+    return [];
+  }
+
   async loadAllDocumentTitles(): Promise<
-    | Array<{
-        id: string;
-        title: string;
-        createdAt: any;
-        updatedAt: any;
-        metadata?: object;
-      }>
-    | []
+    Array<
+      Pick<NoteType, "id" | "title" | "createdAt" | "updatedAt" | "metadata">
+    >
   > {
-    try {
-      const querySnapshot = await getDocs(
-        collection(firestore, this.collectionName)
-      );
-      const documents = querySnapshot.docs.map((doc) => {
+    const querySnapshot = await this.handleError(
+      getDocs(this.collectionRef),
+      "Error loading document titles:"
+    );
+    if (querySnapshot) {
+      return querySnapshot.docs.map((doc) => {
         const data = doc.data();
         return {
           id: doc.id,
           title: data.title,
           createdAt: data.createdAt,
           updatedAt: data.updatedAt,
-          metadata: data.metadata || {}, // Load metadata if it exists
+          metadata: data.metadata || {},
         };
       });
-      return documents;
-    } catch (error) {
-      console.error("Error loading documents:", error);
-      return [];
     }
+    return [];
   }
 
-  // Update metadata for a specific document ID
   async updateMetadata(documentID: string, metadata: object): Promise<void> {
-    try {
-      const docRef = doc(firestore, this.collectionName, documentID);
-      await updateDoc(docRef, {
-        metadata,
-        updatedAt: serverTimestamp(), // Update the updatedAt timestamp
-      });
-    } catch (error) {
-      console.error("Error updating metadata:", error);
-    }
+    const docRef = doc(this.collectionRef, documentID);
+    await this.handleError(
+      updateDoc(docRef, { metadata, updatedAt: serverTimestamp() }),
+      "Error updating metadata:"
+    );
   }
 
   updateContentWithDebounce = debounce(
@@ -128,16 +132,7 @@ class FirestoreService {
       content: object,
       title: string
     ): Promise<void> => {
-      try {
-        const docRef = doc(firestore, this.collectionName, documentID);
-        await updateDoc(docRef, {
-          content,
-          title,
-          updatedAt: new Date(), // Update the updatedAt timestamp
-        });
-      } catch (error) {
-        console.error("Error updating content with debounce:", error);
-      }
+      await this.updateContent(documentID, content, title);
     },
     1000
   );
@@ -147,71 +142,54 @@ class FirestoreService {
     content: object,
     title: string
   ): Promise<void> {
-    try {
-      const docRef = doc(firestore, this.collectionName, documentID);
-      await updateDoc(docRef, {
-        content,
-        title,
-        updatedAt: new Date(), // Update the updatedAt timestamp
-      });
-    } catch (error) {
-      console.error("Error updating content:", error);
-    }
+    const docRef = doc(this.collectionRef, documentID);
+    await this.handleError(
+      updateDoc(docRef, { content, title, updatedAt: new Date() }),
+      "Error updating content:"
+    );
   }
 
   async createNewNote(): Promise<void> {
-    try {
-      const timestamp = new Date();
-      await addDoc(collection(firestore, this.collectionName), {
+    const timestamp = new Date();
+    await this.handleError(
+      addDoc(this.collectionRef, {
         content: { type: "doc", content: [] },
         title: "New Note",
         createdAt: timestamp,
         updatedAt: timestamp,
         metadata: {},
-      });
-    } catch (error) {
-      console.error("Error creating new note:", error);
-    }
+      }),
+      "Error creating new note:"
+    );
   }
 
-  async getLatestNote(): Promise<{
-    id: string;
-    title: string;
-    updatedAt: any;
-  } | null> {
-    try {
-      const notesQuery = query(
-        collection(firestore, this.collectionName),
-        orderBy("updatedAt", "desc"),
-        limit(1)
-      );
-      const querySnapshot = await getDocs(notesQuery);
-      if (!querySnapshot.empty) {
-        const latestDoc = querySnapshot.docs[0];
-        const data = latestDoc.data();
-        return {
-          id: latestDoc.id,
-          title: data.title,
-          updatedAt: data.updatedAt,
-        };
-      }
-      return null;
-    } catch (error) {
-      console.error("Error getting latest note:", error);
-      return null;
+  async getLatestNote(): Promise<Pick<
+    NoteType,
+    "id" | "title" | "updatedAt"
+  > | null> {
+    const notesQuery = query(
+      this.collectionRef,
+      orderBy("updatedAt", "desc"),
+      limit(1)
+    );
+    const querySnapshot = await this.handleError(
+      getDocs(notesQuery),
+      "Error getting latest note:"
+    );
+    if (querySnapshot && !querySnapshot.empty) {
+      const latestDoc = querySnapshot.docs[0];
+      const data = latestDoc.data();
+      return { id: latestDoc.id, title: data.title, updatedAt: data.updatedAt };
     }
+    return null;
   }
 
   async updateNoteTitle(noteId: string, title: string): Promise<void> {
-    try {
-      const docRef = doc(firestore, this.collectionName, noteId);
-      await updateDoc(docRef, {
-        title,
-        updatedAt: serverTimestamp(),
-      });
-    } catch (error) {
-      console.error("Error updating note title:", error);
-    }
+    const docRef = doc(this.collectionRef, noteId);
+    await this.handleError(
+      updateDoc(docRef, { title, updatedAt: serverTimestamp() }),
+      "Error updating note title:"
+    );
   }
 }
 
