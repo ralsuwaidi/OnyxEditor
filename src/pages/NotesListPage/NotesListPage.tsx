@@ -13,6 +13,8 @@ import {
   IonIcon,
   IonRefresher,
   IonRefresherContent,
+  IonMenuToggle,
+  IonRippleEffect,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import FirestoreService from "../../services/FirestoreService";
@@ -88,16 +90,18 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
           ) : (
             <IonList>
               {sortedNotes.map((note) => (
-                <IonItem
+                <IonMenuToggle
                   key={note.id}
-                  className="hover:bg-gray-50"
-                  onClick={() => handleSelectNote(note.id)}
+                  className="hover:bg-gray-50 ion-activatable"
                 >
-                  <IonLabel>
-                    <h2>{note.title}</h2>
-                    <p>{formatDateWithoutYear(note.updatedAt)}</p>
-                  </IonLabel>
-                </IonItem>
+                  <IonItem onClick={() => handleSelectNote(note.id)}>
+                    <IonLabel>
+                      <h2>{note.title}</h2>
+                      <p>{formatDateWithoutYear(note.updatedAt)}</p>
+                    </IonLabel>
+                    <IonRippleEffect></IonRippleEffect>
+                  </IonItem>
+                </IonMenuToggle>
               ))}
             </IonList>
           )}
