@@ -12,15 +12,15 @@ import {
   IonButtons,
   IonIcon,
 } from "@ionic/react";
-import { useEffect, useState } from "react";
 import { add } from "ionicons/icons";
 import FirestoreService from "../../services/FirestoreService";
+import { useNoteSelection } from "../../hooks/useNotesSelection";
 
 interface NotesListPageProps {
   contentId: string;
 }
 
-interface Note {
+export interface Note {
   id: string;
   title: string;
   createdAt: any;
@@ -29,23 +29,22 @@ interface Note {
 }
 
 export default function NotesListPage({ contentId }: NotesListPageProps) {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const loadNotes = async () => {
-    const fetchedNotes = await FirestoreService.loadAllContents();
-    setNotes(fetchedNotes);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    loadNotes();
-  }, []);
+  const {
+    notes,
+    loading,
+    loadNotes,
+    setLoading,
+    setSelectedNoteId,
+  } = useNoteSelection();
 
   const handleCreateNewNote = async () => {
     setLoading(true);
     await FirestoreService.createNewNote();
     await loadNotes();
+  };
+
+  const handleSelectNote = (id: string) => {
+    setSelectedNoteId(id);
   };
 
   return (
@@ -67,7 +66,10 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
           ) : (
             <IonList>
               {notes.map((note) => (
-                <IonItem key={note.id}>
+                <IonItem
+                  key={note.id}
+                  onClick={() => handleSelectNote(note.id)}
+                >
                   <IonLabel>
                     <h2>{note.title}</h2>
                     <p>

@@ -25,7 +25,6 @@ import TaskList from "@tiptap/extension-task-list";
 import CodeBlock from "@tiptap/extension-code-block";
 import TaskItem from "@tiptap/extension-task-item";
 import MarkdownPaste from "../extensions/MarkdownPaste";
-import { useLoadEditorContent } from "../hooks/useLoadFirestore";
 import BubbleMenu from "./BubbleMenu";
 import FloatingMenu from "./FloatingMenu";
 import { useSetLink } from "../hooks/useSetLink";
@@ -33,6 +32,7 @@ import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
 import FirestoreService from "../services/FirestoreService";
+import { useLoadSelectedNote } from "../hooks/useLoadSelectedNote";
 // import {
 //   getHierarchicalIndexes,
 //   TableOfContents,
@@ -131,7 +131,7 @@ const Editor = ({ title, setTitle }: EditorProps) => {
 
   useKeyboardSetup();
 
-  useLoadEditorContent(editor, setTitle, "single-page-document");
+  useLoadSelectedNote(editor, setTitle);
 
   const setLink = useSetLink(editor);
 

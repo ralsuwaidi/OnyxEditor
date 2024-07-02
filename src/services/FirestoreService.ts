@@ -1,7 +1,6 @@
 import {
   collection,
   doc,
-  setDoc,
   getDoc,
   getDocs,
   addDoc,
@@ -26,55 +25,6 @@ class FirestoreService {
   constructor() {
     this.collectionName = "documents";
   }
-
-  // Save editor content with a specific document ID
-  saveContentWithID = debounce(
-    async (
-      content: object,
-      title: string,
-      documentID: string
-    ): Promise<void> => {
-      try {
-        const docRef = doc(firestore, this.collectionName, documentID);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          // If document exists, update it
-          await updateDoc(docRef, {
-            content, // Saving content directly
-            title,
-            updatedAt: serverTimestamp(), // Set updated timestamp
-          });
-        } else {
-          // If document doesn't exist, create it
-          await setDoc(docRef, {
-            content, // Saving content directly
-            title,
-            createdAt: serverTimestamp(), // Set created timestamp
-            updatedAt: serverTimestamp(), // Set updated timestamp
-          });
-        }
-      } catch (error) {
-        console.error("Error saving document:", error);
-      }
-    },
-    1000
-  );
-
-  // Save editor content with an auto-generated document ID
-  saveContent = debounce(async (content: object, title: string): Promise<
-    void
-  > => {
-    try {
-      await addDoc(collection(firestore, this.collectionName), {
-        content, // Saving content directly
-        title,
-        createdAt: serverTimestamp(), // Set created timestamp
-        updatedAt: serverTimestamp(), // Set updated timestamp
-      });
-    } catch (error) {
-      console.error("Error saving document:", error);
-    }
-  }, 1000);
 
   // Load content for a specific document ID
   async loadContentWithID(documentID: string): Promise<EditorData | null> {
@@ -210,7 +160,7 @@ class FirestoreService {
     try {
       const timestamp = new Date();
       await addDoc(collection(firestore, this.collectionName), {
-        content: {},
+        content: { type: "doc", content: [] },
         title: "New Note",
         createdAt: timestamp,
         updatedAt: timestamp,
