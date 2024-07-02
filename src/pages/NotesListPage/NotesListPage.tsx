@@ -18,7 +18,7 @@ import {
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import FirestoreService from "../../services/FirestoreService";
-import { useNoteSelection } from "../../hooks/useNotesSelection";
+import { useNoteContext } from "../../contexts/NoteContext";
 
 interface NotesListPageProps {
   contentId: string;
@@ -33,13 +33,7 @@ export interface Note {
 }
 
 export default function NotesListPage({ contentId }: NotesListPageProps) {
-  const {
-    notes,
-    loading,
-    loadNotes,
-    setLoading,
-    setSelectedNoteId,
-  } = useNoteSelection();
+  const { notes, loading, loadNotes, setSelectedNoteId } = useNoteContext();
 
   const handleRefresh = async (event: CustomEvent) => {
     await loadNotes();
@@ -47,7 +41,6 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
   };
 
   const handleCreateNewNote = async () => {
-    setLoading(true);
     await FirestoreService.createNewNote();
     await loadNotes();
   };

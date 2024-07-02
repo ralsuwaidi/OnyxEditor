@@ -13,7 +13,7 @@ import {
   IonRefresher,
   useIonModal,
   RefresherEventDetail,
-  IonSpinner,
+  // IonSpinner,
 } from "@ionic/react";
 import Editor from "../../components/Editor";
 import { chevronBack, ellipsisVertical } from "ionicons/icons";
@@ -24,7 +24,7 @@ import { useNoteContext } from "../../contexts/NoteContext";
 import { useMaxHeight } from "../../hooks/useMaxHeight";
 
 export default function EditorPage() {
-  const { title, loading, updateNoteTitle } = useNoteContext();
+  const { title, updateNoteTitle } = useNoteContext();
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
   });
@@ -114,7 +114,7 @@ export default function EditorPage() {
                 />
               </IonToolbar>
             </IonHeader>
-            {loading ? <IonSpinner /> : <Editor />}
+            <Editor />
           </div>
         </IonContent>
       </IonPage>

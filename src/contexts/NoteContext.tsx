@@ -16,7 +16,9 @@ export interface NoteContextProps {
   title: string;
   updateNoteTitle: (title: string) => void;
   loading: boolean;
+  notes: Note[];
   setEditorInstance: (editor: Editor | null) => void;
+  loadNotes: () => void;
 }
 
 const NoteContext = createContext<NoteContextProps | undefined>(undefined);
@@ -25,30 +27,52 @@ interface NoteProviderProps {
   children: ReactNode;
 }
 
+export interface Note {
+  id: string;
+  title: string;
+  createdAt: any;
+  updatedAt: any;
+  metadata?: object;
+}
+
 export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   const [selectedNoteId, setSelectedNoteId] = useState<string>("");
   const [title, setTitle] = useState<string>("Header");
   const [loading, setLoading] = useState<boolean>(false);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [editor, setEditor] = useState<Editor | null>(null);
 
-  const initializeNote = useCallback(async () => {
+  const setEditorInstance = useCallback((editor: Editor | null) => {
+    setEditor(editor);
+  }, []);
+
+  const loadNotes = useCallback(async () => {
     setLoading(true);
     try {
-      const latestNote = await FirestoreService.getLatestNote();
-      if (latestNote) {
-        setSelectedNoteId(latestNote.id);
-        setTitle(latestNote.title);
+      const fetchedNotes = await FirestoreService.getNoteTitles();
+      setNotes(fetchedNotes);
+
+      // Set the latest updated note as selected if no note is selected
+      if (!selectedNoteId && fetchedNotes.length > 0) {
+        console.log(fetchedNotes);
+        const latestUpdatedNote = fetchedNotes.reduce((latest, note) => {
+          return latest.updatedAt.toDate() > note.updatedAt.toDate()
+            ? latest
+            : note;
+        });
+        setSelectedNoteId(latestUpdatedNote.id);
+        setTitle(latestUpdatedNote.title);
       }
     } catch (error) {
-      console.error("Failed to initialize note", error);
+      console.error("Failed to load notes", error);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    initializeNote();
-  }, [initializeNote]);
+    loadNotes();
+  }, [loadNotes]);
 
   const updateNoteTitle = useCallback(
     async (newTitle: string) => {
@@ -63,10 +87,6 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
     },
     [selectedNoteId]
   );
-
-  const setEditorInstance = useCallback((editor: Editor | null) => {
-    setEditor(editor);
-  }, []);
 
   useEffect(() => {
     if (selectedNoteId && editor) {
@@ -92,9 +112,19 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
       title,
       updateNoteTitle,
       loading,
+      notes,
       setEditorInstance,
+      loadNotes,
     }),
-    [selectedNoteId, title, updateNoteTitle, loading, setEditorInstance]
+    [
+      selectedNoteId,
+      title,
+      updateNoteTitle,
+      loading,
+      notes,
+      setEditorInstance,
+      loadNotes,
+    ]
   );
 
   return (
