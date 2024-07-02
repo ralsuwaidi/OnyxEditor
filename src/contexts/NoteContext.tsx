@@ -13,7 +13,6 @@ export interface NoteContextProps {
   selectedNoteId: string;
   setSelectedNoteId: (id: string) => void;
   title: string;
-  setTitle: (title: string) => void;
   updateNoteTitle: (title: string) => void;
   loading: boolean;
 }
@@ -29,32 +28,34 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   const [title, setTitle] = useState<string>("Header");
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    const initializeNote = async () => {
-      setLoading(true);
-      try {
-        const latestNote = await FirestoreService.getLatestNote();
-        if (latestNote) {
-          setSelectedNoteId(latestNote.id);
-          setTitle(latestNote.title);
-        }
-      } catch (error) {
-        console.error("Failed to initialize note", error);
-      } finally {
-        setLoading(false);
+  const initializeNote = useCallback(async () => {
+    setLoading(true);
+    try {
+      const latestNote = await FirestoreService.getLatestNote();
+      if (latestNote) {
+        setSelectedNoteId(latestNote.id);
+        setTitle(latestNote.title);
       }
-    };
-    initializeNote();
+    } catch (error) {
+      console.error("Failed to initialize note", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    initializeNote();
+  }, [initializeNote]);
+
   const updateNoteTitle = useCallback(
-    (newTitle: string) => {
+    async (newTitle: string) => {
       if (selectedNoteId) {
-        FirestoreService.updateNoteTitle(selectedNoteId, newTitle)
-          .then(() => setTitle(newTitle))
-          .catch((error) =>
-            console.error("Failed to update note title", error)
-          );
+        try {
+          await FirestoreService.updateNoteTitle(selectedNoteId, newTitle);
+          setTitle(newTitle);
+        } catch (error) {
+          console.error("Failed to update note title", error);
+        }
       }
     },
     [selectedNoteId]
@@ -65,7 +66,6 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
       selectedNoteId,
       setSelectedNoteId,
       title,
-      setTitle,
       updateNoteTitle,
       loading,
     }),

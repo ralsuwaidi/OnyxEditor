@@ -45,7 +45,7 @@ import { useNoteContext } from "../contexts/NoteContext";
 
 const Editor = () => {
   // const [items, setItems] = useState<any>([]);
-  const { selectedNoteId, title, setTitle } = useNoteContext();
+  const { selectedNoteId, title, updateNoteTitle } = useNoteContext();
 
   const content = "";
 
@@ -125,7 +125,7 @@ const Editor = () => {
   });
 
   useKeyboardSetup();
-  useLoadSelectedNote(editor, setTitle);
+  useLoadSelectedNote(editor, updateNoteTitle);
   const setLink = useSetLink(editor);
 
   return (
