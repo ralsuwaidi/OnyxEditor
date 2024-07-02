@@ -29,7 +29,7 @@ export interface FirestoreServiceInterface {
     content: object,
     title: string
   ): Promise<void>;
-  createNewNote(): Promise<void>;
+  createNewNote(): Promise<string>;
   getLatestNote(): Promise<Pick<NoteType, "id" | "title" | "updatedAt"> | null>;
   updateNoteTitle(noteId: string, title: string): Promise<void>;
 }
@@ -141,18 +141,21 @@ class FirestoreService implements FirestoreServiceInterface {
     );
   }
 
-  async createNewNote(): Promise<void> {
+  async createNewNote(): Promise<string> {
     const timestamp = new Date();
-    await this.handleError(
-      addDoc(this.collectionRef, {
+    try {
+      const docRef = await addDoc(this.collectionRef, {
         content: { type: "doc", content: [] },
         title: "New Note",
         createdAt: timestamp,
         updatedAt: timestamp,
         metadata: {},
-      }),
-      "Error creating new note:"
-    );
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error("Error creating new note:", error);
+      throw new Error("Failed to create new note");
+    }
   }
 
   async getLatestNote(): Promise<Pick<
