@@ -1,5 +1,5 @@
+import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
-import { useKeyboardSetup } from "../hooks/useKeyboardSetup";
 import BulletList from "@tiptap/extension-bullet-list";
 import HardBreak from "@tiptap/extension-hard-break";
 import Heading from "@tiptap/extension-heading";
@@ -32,20 +32,11 @@ import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
 import FirestoreService from "../services/FirestoreService";
-import { useLoadSelectedNote } from "../hooks/useLoadSelectedNote";
 import { useNoteContext } from "../contexts/NoteContext";
-// import {
-//   getHierarchicalIndexes,
-//   TableOfContents,
-// } from "@tiptap-pro/extension-table-of-contents";
-// import { ToC } from "./ToC";
-// import React, { useState } from "react";
-
-// const MemorizedToC = React.memo(ToC);
+import { useKeyboardSetup } from "../hooks/useKeyboardSetup";
 
 const Editor = () => {
-  // const [items, setItems] = useState<any>([]);
-  const { selectedNoteId, title, updateNoteTitle } = useNoteContext();
+  const { selectedNoteId, title, setEditorInstance } = useNoteContext();
 
   const content = "";
 
@@ -82,14 +73,6 @@ const Editor = () => {
     Heading.configure({
       levels: [1, 2, 3, 4, 5],
     }),
-    // TableOfContents.configure({
-    //   getIndex: getHierarchicalIndexes,
-    //   onUpdate(content) {
-    //     setItems(content);
-    //   },
-    // }),
-
-    // custom
     CustomHighlight.configure({
       HTMLAttributes: {
         class:
@@ -125,14 +108,17 @@ const Editor = () => {
   });
 
   useKeyboardSetup();
-  useLoadSelectedNote(editor, updateNoteTitle);
+
+  useEffect(() => {
+    if (editor) {
+      setEditorInstance(editor);
+    }
+  }, [editor, setEditorInstance]);
+
   const setLink = useSetLink(editor);
 
   return (
     <>
-      {/* <div className="table-of-contents">
-        <MemorizedToC editor={editor} items={items} />
-      </div> */}
       <EditorContent editor={editor} />
 
       {editor && <BubbleMenu editor={editor} setLink={setLink} />}

@@ -8,6 +8,7 @@ import React, {
   useMemo,
 } from "react";
 import FirestoreService from "../services/FirestoreService";
+import { Editor } from "@tiptap/react";
 
 export interface NoteContextProps {
   selectedNoteId: string;
@@ -15,6 +16,7 @@ export interface NoteContextProps {
   title: string;
   updateNoteTitle: (title: string) => void;
   loading: boolean;
+  setEditorInstance: (editor: Editor | null) => void;
 }
 
 const NoteContext = createContext<NoteContextProps | undefined>(undefined);
@@ -27,6 +29,7 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   const [selectedNoteId, setSelectedNoteId] = useState<string>("");
   const [title, setTitle] = useState<string>("Header");
   const [loading, setLoading] = useState<boolean>(false);
+  const [editor, setEditor] = useState<Editor | null>(null);
 
   const initializeNote = useCallback(async () => {
     setLoading(true);
@@ -61,6 +64,27 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
     [selectedNoteId]
   );
 
+  const setEditorInstance = useCallback((editor: Editor | null) => {
+    setEditor(editor);
+  }, []);
+
+  useEffect(() => {
+    if (selectedNoteId && editor) {
+      const loadContent = async () => {
+        try {
+          const note = await FirestoreService.loadContentWithID(selectedNoteId);
+          if (note) {
+            editor.commands.setContent(note.content);
+            setTitle(note.title);
+          }
+        } catch (error) {
+          console.error("Failed to load note content", error);
+        }
+      };
+      loadContent();
+    }
+  }, [selectedNoteId, editor]);
+
   const contextValue = useMemo(
     () => ({
       selectedNoteId,
@@ -68,8 +92,9 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
       title,
       updateNoteTitle,
       loading,
+      setEditorInstance,
     }),
-    [selectedNoteId, title, updateNoteTitle, loading]
+    [selectedNoteId, title, updateNoteTitle, loading, setEditorInstance]
   );
 
   return (
