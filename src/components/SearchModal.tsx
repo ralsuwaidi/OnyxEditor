@@ -10,38 +10,48 @@ import {
   IonSearchbar,
   IonTitle,
   IonToolbar,
+  IonSpinner,
 } from "@ionic/react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import FirestoreService from "../services/FirestoreService";
+import { NoteMetadataType } from "../types/NoteType";
 
 const SearchNotesModal = ({
   dismiss,
 }: {
   dismiss: (data?: string | null | undefined | number, role?: string) => void;
 }) => {
-  const data = [
-    "Amsterdam",
-    "Buenos Aires",
-    "Cairo",
-    "Geneva",
-    "Hong Kong",
-    "Istanbul",
-    "London",
-    "Madrid",
-    "New York",
-    "Panama City",
-  ];
-
-  let [results, setResults] = useState([...data]);
+  const [noteTitles, setNoteTitles] = useState<NoteMetadataType[]>([]);
+  const [results, setResults] = useState<NoteMetadataType[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const inputRef = useRef<HTMLIonInputElement>(null);
   const modal = useRef<HTMLIonModalElement>(null);
+
+  useEffect(() => {
+    const fetchNoteTitles = async () => {
+      try {
+        const titlesData = await FirestoreService.getNoteTitles();
+        setNoteTitles(titlesData);
+        setResults(titlesData);
+      } catch (error) {
+        console.error("Failed to fetch note titles:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNoteTitles();
+  }, []);
 
   const handleInput = (ev: Event) => {
     let query = "";
     const target = ev.target as HTMLIonSearchbarElement;
     if (target) query = target.value!.toLowerCase();
 
-    setResults(data.filter((d) => d.toLowerCase().indexOf(query) > -1));
+    setResults(
+      noteTitles.filter((note) => note.title.toLowerCase().includes(query))
+    );
   };
 
   return (
@@ -53,7 +63,7 @@ const SearchNotesModal = ({
               Cancel
             </IonButton>
           </IonButtons>
-          <IonTitle>Welcome</IonTitle>
+          <IonTitle>Search Notes</IonTitle>
           <IonButtons slot="end">
             <IonButton
               onClick={() => dismiss(inputRef.current?.value, "confirm")}
@@ -66,21 +76,24 @@ const SearchNotesModal = ({
       </IonHeader>
       <IonContent className="ion-padding">
         <IonSearchbar
-          debounce={1000}
+          debounce={500}
           onIonInput={(ev) => handleInput(ev)}
           onClick={() => modal.current?.setCurrentBreakpoint(0.75)}
           placeholder="Search"
         ></IonSearchbar>
-        <IonList>
-          {results.map((result) => (
-            <IonItem>
-              <IonLabel>
-                <h2>{result}</h2>
-                <p>New Message</p>
-              </IonLabel>
-            </IonItem>
-          ))}
-        </IonList>
+        {loading ? (
+          <IonSpinner />
+        ) : (
+          <IonList>
+            {results.map((result) => (
+              <IonItem key={result.id}>
+                <IonLabel>
+                  <h2>{result.title}</h2>
+                </IonLabel>
+              </IonItem>
+            ))}
+          </IonList>
+        )}
       </IonContent>
     </IonPage>
   );

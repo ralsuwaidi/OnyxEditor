@@ -10,3 +10,5 @@ export interface NoteType {
   updatedAt: FirebaseFirestoreTypes.Timestamp;
   metadata?: object;
 }
+
+export type NoteMetadataType = Omit<NoteType, "content">;

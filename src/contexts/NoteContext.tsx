@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import FirestoreService from "../services/FirestoreService";
 
-interface NoteContextProps {
+export interface NoteContextProps {
   selectedNoteId: string;
   setSelectedNoteId: (id: string) => void;
   title: string;

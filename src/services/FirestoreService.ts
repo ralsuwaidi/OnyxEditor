@@ -13,17 +13,13 @@ import {
   limit,
 } from "firebase/firestore";
 import { DebouncedFunc, debounce } from "lodash";
-import { NoteType } from "../types/NoteType";
+import { NoteMetadataType, NoteType } from "../types/NoteType";
 import firestore from "./firebase";
 
 export interface FirestoreServiceInterface {
   loadContentWithID(documentID: string): Promise<NoteType | null>;
-  loadAllContents(): Promise<NoteType[]>;
-  loadAllDocumentTitles(): Promise<
-    Array<
-      Pick<NoteType, "id" | "title" | "createdAt" | "updatedAt" | "metadata">
-    >
-  >;
+  getNotes(): Promise<NoteType[]>;
+  getNoteTitles(): Promise<Array<NoteMetadataType>>;
   updateMetadata(documentID: string, metadata: object): Promise<void>;
   updateContentWithDebounce: DebouncedFunc<
     (documentID: string, content: object, title: string) => Promise<void>
@@ -73,7 +69,7 @@ class FirestoreService implements FirestoreServiceInterface {
     return null;
   }
 
-  async loadAllContents(): Promise<NoteType[]> {
+  async getNotes(): Promise<NoteType[]> {
     const querySnapshot = await this.handleError(
       getDocs(this.collectionRef),
       "Error loading documents:"
@@ -94,11 +90,7 @@ class FirestoreService implements FirestoreServiceInterface {
     return [];
   }
 
-  async loadAllDocumentTitles(): Promise<
-    Array<
-      Pick<NoteType, "id" | "title" | "createdAt" | "updatedAt" | "metadata">
-    >
-  > {
+  async getNoteTitles(): Promise<NoteMetadataType[]> {
     const querySnapshot = await this.handleError(
       getDocs(this.collectionRef),
       "Error loading document titles:"
@@ -112,7 +104,7 @@ class FirestoreService implements FirestoreServiceInterface {
           createdAt: data.createdAt,
           updatedAt: data.updatedAt,
           metadata: data.metadata || {},
-        };
+        } as NoteMetadataType;
       });
     }
     return [];

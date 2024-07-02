@@ -9,7 +9,7 @@ export const useNoteSelection = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const loadNotes = async () => {
-    const fetchedNotes = await FirestoreService.loadAllDocumentTitles();
+    const fetchedNotes = await FirestoreService.getNoteTitles();
     setNotes(fetchedNotes);
     setLoading(false);
 
