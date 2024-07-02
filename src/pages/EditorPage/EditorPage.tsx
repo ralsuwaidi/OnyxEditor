@@ -10,9 +10,6 @@ import {
   IonIcon,
   IonMenuToggle,
   IonRefresher,
-  // IonAlert,
-  // useIonAlert,
-  // IonRefresherContent,
   useIonModal,
   RefresherEventDetail,
 } from "@ionic/react";
@@ -22,10 +19,11 @@ import { chevronBack, ellipsisVertical } from "ionicons/icons";
 import NotesListPage from "../NotesListPage/NotesListPage";
 import SearchModal from "../../components/SearchModal";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
+import { useNoteContext } from "../../contexts/NoteContext";
 
 export default function EditorPage() {
+  const { title, updateNoteTitle } = useNoteContext();
   const [maxHeight, setMaxHeight] = useState("calc(100vh - 100px)");
-  const [title, setTitle] = useState("Header");
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
   });
@@ -54,6 +52,11 @@ export default function EditorPage() {
       },
     });
   }
+
+  const handleTitleChange = (e: CustomEvent) => {
+    const newTitle = e.detail.value as string;
+    updateNoteTitle(newTitle);
+  };
 
   return (
     <>
@@ -103,11 +106,11 @@ export default function EditorPage() {
                   className="ml-3 text-3xl font-extrabold"
                   value={title}
                   placeholder="Enter Title"
-                  onIonChange={(e) => setTitle(e.detail.value!)}
+                  onIonChange={handleTitleChange}
                 />
               </IonToolbar>
             </IonHeader>
-            <Editor title={title} setTitle={setTitle} />
+            <Editor />
           </div>
         </IonContent>
       </IonPage>

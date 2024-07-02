@@ -33,6 +33,7 @@ import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
 import FirestoreService from "../services/FirestoreService";
 import { useLoadSelectedNote } from "../hooks/useLoadSelectedNote";
+import { useNoteContext } from "../contexts/NoteContext";
 // import {
 //   getHierarchicalIndexes,
 //   TableOfContents,
@@ -42,13 +43,9 @@ import { useLoadSelectedNote } from "../hooks/useLoadSelectedNote";
 
 // const MemorizedToC = React.memo(ToC);
 
-interface EditorProps {
-  title: string;
-  setTitle: (title: string) => void;
-}
-
-const Editor = ({ title, setTitle }: EditorProps) => {
+const Editor = () => {
   // const [items, setItems] = useState<any>([]);
+  const { selectedNoteId, title, setTitle } = useNoteContext();
 
   const content = `
   Test
@@ -122,7 +119,7 @@ const Editor = ({ title, setTitle }: EditorProps) => {
     },
     onUpdate: ({ editor }) => {
       FirestoreService.updateContentWithDebounce(
-        "single-page-document",
+        selectedNoteId,
         editor.getJSON(),
         title
       );

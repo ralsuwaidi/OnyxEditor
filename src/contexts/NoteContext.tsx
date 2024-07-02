@@ -1,8 +1,18 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import FirestoreService from "../services/FirestoreService";
 
 interface NoteContextProps {
-  selectedNoteId: string | null;
-  setSelectedNoteId: (id: string | null) => void;
+  selectedNoteId: string;
+  setSelectedNoteId: (id: string) => void;
+  title: string;
+  setTitle: (title: string) => void;
+  updateNoteTitle: (title: string) => void;
 }
 
 const NoteContext = createContext<NoteContextProps | undefined>(undefined);
@@ -12,10 +22,37 @@ interface NoteProviderProps {
 }
 
 export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
-  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  const [selectedNoteId, setSelectedNoteId] = useState<string>("");
+  const [title, setTitle] = useState<string>("Header");
+
+  useEffect(() => {
+    const initializeNote = async () => {
+      const latestNote = await FirestoreService.getLatestNote();
+      if (latestNote) {
+        setSelectedNoteId(latestNote.id);
+        setTitle(latestNote.title);
+      }
+    };
+    initializeNote();
+  }, []);
+
+  const updateNoteTitle = (newTitle: string) => {
+    if (selectedNoteId) {
+      FirestoreService.updateNoteTitle(selectedNoteId, newTitle);
+      setTitle(newTitle);
+    }
+  };
 
   return (
-    <NoteContext.Provider value={{ selectedNoteId, setSelectedNoteId }}>
+    <NoteContext.Provider
+      value={{
+        selectedNoteId,
+        setSelectedNoteId,
+        title,
+        setTitle,
+        updateNoteTitle,
+      }}
+    >
       {children}
     </NoteContext.Provider>
   );

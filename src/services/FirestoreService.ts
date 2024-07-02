@@ -6,6 +6,9 @@ import {
   addDoc,
   serverTimestamp,
   updateDoc,
+  query,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 import firestore from "./firebase";
 import { debounce } from "lodash";
@@ -35,7 +38,7 @@ class FirestoreService {
         const savedData = docSnap.data();
         return {
           id: docRef.id,
-          content: savedData.content, // Content is already an object
+          content: savedData.content,
           title: savedData.title,
           createdAt: savedData.createdAt,
           updatedAt: savedData.updatedAt,
@@ -168,6 +171,46 @@ class FirestoreService {
       });
     } catch (error) {
       console.error("Error creating new note:", error);
+    }
+  }
+
+  async getLatestNote(): Promise<{
+    id: string;
+    title: string;
+    updatedAt: any;
+  } | null> {
+    try {
+      const notesQuery = query(
+        collection(firestore, this.collectionName),
+        orderBy("updatedAt", "desc"),
+        limit(1)
+      );
+      const querySnapshot = await getDocs(notesQuery);
+      if (!querySnapshot.empty) {
+        const latestDoc = querySnapshot.docs[0];
+        const data = latestDoc.data();
+        return {
+          id: latestDoc.id,
+          title: data.title,
+          updatedAt: data.updatedAt,
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error("Error getting latest note:", error);
+      return null;
+    }
+  }
+
+  async updateNoteTitle(noteId: string, title: string): Promise<void> {
+    try {
+      const docRef = doc(firestore, this.collectionName, noteId);
+      await updateDoc(docRef, {
+        title,
+        updatedAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error("Error updating note title:", error);
     }
   }
 }

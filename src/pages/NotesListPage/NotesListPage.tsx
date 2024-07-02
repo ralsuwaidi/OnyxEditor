@@ -11,6 +11,8 @@ import {
   IonButton,
   IonButtons,
   IonIcon,
+  IonRefresher,
+  IonRefresherContent,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import FirestoreService from "../../services/FirestoreService";
@@ -37,6 +39,11 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     setSelectedNoteId,
   } = useNoteSelection();
 
+  const handleRefresh = async (event: CustomEvent) => {
+    await loadNotes();
+    event.detail.complete();
+  };
+
   const handleCreateNewNote = async () => {
     setLoading(true);
     await FirestoreService.createNewNote();
@@ -61,6 +68,9 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">
+          <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+            <IonRefresherContent />
+          </IonRefresher>
           {loading ? (
             <IonSpinner />
           ) : (
@@ -68,6 +78,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
               {notes.map((note) => (
                 <IonItem
                   key={note.id}
+                  className="hover:bg-gray-50"
                   onClick={() => handleSelectNote(note.id)}
                 >
                   <IonLabel>
