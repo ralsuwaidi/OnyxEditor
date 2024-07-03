@@ -21,18 +21,22 @@ import {
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import FirestoreService from "../../services/FirestoreService";
-import { useNoteContext } from "../../contexts/NoteContext";
 import { useEffect, useRef, useState } from "react";
 import { pin } from "ionicons/icons";
 import { SortNotes } from "../../utils/sortNotes";
 import { NoteMetadataType } from "../../types/NoteType";
+import { useNoteContext } from "../../hooks/useNoteContext";
 
 interface NotesListPageProps {
   contentId: string;
 }
 
 export default function NotesListPage({ contentId }: NotesListPageProps) {
-  const { notes, loadNotes, setSelectedNoteId } = useNoteContext();
+  const {
+    notes,
+    loadAllNotes: loadNotes,
+    setSelectedNoteId,
+  } = useNoteContext();
   const [results, setResults] = useState<NoteMetadataType[]>([]);
   const [showToast, setShowToast] = useState<string | null>(null);
   const menuRef = useRef<HTMLIonMenuElement | null>(null);

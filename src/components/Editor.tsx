@@ -37,8 +37,8 @@ import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
 import FirestoreService from "../services/FirestoreService";
-import { useNoteContext } from "../contexts/NoteContext";
 import { useKeyboardSetup } from "../hooks/useKeyboardSetup";
+import { useNoteContext } from "../hooks/useNoteContext";
 
 const Editor = () => {
   const {

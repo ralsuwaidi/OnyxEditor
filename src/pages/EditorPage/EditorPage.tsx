@@ -19,9 +19,9 @@ import { chevronBack, ellipsisVertical } from "ionicons/icons";
 import NotesListPage from "../NotesListPage/NotesListPage";
 import SearchModal from "../../components/SearchModal";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
-import { useNoteContext } from "../../contexts/NoteContext";
 import { useMaxHeight } from "../../hooks/useMaxHeight";
 import Sidebar from "../../components/Sidebar";
+import { useNoteContext } from "../../hooks/useNoteContext";
 
 export default function EditorPage() {
   const { title, updateNoteTitle } = useNoteContext();

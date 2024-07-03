@@ -6,8 +6,8 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useNoteContext } from "../contexts/NoteContext";
 import { ToC } from "./ToC";
+import { useNoteContext } from "../hooks/useNoteContext";
 
 const MemorizedToC = React.memo(ToC);
 
