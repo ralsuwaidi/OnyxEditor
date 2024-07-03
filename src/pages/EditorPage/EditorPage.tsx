@@ -50,7 +50,6 @@ export default function EditorPage() {
 
   const scrollToTop = () => {
     if (scrollHostRef.current) {
-      console.log("scrolling");
       scrollHostRef.current.scrollTo({
         top: 0,
         behavior: "smooth",
@@ -113,7 +112,11 @@ export default function EditorPage() {
                 />
               </IonToolbar>
             </IonHeader>
-            <Editor />
+            <div className="flex justify-center">
+              <div className="w-full max-w-2xl">
+                <Editor />
+              </div>
+            </div>
           </div>
         </IonContent>
       </IonPage>

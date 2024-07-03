@@ -16,6 +16,7 @@ import Focus from "@tiptap/extension-focus";
 import Italic from "@tiptap/extension-italic";
 import Image from "@tiptap/extension-image";
 import Strike from "@tiptap/extension-strike";
+import Blockquote from "@tiptap/extension-blockquote";
 import Underline from "@tiptap/extension-underline";
 import ListItem from "@tiptap/extension-list-item";
 import Typography from "@tiptap/extension-typography";
@@ -45,6 +46,7 @@ const Editor = () => {
     Document,
     Text,
     Bold,
+    Blockquote,
     CodeBlock,
     Italic,
     ListItem,

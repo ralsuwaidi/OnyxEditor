@@ -47,7 +47,6 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
 
       // Set the latest updated note as selected if no note is selected
       if (!selectedNoteId && fetchedNotes.length > 0) {
-        console.log(fetchedNotes);
         const latestUpdatedNote = fetchedNotes.reduce((latest, note) => {
           return latest.updatedAt.toDate() > note.updatedAt.toDate()
             ? latest

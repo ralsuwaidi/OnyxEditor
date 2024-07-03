@@ -60,10 +60,10 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     event: any,
     slidingItem: HTMLIonItemSlidingElement
   ) => {
-    event.stopPropagation(); // Prevent the click event from propagating
+    event.stopPropagation();
     try {
       await FirestoreService.updateMetadata(id, { pin: !pinned });
-      await loadNotes();
+      loadNotes();
       setShowToast("Note pinned successfully");
     } catch (error) {
       console.error("Failed to pin note:", error);
@@ -76,7 +76,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
   const handleDeleteNote = async (id: string) => {
     try {
       await FirestoreService.deleteNote(id);
-      await loadNotes();
+      loadNotes();
       setShowToast("Note deleted successfully");
     } catch (error) {
       console.error("Failed to delete note:", error);
