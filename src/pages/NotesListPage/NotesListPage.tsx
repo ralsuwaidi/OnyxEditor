@@ -24,22 +24,16 @@ import FirestoreService from "../../services/FirestoreService";
 import { useNoteContext } from "../../contexts/NoteContext";
 import { useEffect, useRef, useState } from "react";
 import { pin } from "ionicons/icons";
+import { SortNotes } from "../../utils/sortNotes";
+import { NoteMetadataType } from "../../types/NoteType";
 
 interface NotesListPageProps {
   contentId: string;
 }
 
-export interface Note {
-  id: string;
-  title: string;
-  createdAt: any;
-  updatedAt: any;
-  metadata?: object;
-}
-
 export default function NotesListPage({ contentId }: NotesListPageProps) {
   const { notes, loadNotes, setSelectedNoteId } = useNoteContext();
-  const [results, setResults] = useState<Note[]>([]);
+  const [results, setResults] = useState<NoteMetadataType[]>([]);
   const [showToast, setShowToast] = useState<string | null>(null);
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
   const slidingRef = useRef<{ [key: string]: boolean }>({});
@@ -62,12 +56,13 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
 
   const handlePinNote = async (
     id: string,
+    pinned: boolean,
     event: any,
     slidingItem: HTMLIonItemSlidingElement
   ) => {
     event.stopPropagation(); // Prevent the click event from propagating
     try {
-      await FirestoreService.updateMetadata(id, { pin: true });
+      await FirestoreService.updateMetadata(id, { pin: !pinned });
       await loadNotes();
       setShowToast("Note pinned successfully");
     } catch (error) {
@@ -143,55 +138,57 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
             <IonRefresherContent />
           </IonRefresher>
           <IonList>
-            {sortedNotes
-              .sort(
-                (a, b) =>
-                  new Date(b.updatedAt.toDate()).getTime() -
-                  new Date(a.updatedAt.toDate()).getTime()
-              )
-              .map((note) => (
-                <IonItemSliding
-                  key={note.id}
-                  onIonDrag={() => handleSliding(note.id)}
-                >
-                  <IonMenuToggle>
-                    <IonItem
-                      button={true}
-                      onClick={() => handleSelectNote(note.id)}
-                    >
-                      <IonLabel>
-                        <h2>{note.title}</h2>
-                        <p>{formatDateWithoutYear(note.updatedAt)}</p>
-                      </IonLabel>
-                    </IonItem>
-                  </IonMenuToggle>
+            {sortedNotes.sort(SortNotes).map((note) => (
+              <IonItemSliding
+                key={note.id}
+                onIonDrag={() => handleSliding(note.id)}
+              >
+                <IonMenuToggle>
+                  <IonItem
+                    button={true}
+                    onClick={() => handleSelectNote(note.id)}
+                  >
+                    <IonLabel>
+                      <h2>{note.title}</h2>
+                      <p>
+                        {note.metadata?.pin && (
+                          <>
+                            <IonIcon icon={pin} />
+                          </>
+                        )}
+                        {formatDateWithoutYear(note.updatedAt)}
+                      </p>
+                    </IonLabel>
+                  </IonItem>
+                </IonMenuToggle>
 
-                  <IonItemOptions side="start">
-                    <IonItemOption
-                      color="primary"
-                      onClick={(event) =>
-                        handlePinNote(
-                          note.id,
-                          event,
-                          event.currentTarget.closest("ion-item-sliding")!
-                        )
-                      }
-                    >
-                      <IonIcon slot="end" icon={pin}></IonIcon>
-                      Pin
-                    </IonItemOption>
-                  </IonItemOptions>
+                <IonItemOptions side="start">
+                  <IonItemOption
+                    color="primary"
+                    onClick={(event) =>
+                      handlePinNote(
+                        note.id,
+                        note.metadata?.pin || false,
+                        event,
+                        event.currentTarget.closest("ion-item-sliding")!
+                      )
+                    }
+                  >
+                    <IonIcon slot="end" icon={pin}></IonIcon>
+                    {note.metadata?.pin ? "Unpin" : "Pin"}
+                  </IonItemOption>
+                </IonItemOptions>
 
-                  <IonItemOptions>
-                    <IonItemOption
-                      color="danger"
-                      onClick={() => handleDeleteNote(note.id)}
-                    >
-                      Delete
-                    </IonItemOption>
-                  </IonItemOptions>
-                </IonItemSliding>
-              ))}
+                <IonItemOptions>
+                  <IonItemOption
+                    color="danger"
+                    onClick={() => handleDeleteNote(note.id)}
+                  >
+                    Delete
+                  </IonItemOption>
+                </IonItemOptions>
+              </IonItemSliding>
+            ))}
           </IonList>
         </IonContent>
       </IonMenu>

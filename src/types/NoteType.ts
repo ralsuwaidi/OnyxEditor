@@ -8,7 +8,9 @@ export interface NoteType {
   title: string;
   createdAt: FirebaseFirestoreTypes.Timestamp;
   updatedAt: FirebaseFirestoreTypes.Timestamp;
-  metadata?: object;
+  metadata?: {
+    pin?: boolean;
+  };
 }
 
 export type NoteMetadataType = Omit<NoteType, "content">;

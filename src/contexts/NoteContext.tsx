@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import FirestoreService from "../services/FirestoreService";
 import { Editor } from "@tiptap/react";
+import { NoteMetadataType } from "../types/NoteType";
 
 export interface NoteContextProps {
   selectedNoteId: string;
@@ -16,7 +17,7 @@ export interface NoteContextProps {
   title: string;
   updateNoteTitle: (title: string) => void;
   loading: boolean;
-  notes: Note[];
+  notes: NoteMetadataType[];
   setEditorInstance: (editor: Editor | null) => void;
   loadNotes: () => void;
 }
@@ -27,19 +28,11 @@ interface NoteProviderProps {
   children: ReactNode;
 }
 
-export interface Note {
-  id: string;
-  title: string;
-  createdAt: any;
-  updatedAt: any;
-  metadata?: object;
-}
-
 export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   const [selectedNoteId, setSelectedNoteId] = useState<string>("");
   const [title, setTitle] = useState<string>("Loading");
   const [loading, setLoading] = useState<boolean>(false);
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [notes, setNotes] = useState<NoteMetadataType[]>([]);
   const [editor, setEditor] = useState<Editor | null>(null);
 
   const setEditorInstance = useCallback((editor: Editor | null) => {

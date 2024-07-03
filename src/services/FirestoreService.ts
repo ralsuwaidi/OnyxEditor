@@ -120,6 +120,19 @@ class FirestoreService implements FirestoreServiceInterface {
     );
   }
 
+  async isNotePinned(documentID: string): Promise<boolean> {
+    const docRef = doc(this.collectionRef, documentID);
+    const docSnap = await this.handleError(
+      getDoc(docRef),
+      "Error loading document:"
+    );
+    if (docSnap && docSnap.exists()) {
+      const savedData = docSnap.data();
+      return savedData.metadata?.pin === true;
+    }
+    return false;
+  }
+
   updateContentWithDebounce = debounce(
     async (
       documentID: string,
