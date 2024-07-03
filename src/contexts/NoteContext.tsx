@@ -14,7 +14,7 @@ import useLoadNote from "../hooks/useLoadNote";
 import FirestoreService from "../services/FirestoreService";
 
 export interface NoteContextProps {
-  selectedNoteId: string;
+  selectedNoteId: string | null;
   setSelectedNoteId: (id: string) => void;
   title: string;
   updateNoteTitle: (title: string) => void;
@@ -34,7 +34,7 @@ interface NoteProviderProps {
 }
 
 export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
-  const [selectedNoteId, setSelectedNoteId] = useState<string>("");
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
 
   const { loading: loadingNotes, notes, loadAllNotes } = useLoadNotes();
   const {

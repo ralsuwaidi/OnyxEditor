@@ -1,10 +1,10 @@
 import { useState, useCallback } from "react";
 import FirestoreService from "../services/FirestoreService";
 
-const useLoadNote = (noteId: string) => {
+const useLoadNote = (noteId: string | null) => {
   const [loading, setLoading] = useState(false);
   const [noteContent, setNoteContent] = useState<object>({});
-  const [noteTitle, setNoteTitle] = useState("Loading");
+  const [noteTitle, setNoteTitle] = useState("");
 
   const loadNote = useCallback(async () => {
     if (!noteId) return;

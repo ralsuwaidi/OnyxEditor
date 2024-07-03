@@ -34,9 +34,26 @@ import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
 import { useNoteContext } from "../hooks/useNoteContext";
 import FirestoreService from "../services/FirestoreService";
+import { IonSpinner } from "@ionic/react";
+import TableOfContents, {
+  getHierarchicalIndexes,
+} from "@tiptap-pro/extension-table-of-contents";
 
 const Editor = () => {
-  const { selectedNoteId, title, setEditorInstance } = useNoteContext();
+  const {
+    selectedNoteId,
+    title,
+    setEditorInstance,
+    setTOCItemsInstance,
+  } = useNoteContext();
+
+  if (!selectedNoteId) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <IonSpinner />
+      </div>
+    );
+  }
 
   const extensions = [
     Paragraph,
@@ -60,6 +77,13 @@ const Editor = () => {
     Underline,
     Focus,
     HorizontalRule,
+    TableOfContents.configure({
+      getIndex: getHierarchicalIndexes,
+      onUpdate(content) {
+        setTOCItemsInstance(content);
+      },
+    }),
+
     Table.configure({
       resizable: true,
     }),
