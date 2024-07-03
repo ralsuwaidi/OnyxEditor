@@ -21,12 +21,14 @@ import SearchModal from "../../components/SearchModal";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 import { useNoteContext } from "../../contexts/NoteContext";
 import { useMaxHeight } from "../../hooks/useMaxHeight";
+import Sidebar from "../../components/Sidebar";
 
 export default function EditorPage() {
   const { title, updateNoteTitle } = useNoteContext();
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
   });
+  const sidebarMenuRef = useRef<HTMLIonMenuElement | null>(null);
 
   const maxHeight = useMaxHeight();
   const contentRef = useRef<HTMLIonContentElement>(null);
@@ -60,6 +62,7 @@ export default function EditorPage() {
   return (
     <>
       <NotesListPage contentId="main-content" />
+      <Sidebar ref={sidebarMenuRef} />
       <IonPage id="main-content">
         <IonHeader translucent={false}>
           <IonToolbar>
@@ -78,14 +81,16 @@ export default function EditorPage() {
               {title}
             </IonTitle>
             <IonButtons slot="primary">
-              <IonButton>
-                <IonIcon
-                  className="text-gray-300"
-                  slot="icon-only"
-                  size="small"
-                  icon={ellipsisVertical}
-                ></IonIcon>
-              </IonButton>
+              <IonMenuToggle menu="sidebarMenu">
+                <IonButton>
+                  <IonIcon
+                    className="text-gray-300"
+                    slot="icon-only"
+                    size="small"
+                    icon={ellipsisVertical}
+                  ></IonIcon>
+                </IonButton>
+              </IonMenuToggle>
             </IonButtons>
           </IonToolbar>
         </IonHeader>

@@ -10,6 +10,7 @@ import React, {
 import FirestoreService from "../services/FirestoreService";
 import { Editor } from "@tiptap/react";
 import { NoteMetadataType } from "../types/NoteType";
+import { TableOfContentData } from "@tiptap-pro/extension-table-of-contents";
 
 export interface NoteContextProps {
   selectedNoteId: string;
@@ -19,6 +20,9 @@ export interface NoteContextProps {
   loading: boolean;
   notes: NoteMetadataType[];
   setEditorInstance: (editor: Editor | null) => void;
+  editor: Editor | null;
+  TOCItems: TableOfContentData;
+  setTOCItemsInstance: (items: TableOfContentData) => void;
   loadNotes: () => void;
 }
 
@@ -34,7 +38,11 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [notes, setNotes] = useState<NoteMetadataType[]>([]);
   const [editor, setEditor] = useState<Editor | null>(null);
+  const [TOCItems, setTOCItems] = useState<TableOfContentData>([]); // Initialize as an empty array
 
+  const setTOCItemsInstance = useCallback((items: TableOfContentData) => {
+    setTOCItems(items);
+  }, []);
   const setEditorInstance = useCallback((editor: Editor | null) => {
     setEditor(editor);
   }, []);
@@ -105,7 +113,10 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
       updateNoteTitle,
       loading,
       notes,
+      editor,
       setEditorInstance,
+      TOCItems,
+      setTOCItemsInstance,
       loadNotes,
     }),
     [
@@ -114,6 +125,9 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
       updateNoteTitle,
       loading,
       notes,
+      editor,
+      setTOCItemsInstance,
+      TOCItems,
       setEditorInstance,
       loadNotes,
     ]

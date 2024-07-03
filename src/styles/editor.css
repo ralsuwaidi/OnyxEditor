@@ -132,6 +132,6 @@
   content: attr(data-item-index) ".";
 }
 
-ion-menu {
+ion-menu.full-menu {
   --min-width: 100%;
 }

@@ -115,7 +115,12 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
 
   return (
     <>
-      <IonMenu ref={menuRef} contentId={contentId} type="push">
+      <IonMenu
+        className="full-menu"
+        ref={menuRef}
+        contentId={contentId}
+        type="push"
+      >
         <IonHeader>
           <IonToolbar>
             <IonTitle>Notes</IonTitle>

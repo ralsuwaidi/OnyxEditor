@@ -28,6 +28,10 @@ import TaskItem from "@tiptap/extension-task-item";
 import MarkdownPaste from "../extensions/MarkdownPaste";
 import BubbleMenu from "./BubbleMenu";
 import FloatingMenu from "./FloatingMenu";
+import {
+  getHierarchicalIndexes,
+  TableOfContents,
+} from "@tiptap-pro/extension-table-of-contents";
 import { useSetLink } from "../hooks/useSetLink";
 import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
@@ -37,7 +41,12 @@ import { useNoteContext } from "../contexts/NoteContext";
 import { useKeyboardSetup } from "../hooks/useKeyboardSetup";
 
 const Editor = () => {
-  const { selectedNoteId, title, setEditorInstance } = useNoteContext();
+  const {
+    selectedNoteId,
+    title,
+    setEditorInstance,
+    setTOCItemsInstance,
+  } = useNoteContext();
 
   const content = "";
 
@@ -69,6 +78,13 @@ const Editor = () => {
     TableRow,
     TableHeader,
     Dropcursor,
+    TableOfContents.configure({
+      getIndex: getHierarchicalIndexes,
+      onUpdate(content) {
+        setTOCItemsInstance(content);
+      },
+    }),
+
     OrderedList,
     TableCell,
     HardBreak,
