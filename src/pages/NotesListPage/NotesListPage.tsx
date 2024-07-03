@@ -23,6 +23,7 @@ import { add } from "ionicons/icons";
 import FirestoreService from "../../services/FirestoreService";
 import { useNoteContext } from "../../contexts/NoteContext";
 import { useEffect, useRef, useState } from "react";
+import { pin } from "ionicons/icons";
 
 interface NotesListPageProps {
   contentId: string;
@@ -54,9 +55,27 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
 
   const handleCreateNewNote = async () => {
     const documentId = await FirestoreService.createNewNote();
-    await loadNotes();
+    loadNotes();
     setSelectedNoteId(documentId);
     menuRef.current?.close();
+  };
+
+  const handlePinNote = async (
+    id: string,
+    event: any,
+    slidingItem: HTMLIonItemSlidingElement
+  ) => {
+    event.stopPropagation(); // Prevent the click event from propagating
+    try {
+      await FirestoreService.updateMetadata(id, { pin: true });
+      await loadNotes();
+      setShowToast("Note pinned successfully");
+    } catch (error) {
+      console.error("Failed to pin note:", error);
+      setShowToast("Failed to pin note");
+    } finally {
+      slidingItem.close();
+    }
   };
 
   const handleDeleteNote = async (id: string) => {
@@ -146,6 +165,22 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                       </IonLabel>
                     </IonItem>
                   </IonMenuToggle>
+
+                  <IonItemOptions side="start">
+                    <IonItemOption
+                      color="primary"
+                      onClick={(event) =>
+                        handlePinNote(
+                          note.id,
+                          event,
+                          event.currentTarget.closest("ion-item-sliding")!
+                        )
+                      }
+                    >
+                      <IonIcon slot="end" icon={pin}></IonIcon>
+                      Pin
+                    </IonItemOption>
+                  </IonItemOptions>
 
                   <IonItemOptions>
                     <IonItemOption

@@ -37,7 +37,7 @@ export interface Note {
 
 export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   const [selectedNoteId, setSelectedNoteId] = useState<string>("");
-  const [title, setTitle] = useState<string>("Header");
+  const [title, setTitle] = useState<string>("Loading");
   const [loading, setLoading] = useState<boolean>(false);
   const [notes, setNotes] = useState<Note[]>([]);
   const [editor, setEditor] = useState<Editor | null>(null);
