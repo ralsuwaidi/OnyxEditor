@@ -28,27 +28,15 @@ import TaskItem from "@tiptap/extension-task-item";
 import MarkdownPaste from "../extensions/MarkdownPaste";
 import BubbleMenu from "./BubbleMenu";
 import FloatingMenu from "./FloatingMenu";
-import {
-  getHierarchicalIndexes,
-  TableOfContents,
-} from "@tiptap-pro/extension-table-of-contents";
 import { useSetLink } from "../hooks/useSetLink";
 import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
-import FirestoreService from "../services/FirestoreService";
-import { useKeyboardSetup } from "../hooks/useKeyboardSetup";
 import { useNoteContext } from "../hooks/useNoteContext";
+import FirestoreService from "../services/FirestoreService";
 
 const Editor = () => {
-  const {
-    selectedNoteId,
-    title,
-    setEditorInstance,
-    setTOCItemsInstance,
-  } = useNoteContext();
-
-  const content = "";
+  const { selectedNoteId, title, setEditorInstance } = useNoteContext();
 
   const extensions = [
     Paragraph,
@@ -78,13 +66,6 @@ const Editor = () => {
     TableRow,
     TableHeader,
     Dropcursor,
-    TableOfContents.configure({
-      getIndex: getHierarchicalIndexes,
-      onUpdate(content) {
-        setTOCItemsInstance(content);
-      },
-    }),
-
     OrderedList,
     TableCell,
     HardBreak,
@@ -109,7 +90,7 @@ const Editor = () => {
 
   const editor = useEditor({
     extensions,
-    content,
+    content: "",
     editorProps: {
       attributes: {
         class:
@@ -125,8 +106,6 @@ const Editor = () => {
     },
   });
 
-  useKeyboardSetup();
-
   useEffect(() => {
     if (editor) {
       setEditorInstance(editor);
@@ -138,7 +117,6 @@ const Editor = () => {
   return (
     <>
       <EditorContent editor={editor} />
-
       {editor && <BubbleMenu editor={editor} setLink={setLink} />}
       {editor && <FloatingMenu editor={editor} />}
     </>

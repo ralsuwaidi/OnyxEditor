@@ -1,15 +1,16 @@
 import React, {
   createContext,
-  useState,
   ReactNode,
-  useEffect,
-  useCallback,
   useMemo,
+  useEffect,
+  useState,
+  useCallback,
 } from "react";
 import { Editor } from "@tiptap/react";
 import { NoteMetadataType } from "../types/NoteType";
 import { TableOfContentData } from "@tiptap-pro/extension-table-of-contents";
 import useLoadNotes from "../hooks/useLoadNotes";
+import useLoadNote from "../hooks/useLoadNote";
 import FirestoreService from "../services/FirestoreService";
 
 export interface NoteContextProps {
@@ -34,9 +35,18 @@ interface NoteProviderProps {
 
 export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   const [selectedNoteId, setSelectedNoteId] = useState<string>("");
+
+  const { loading: loadingNotes, notes, loadAllNotes } = useLoadNotes();
+  const {
+    loading: loadingNote,
+    noteContent,
+    noteTitle,
+    loadNote,
+  } = useLoadNote(selectedNoteId);
+
   const [title, setTitle] = useState<string>("Loading");
   const [editor, setEditor] = useState<Editor | null>(null);
-  const [TOCItems, setTOCItems] = useState<TableOfContentData>([]); // Initialize as an empty array
+  const [TOCItems, setTOCItems] = useState<TableOfContentData>([]);
 
   const setTOCItemsInstance = useCallback((items: TableOfContentData) => {
     setTOCItems(items);
@@ -45,12 +55,6 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   const setEditorInstance = useCallback((editor: Editor | null) => {
     setEditor(editor);
   }, []);
-
-  const { loading, notes, loadAllNotes } = useLoadNotes(
-    selectedNoteId,
-    setSelectedNoteId,
-    setTitle
-  );
 
   const updateNoteTitle = useCallback(
     async (newTitle: string) => {
@@ -67,21 +71,31 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    if (selectedNoteId && editor) {
-      const loadContent = async () => {
-        try {
-          const note = await FirestoreService.loadContentWithID(selectedNoteId);
-          if (note) {
-            editor.commands.setContent(note.content);
-            setTitle(note.title);
-          }
-        } catch (error) {
-          console.error("Failed to load note content", error);
-        }
-      };
-      loadContent();
+    loadAllNotes();
+  }, [loadAllNotes]);
+
+  useEffect(() => {
+    if (notes.length > 0 && !selectedNoteId) {
+      const latestUpdatedNote = notes.reduce((latest, note) =>
+        latest.updatedAt.toDate() > note.updatedAt.toDate() ? latest : note
+      );
+      setSelectedNoteId(latestUpdatedNote.id);
+      setTitle(latestUpdatedNote.title);
     }
-  }, [selectedNoteId, editor]);
+  }, [notes, selectedNoteId]);
+
+  useEffect(() => {
+    if (selectedNoteId) {
+      loadNote();
+    }
+  }, [selectedNoteId, loadNote]);
+
+  useEffect(() => {
+    if (editor && noteContent) {
+      editor.commands.setContent(noteContent);
+      setTitle(noteTitle);
+    }
+  }, [editor, noteContent, noteTitle]);
 
   const contextValue = useMemo(
     () => ({
@@ -89,7 +103,7 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
       setSelectedNoteId,
       title,
       updateNoteTitle,
-      loading,
+      loading: loadingNotes || loadingNote,
       notes,
       editor,
       setEditorInstance,
@@ -101,7 +115,8 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
       selectedNoteId,
       title,
       updateNoteTitle,
-      loading,
+      loadingNotes,
+      loadingNote,
       notes,
       editor,
       setTOCItemsInstance,
