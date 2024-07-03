@@ -7,24 +7,24 @@ import React, {
   useCallback,
 } from "react";
 import { Editor } from "@tiptap/react";
-import { NoteMetadataType } from "../types/NoteType";
+import { NoteMetadataType, NoteType } from "../types/NoteType";
 import { TableOfContentData } from "@tiptap-pro/extension-table-of-contents";
 import useLoadNotes from "../hooks/useLoadNotes";
 import useLoadNote from "../hooks/useLoadNote";
 import FirestoreService from "../services/FirestoreService";
 
 export interface NoteContextProps {
-  selectedNoteId: string | null;
-  setSelectedNoteId: (id: string) => void;
-  title: string;
-  updateNoteTitle: (title: string) => void;
-  loading: boolean;
+  note: NoteType | null;
+  updateNote: (note: NoteType) => void;
   notes: NoteMetadataType[];
+  loadAllNotes: () => void;
+  selectedNoteMetadata: NoteMetadataType | null;
+  setSelectedNoteMetadata: (noteMetadata: NoteMetadataType) => void;
+  loading: boolean;
   setEditorInstance: (editor: Editor | null) => void;
   editor: Editor | null;
   TOCItems: TableOfContentData;
   setTOCItemsInstance: (items: TableOfContentData) => void;
-  loadAllNotes: () => void;
 }
 
 const NoteContext = createContext<NoteContextProps | undefined>(undefined);
@@ -34,19 +34,17 @@ interface NoteProviderProps {
 }
 
 export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
-  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
-
-  const { loading: loadingNotes, notes, loadAllNotes } = useLoadNotes();
-  const {
-    loading: loadingNote,
-    noteContent,
-    noteTitle,
-    loadNote,
-  } = useLoadNote(selectedNoteId);
-
-  const [title, setTitle] = useState<string>("Loading");
+  const [
+    selectedNoteMetadata,
+    setSelectedNoteMetadata,
+  ] = useState<NoteMetadataType | null>(null);
   const [editor, setEditor] = useState<Editor | null>(null);
   const [TOCItems, setTOCItems] = useState<TableOfContentData>([]);
+
+  const { loading: loadingNotes, notes, loadAllNotes } = useLoadNotes();
+  const { loading: loadingNote, note, loadNote } = useLoadNote(
+    selectedNoteMetadata
+  );
 
   const setTOCItemsInstance = useCallback((items: TableOfContentData) => {
     setTOCItems(items);
@@ -56,53 +54,41 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
     setEditor(editor);
   }, []);
 
-  const updateNoteTitle = useCallback(
-    async (newTitle: string) => {
-      if (selectedNoteId) {
-        try {
-          await FirestoreService.updateNoteTitle(selectedNoteId, newTitle);
-          setTitle(newTitle);
-        } catch (error) {
-          console.error("Failed to update note title", error);
-        }
-      }
-    },
-    [selectedNoteId]
-  );
+  const updateNote = useCallback((updatedNote: NoteType) => {
+    FirestoreService.updateFirestoreNoteWithDebounce(updatedNote);
+  }, []);
 
   useEffect(() => {
     loadAllNotes();
   }, [loadAllNotes]);
 
   useEffect(() => {
-    if (notes.length > 0 && !selectedNoteId) {
+    if (!selectedNoteMetadata && notes.length > 0) {
       const latestUpdatedNote = notes.reduce((latest, note) =>
         latest.updatedAt.toDate() > note.updatedAt.toDate() ? latest : note
       );
-      setSelectedNoteId(latestUpdatedNote.id);
-      setTitle(latestUpdatedNote.title);
+      setSelectedNoteMetadata(latestUpdatedNote);
     }
-  }, [notes, selectedNoteId]);
+  }, [notes, selectedNoteMetadata]);
 
   useEffect(() => {
-    if (selectedNoteId) {
+    if (editor && note) {
+      editor.commands.setContent(note.content);
+    }
+  }, [editor, note]);
+
+  useEffect(() => {
+    if (selectedNoteMetadata) {
       loadNote();
     }
-  }, [selectedNoteId, loadNote]);
-
-  useEffect(() => {
-    if (editor && noteContent) {
-      editor.commands.setContent(noteContent);
-      setTitle(noteTitle);
-    }
-  }, [editor, noteContent, noteTitle]);
+  }, [selectedNoteMetadata, loadNote]);
 
   const contextValue = useMemo(
     () => ({
-      selectedNoteId,
-      setSelectedNoteId,
-      title,
-      updateNoteTitle,
+      note,
+      updateNote,
+      selectedNoteMetadata,
+      setSelectedNoteMetadata,
       loading: loadingNotes || loadingNote,
       notes,
       editor,
@@ -112,16 +98,17 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
       loadAllNotes,
     }),
     [
-      selectedNoteId,
-      title,
-      updateNoteTitle,
+      note,
+      updateNote,
+      selectedNoteMetadata,
+      setSelectedNoteMetadata,
       loadingNotes,
       loadingNote,
       notes,
       editor,
-      setTOCItemsInstance,
-      TOCItems,
       setEditorInstance,
+      TOCItems,
+      setTOCItemsInstance,
       loadAllNotes,
     ]
   );

@@ -22,9 +22,10 @@ import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-com
 import { useMaxHeight } from "../../hooks/useMaxHeight";
 import Sidebar from "../../components/Sidebar";
 import { useNoteContext } from "../../hooks/useNoteContext";
+import { NoteType } from "../../types/NoteType";
 
 export default function EditorPage() {
-  const { title, updateNoteTitle } = useNoteContext();
+  const { note, updateNote } = useNoteContext();
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
   });
@@ -47,7 +48,7 @@ export default function EditorPage() {
 
   const handleTitleChange = (e: CustomEvent) => {
     const newTitle = e.detail.value as string;
-    updateNoteTitle(newTitle);
+    updateNote({ ...note, title: newTitle } as NoteType);
   };
 
   const scrollToTop = () => {
@@ -78,7 +79,7 @@ export default function EditorPage() {
               </IonMenuToggle>
             </IonButtons>
             <IonTitle onClick={scrollToTop} style={{ cursor: "pointer" }}>
-              {title}
+              {note?.title}
             </IonTitle>
             <IonButtons slot="primary">
               <IonMenuToggle menu="sidebarMenu">
@@ -111,7 +112,7 @@ export default function EditorPage() {
               <IonToolbar>
                 <IonInput
                   className="ml-3 text-3xl font-extrabold"
-                  value={title}
+                  value={note?.title}
                   placeholder="Enter Title"
                   onIonChange={handleTitleChange}
                 />

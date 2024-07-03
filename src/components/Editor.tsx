@@ -33,21 +33,22 @@ import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
 import { useNoteContext } from "../hooks/useNoteContext";
-import FirestoreService from "../services/FirestoreService";
 import { IonSpinner } from "@ionic/react";
 import TableOfContents, {
   getHierarchicalIndexes,
 } from "@tiptap-pro/extension-table-of-contents";
+import { NoteType } from "../types/NoteType";
 
 const Editor = () => {
   const {
-    selectedNoteId,
-    title,
+    selectedNoteMetadata,
     setEditorInstance,
+    note,
+    updateNote,
     setTOCItemsInstance,
   } = useNoteContext();
 
-  if (!selectedNoteId) {
+  if (!selectedNoteMetadata) {
     return (
       <div className="flex items-center justify-center h-screen">
         <IonSpinner />
@@ -122,11 +123,10 @@ const Editor = () => {
       },
     },
     onUpdate: ({ editor }) => {
-      FirestoreService.updateContentWithDebounce(
-        selectedNoteId,
-        editor.getJSON(),
-        title
-      );
+      updateNote({
+        ...note,
+        content: editor.getJSON(),
+      } as NoteType);
     },
   });
 

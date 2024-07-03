@@ -1,29 +1,28 @@
 import { useState, useCallback } from "react";
 import FirestoreService from "../services/FirestoreService";
+import { NoteMetadataType, NoteType } from "../types/NoteType";
 
-const useLoadNote = (noteId: string | null) => {
+const useLoadNote = (noteMetadata: NoteMetadataType | null) => {
   const [loading, setLoading] = useState(false);
-  const [noteContent, setNoteContent] = useState<object>({});
-  const [noteTitle, setNoteTitle] = useState("");
+  const [note, setNote] = useState<NoteType | null>(null);
 
   const loadNote = useCallback(async () => {
-    if (!noteId) return;
+    if (!noteMetadata) return;
 
     setLoading(true);
     try {
-      const note = await FirestoreService.loadContentWithID(noteId);
+      const note = await FirestoreService.loadContentWithID(noteMetadata.id);
       if (note) {
-        setNoteContent(note.content);
-        setNoteTitle(note.title);
+        setNote(note);
       }
     } catch (error) {
       console.error("Failed to load note content", error);
     } finally {
       setLoading(false);
     }
-  }, [noteId]);
+  }, [noteMetadata]);
 
-  return { loading, noteContent, noteTitle, loadNote };
+  return { loading, note, loadNote };
 };
 
 export default useLoadNote;

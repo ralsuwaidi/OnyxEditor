@@ -1,13 +1,13 @@
 // src/types/NoteType.ts
 
-import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 
 export interface NoteType {
   id: string;
   content: object;
   title: string;
-  createdAt: FirebaseFirestoreTypes.Timestamp;
-  updatedAt: FirebaseFirestoreTypes.Timestamp;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
   metadata?: {
     pin?: boolean;
   };

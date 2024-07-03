@@ -16,24 +16,21 @@ import {
 import { DebouncedFunc, debounce } from "lodash";
 import { NoteMetadataType, NoteType } from "../types/NoteType";
 import firestore from "./firebase";
+import { Timestamp } from "firebase/firestore";
 
 export interface FirestoreServiceInterface {
   loadContentWithID(documentID: string): Promise<NoteType | null>;
   getNotes(): Promise<NoteType[]>;
   getNoteTitles(): Promise<Array<NoteMetadataType>>;
   updateMetadata(documentID: string, metadata: object): Promise<void>;
-  updateContentWithDebounce: DebouncedFunc<
-    (documentID: string, content: object, title: string) => Promise<void>
+  updateFirestoreNoteWithDebounce: DebouncedFunc<
+    (note: NoteType) => Promise<void>
   >;
-  updateContent(
-    documentID: string,
-    content: object,
-    title: string
-  ): Promise<void>;
-  createNewNote(): Promise<string>;
+  updateFirestoreNote(note: NoteType): Promise<void>;
+  createNewNote(): Promise<NoteMetadataType>;
   deleteNote(noteId: string): Promise<void>;
   getLatestNote(): Promise<Pick<NoteType, "id" | "title" | "updatedAt"> | null>;
-  updateNoteTitle(noteId: string, title: string): Promise<void>;
+  updateFirestoreNoteTitle(noteId: string, title: string): Promise<void>;
 }
 
 class FirestoreService implements FirestoreServiceInterface {
@@ -133,40 +130,42 @@ class FirestoreService implements FirestoreServiceInterface {
     return false;
   }
 
-  updateContentWithDebounce = debounce(
-    async (
-      documentID: string,
-      content: object,
-      title: string
-    ): Promise<void> => {
-      await this.updateContent(documentID, content, title);
-    },
-    1000
-  );
+  updateFirestoreNoteWithDebounce = debounce(async (note: NoteType): Promise<
+    void
+  > => {
+    await this.updateFirestoreNote(note);
+  }, 1000);
 
-  async updateContent(
-    documentID: string,
-    content: object,
-    title: string
-  ): Promise<void> {
-    const docRef = doc(this.collectionRef, documentID);
+  async updateFirestoreNote(note: NoteType): Promise<void> {
+    const docRef = doc(this.collectionRef, note.id);
     await this.handleError(
-      updateDoc(docRef, { content, title, updatedAt: new Date() }),
+      updateDoc(docRef, { ...note, updatedAt: new Date() }),
       "Error updating content:"
     );
   }
 
-  async createNewNote(): Promise<string> {
-    const timestamp = new Date();
+  async createNewNote(): Promise<NoteMetadataType> {
+    const timestamp = Timestamp.now();
     try {
-      const docRef = await addDoc(this.collectionRef, {
+      const newNote: Omit<NoteType, "id"> = {
         content: { type: "doc", content: [] },
         title: "New Note",
         createdAt: timestamp,
         updatedAt: timestamp,
         metadata: {},
-      });
-      return docRef.id;
+      };
+
+      const docRef = await addDoc(this.collectionRef, newNote);
+
+      const noteMetadata: NoteMetadataType = {
+        id: docRef.id,
+        title: newNote.title,
+        createdAt: newNote.createdAt,
+        updatedAt: newNote.updatedAt,
+        metadata: newNote.metadata,
+      };
+
+      return noteMetadata;
     } catch (error) {
       console.error("Error creating new note:", error);
       throw new Error("Failed to create new note");
@@ -199,7 +198,7 @@ class FirestoreService implements FirestoreServiceInterface {
     await this.handleError(deleteDoc(docRef), "Error deleting note:");
   }
 
-  async updateNoteTitle(noteId: string, title: string): Promise<void> {
+  async updateFirestoreNoteTitle(noteId: string, title: string): Promise<void> {
     const docRef = doc(this.collectionRef, noteId);
     await this.handleError(
       updateDoc(docRef, { title, updatedAt: serverTimestamp() }),

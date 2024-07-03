@@ -35,7 +35,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
   const {
     notes,
     loadAllNotes: loadNotes,
-    setSelectedNoteId,
+    setSelectedNoteMetadata,
   } = useNoteContext();
   const [results, setResults] = useState<NoteMetadataType[]>([]);
   const [showToast, setShowToast] = useState<string | null>(null);
@@ -54,7 +54,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
   const handleCreateNewNote = async () => {
     const documentId = await FirestoreService.createNewNote();
     loadNotes();
-    setSelectedNoteId(documentId);
+    setSelectedNoteMetadata(documentId);
     menuRef.current?.close();
   };
 
@@ -88,11 +88,11 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     }
   };
 
-  const handleSelectNote = (id: string) => {
-    if (!slidingRef.current[id]) {
-      setSelectedNoteId(id);
+  const handleSelectNote = (noteMetadata: NoteMetadataType) => {
+    if (!slidingRef.current[noteMetadata.id]) {
+      setSelectedNoteMetadata(noteMetadata);
     }
-    slidingRef.current[id] = false;
+    slidingRef.current[noteMetadata.id] = false;
   };
 
   const handleSliding = (id: string) => {
@@ -153,10 +153,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                 onIonDrag={() => handleSliding(note.id)}
               >
                 <IonMenuToggle>
-                  <IonItem
-                    button={true}
-                    onClick={() => handleSelectNote(note.id)}
-                  >
+                  <IonItem button={true} onClick={() => handleSelectNote(note)}>
                     <IonLabel>
                       <h2>{note.title}</h2>
                       <p>
