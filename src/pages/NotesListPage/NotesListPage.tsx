@@ -22,7 +22,8 @@ import {
 import { add } from "ionicons/icons";
 import FirestoreService from "../../services/FirestoreService";
 import { useEffect, useRef, useState } from "react";
-import { pin } from "ionicons/icons";
+// Import Heroicons pin
+import { BookmarkIcon } from "@heroicons/react/16/solid";
 import { SortNotes } from "../../utils/sortNotes";
 import { NoteMetadataType } from "../../types/NoteType";
 import { useNoteContext } from "../../hooks/useNoteContext";
@@ -159,7 +160,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                       <p>
                         {note.metadata?.pin && (
                           <>
-                            <IonIcon icon={pin} />
+                            <BookmarkIcon className="h-3 w-3 mr-2 inline-block" />
                           </>
                         )}
                         {formatDateWithoutYear(note.updatedAt)}
@@ -180,7 +181,6 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                       )
                     }
                   >
-                    <IonIcon slot="end" icon={pin}></IonIcon>
                     {note.metadata?.pin ? "Unpin" : "Pin"}
                   </IonItemOption>
                 </IonItemOptions>

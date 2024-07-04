@@ -72,6 +72,12 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   }, [notes, selectedNoteMetadata]);
 
   useEffect(() => {
+    if (loadingNote && editor) {
+      editor.commands.setContent("Loading");
+    }
+  }, [loadingNote]);
+
+  useEffect(() => {
     if (editor && note) {
       editor.commands.setContent(note.content);
     }
