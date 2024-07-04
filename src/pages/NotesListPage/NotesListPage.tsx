@@ -155,7 +155,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                 <IonMenuToggle>
                   <IonItem button={true} onClick={() => handleSelectNote(note)}>
                     <IonLabel>
-                      <h2>{note.title}</h2>
+                      <h2>{note.title == "" ? "(No Title)" : note.title}</h2>
                       <p>
                         {note.metadata?.pin && (
                           <>

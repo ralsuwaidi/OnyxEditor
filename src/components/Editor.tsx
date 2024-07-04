@@ -38,6 +38,7 @@ import TableOfContents, {
   getHierarchicalIndexes,
 } from "@tiptap-pro/extension-table-of-contents";
 import { NoteType } from "../types/NoteType";
+import { useKeyboardSetup } from "../hooks/useKeyboardSetup";
 
 const Editor = () => {
   const {
@@ -128,6 +129,8 @@ const Editor = () => {
       } as NoteType);
     },
   });
+
+  useKeyboardSetup();
 
   useEffect(() => {
     if (editor) {
