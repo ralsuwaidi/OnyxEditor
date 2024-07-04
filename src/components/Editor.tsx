@@ -49,7 +49,7 @@ const Editor = () => {
 
   if (!note?.content) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center mt-4 ">
         <IonSpinner />
       </div>
     );

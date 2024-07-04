@@ -149,7 +149,7 @@ class FirestoreService implements FirestoreServiceInterface {
     try {
       const newNote: Omit<NoteType, "id"> = {
         content: { type: "doc", content: [] },
-        title: "New Note",
+        title: "",
         createdAt: timestamp,
         updatedAt: timestamp,
         metadata: {},

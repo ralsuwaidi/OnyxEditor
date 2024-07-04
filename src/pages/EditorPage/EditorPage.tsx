@@ -60,6 +60,20 @@ export default function EditorPage() {
     }
   };
 
+  function handleTitle() {
+    if (note && note.title) {
+      return note.title;
+    }
+
+    if (note && !note.title) {
+      return "";
+    }
+
+    if (!note) {
+      return " ";
+    }
+  }
+
   return (
     <>
       <NotesListPage contentId="main-content" />
@@ -112,7 +126,7 @@ export default function EditorPage() {
               <IonToolbar>
                 <IonInput
                   className="ml-3 text-3xl font-extrabold"
-                  value={note?.title}
+                  value={handleTitle()}
                   placeholder="Enter Title"
                   onIonChange={handleTitleChange}
                 />
