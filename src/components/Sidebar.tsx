@@ -22,7 +22,7 @@ const Sidebar = forwardRef<HTMLIonMenuElement>((_, ref) => {
       </IonHeader>
       <IonContent className="ion-padding">
         <div className="table-of-contents">
-          <MemorizedToC editor={editor} items={TOCItems} />
+          <MemorizedToC editor={editor} items={TOCItems} menuRef={ref} />{" "}
         </div>
       </IonContent>
     </IonMenu>

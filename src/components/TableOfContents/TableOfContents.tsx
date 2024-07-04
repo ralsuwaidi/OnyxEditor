@@ -21,9 +21,14 @@ interface ToCProps {
     textContent: string;
   }[];
   editor: Editor | null;
+  menuRef: any;
 }
 
-const TableOfContents: React.FC<ToCProps> = ({ items = [], editor }) => {
+const TableOfContents: React.FC<ToCProps> = ({
+  items = [],
+  editor,
+  menuRef,
+}) => {
   if (items.length === 0) {
     return <ToCEmptyState />;
   }
@@ -59,6 +64,9 @@ const TableOfContents: React.FC<ToCProps> = ({ items = [], editor }) => {
             behavior: "smooth",
           });
         }
+
+        // Close the sidebar using the ref
+        menuRef.current?.close();
       }
     }
   };
