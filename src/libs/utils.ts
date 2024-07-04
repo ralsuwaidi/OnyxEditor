@@ -24,4 +24,28 @@ function getSample(content: JSONContent): string {
   return words.join(" ");
 }
 
-export { getSample };
+function extractTagsFromJSON(content: JSONContent): string[] {
+  const tags: string[] = [];
+
+  const extractTextAndFindTags = (nodes: any[]): void => {
+    nodes.forEach((node) => {
+      if (node.type === "text") {
+        const tagRegex = /#(\w+)/g;
+        let match;
+        while ((match = tagRegex.exec(node.text)) !== null) {
+          tags.push(match[1]);
+        }
+      } else if (node.content) {
+        extractTextAndFindTags(node.content);
+      }
+    });
+  };
+
+  if (content.content) {
+    extractTextAndFindTags(content.content);
+  }
+
+  return tags;
+}
+
+export { getSample, extractTagsFromJSON };

@@ -39,6 +39,7 @@ import TableOfContents, {
 } from "@tiptap-pro/extension-table-of-contents";
 import { NoteType } from "../types/NoteType";
 import { useKeyboardSetup } from "../hooks/useKeyboardSetup";
+import { Tags } from "../extensions/tags";
 
 const Editor = () => {
   const {
@@ -66,6 +67,7 @@ const Editor = () => {
     Italic,
     ListItem,
     TaskList,
+    Tags,
     TaskItem.configure({
       nested: true,
     }),
