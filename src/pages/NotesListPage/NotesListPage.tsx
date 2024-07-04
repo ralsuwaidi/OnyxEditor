@@ -157,6 +157,9 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                   <IonItem button={true} onClick={() => handleSelectNote(note)}>
                     <IonLabel>
                       <h2>{note.title == "" ? "(No Title)" : note.title}</h2>
+                      <div className="line-clamp-2 text-sm text-gray-500">
+                        {note.metadata?.sample ? note.metadata.sample : ""}
+                      </div>
                       <p>
                         {note.metadata?.pin && (
                           <>

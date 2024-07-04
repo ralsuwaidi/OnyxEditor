@@ -12,6 +12,7 @@ import { TableOfContentData } from "@tiptap-pro/extension-table-of-contents";
 import useLoadNotes from "../hooks/useLoadNotes";
 import useLoadNote from "../hooks/useLoadNote";
 import FirestoreService from "../services/FirestoreService";
+import { getSample } from "../libs/utils";
 
 export interface NoteContextProps {
   note: NoteType | null;
@@ -55,7 +56,13 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   }, []);
 
   const updateNote = useCallback((updatedNote: NoteType) => {
-    FirestoreService.updateFirestoreNoteWithDebounce(updatedNote);
+    const sampleData = getSample(updatedNote.content);
+    const updatedMetadata = { ...updatedNote.metadata, sample: sampleData };
+    const newUpdatedNote = {
+      ...updatedNote,
+      metadata: updatedMetadata,
+    };
+    FirestoreService.updateFirestoreNoteWithDebounce(newUpdatedNote);
   }, []);
 
   useEffect(() => {

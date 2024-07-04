@@ -25,7 +25,7 @@ import { useNoteContext } from "../../hooks/useNoteContext";
 import { NoteType } from "../../types/NoteType";
 
 export default function EditorPage() {
-  const { note, updateNote } = useNoteContext();
+  const { note, updateNote, loading } = useNoteContext();
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
   });
@@ -61,15 +61,9 @@ export default function EditorPage() {
   };
 
   function handleTitle() {
-    if (note && note.title) {
+    if (note && note.title && !loading) {
       return note.title;
-    }
-
-    if (note && !note.title) {
-      return "";
-    }
-
-    if (!note) {
+    } else {
       return " ";
     }
   }
@@ -93,7 +87,7 @@ export default function EditorPage() {
               </IonMenuToggle>
             </IonButtons>
             <IonTitle onClick={scrollToTop} style={{ cursor: "pointer" }}>
-              {note?.title}
+              {!loading && note?.title ? note.title : " "}
             </IonTitle>
             <IonButtons slot="primary">
               <IonMenuToggle menu="sidebarMenu">

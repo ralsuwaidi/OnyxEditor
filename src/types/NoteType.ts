@@ -10,6 +10,7 @@ export interface NoteType {
   updatedAt: Timestamp;
   metadata?: {
     pin?: boolean;
+    sample?: string;
   };
 }
 
