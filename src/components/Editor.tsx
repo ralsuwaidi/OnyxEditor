@@ -41,14 +41,13 @@ import { NoteType } from "../types/NoteType";
 
 const Editor = () => {
   const {
-    selectedNoteMetadata,
     setEditorInstance,
     note,
     updateNote,
     setTOCItemsInstance,
   } = useNoteContext();
 
-  if (!selectedNoteMetadata) {
+  if (!note?.content) {
     return (
       <div className="flex items-center justify-center h-screen">
         <IonSpinner />
@@ -115,7 +114,7 @@ const Editor = () => {
 
   const editor = useEditor({
     extensions,
-    content: "",
+    content: note.content,
     editorProps: {
       attributes: {
         class:
