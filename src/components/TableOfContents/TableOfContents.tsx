@@ -49,10 +49,16 @@ const TableOfContents: React.FC<ToCProps> = ({ items = [], editor }) => {
           history.pushState(null, "", `#${id}`);
         }
 
-        window.scrollTo({
-          top: element.getBoundingClientRect().top + window.scrollY,
-          behavior: "smooth",
-        });
+        // Smooth scroll to the heading
+        const scrollContainer = document.querySelector(
+          ".ion-content-scroll-host"
+        );
+        if (scrollContainer) {
+          scrollContainer.scrollTo({
+            top: element.getBoundingClientRect().top + window.scrollY,
+            behavior: "smooth",
+          });
+        }
       }
     }
   };
