@@ -1,41 +1,7 @@
 import React from "react";
 import { Editor } from "@tiptap/core";
 import { TextSelection } from "@tiptap/pm/state";
-
-interface ToCItemProps {
-  item: {
-    id: string;
-    isActive: boolean;
-    isScrolledOver: boolean;
-    level: number;
-    itemIndex: number;
-    textContent: string;
-  };
-  onItemClick: (e: React.MouseEvent<HTMLAnchorElement>, id: string) => void;
-}
-
-const ToCItem: React.FC<ToCItemProps> = ({ item, onItemClick }) => {
-  return (
-    <div
-      className={`${item.isActive && !item.isScrolledOver ? "is-active" : ""} ${
-        item.isScrolledOver ? "is-scrolled-over" : ""
-      }`}
-      style={
-        {
-          "--level": item.level,
-        } as React.CSSProperties
-      }
-    >
-      <a
-        href={`#${item.id}`}
-        onClick={(e) => onItemClick(e, item.id)}
-        data-item-index={item.itemIndex}
-      >
-        {item.textContent}
-      </a>
-    </div>
-  );
-};
+import { ToCItem } from "./TableOfContentsItem";
 
 const ToCEmptyState: React.FC = () => {
   return (
@@ -57,7 +23,7 @@ interface ToCProps {
   editor: Editor | null;
 }
 
-const ToC: React.FC<ToCProps> = ({ items = [], editor }) => {
+const TableOfContents: React.FC<ToCProps> = ({ items = [], editor }) => {
   if (items.length === 0) {
     return <ToCEmptyState />;
   }
@@ -100,4 +66,4 @@ const ToC: React.FC<ToCProps> = ({ items = [], editor }) => {
   );
 };
 
-export { ToCItem, ToCEmptyState, ToC };
+export { ToCItem, ToCEmptyState, TableOfContents };

@@ -6,10 +6,10 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { ToC } from "./ToC";
 import { useNoteContext } from "../hooks/useNoteContext";
+import { TableOfContents } from "./TableOfContents/TableOfContents";
 
-const MemorizedToC = React.memo(ToC);
+const MemorizedToC = React.memo(TableOfContents);
 
 const Sidebar = forwardRef<HTMLIonMenuElement>((_, ref) => {
   const { editor, TOCItems } = useNoteContext();
