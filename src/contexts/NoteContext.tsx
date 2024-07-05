@@ -11,8 +11,6 @@ import { NoteMetadataType, NoteType } from "../types/NoteType";
 import { TableOfContentData } from "@tiptap-pro/extension-table-of-contents";
 import useLoadNotes from "../hooks/useLoadNotes";
 import useLoadNote from "../hooks/useLoadNote";
-import FirestoreService from "../services/FirestoreService";
-import { getSample } from "../libs/utils";
 
 export interface NoteContextProps {
   note: NoteType | null;
@@ -43,7 +41,7 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
   const [TOCItems, setTOCItems] = useState<TableOfContentData>([]);
 
   const { loading: loadingNotes, notes, loadAllNotes } = useLoadNotes();
-  const { loading: loadingNote, note, loadNote } = useLoadNote(
+  const { loading: loadingNote, note, loadNote, updateNote } = useLoadNote(
     selectedNoteMetadata
   );
 
@@ -53,16 +51,6 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
 
   const setEditorInstance = useCallback((editor: Editor | null) => {
     setEditor(editor);
-  }, []);
-
-  const updateNote = useCallback((updatedNote: NoteType) => {
-    const sampleData = getSample(updatedNote.content);
-    const updatedMetadata = { ...updatedNote.metadata, sample: sampleData };
-    const newUpdatedNote = {
-      ...updatedNote,
-      metadata: updatedMetadata,
-    };
-    FirestoreService.updateFirestoreNoteWithDebounce(newUpdatedNote);
   }, []);
 
   useEffect(() => {
@@ -82,7 +70,7 @@ export const NoteProvider: React.FC<NoteProviderProps> = ({ children }) => {
     if (loadingNote && editor) {
       editor.commands.setContent("Loading");
     }
-  }, [loadingNote]);
+  }, [loadingNote, editor]);
 
   useEffect(() => {
     if (editor && note) {

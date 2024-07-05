@@ -27,7 +27,7 @@ export interface FirestoreServiceInterface {
     (note: NoteType) => Promise<void>
   >;
   updateFirestoreNote(note: NoteType): Promise<void>;
-  createNewNote(): Promise<NoteMetadataType>;
+  createNewNote(): Promise<NoteType>;
   deleteNote(noteId: string): Promise<void>;
   getLatestNote(): Promise<Pick<NoteType, "id" | "title" | "updatedAt"> | null>;
   updateFirestoreNoteTitle(noteId: string, title: string): Promise<void>;
@@ -139,16 +139,17 @@ class FirestoreService implements FirestoreServiceInterface {
   async updateFirestoreNote(note: NoteType): Promise<void> {
     const docRef = doc(this.collectionRef, note.id);
     await this.handleError(
-      updateDoc(docRef, { ...note, updatedAt: new Date() }),
+      updateDoc(docRef, { ...note, updatedAt: serverTimestamp() }),
       "Error updating content:"
     );
   }
 
-  async createNewNote(): Promise<NoteMetadataType> {
+  async createNewNote(): Promise<NoteType> {
     const timestamp = Timestamp.now();
     try {
+      const emptyContent = { type: "doc", content: [] };
       const newNote: Omit<NoteType, "id"> = {
-        content: { type: "doc", content: [] },
+        content: emptyContent,
         title: "",
         createdAt: timestamp,
         updatedAt: timestamp,
@@ -157,9 +158,10 @@ class FirestoreService implements FirestoreServiceInterface {
 
       const docRef = await addDoc(this.collectionRef, newNote);
 
-      const noteMetadata: NoteMetadataType = {
+      const noteMetadata: NoteType = {
         id: docRef.id,
         title: newNote.title,
+        content: emptyContent,
         createdAt: newNote.createdAt,
         updatedAt: newNote.updatedAt,
         metadata: newNote.metadata,

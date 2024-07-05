@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import {
   IonContent,
   IonHeader,
@@ -23,6 +23,7 @@ import { useMaxHeight } from "../../hooks/useMaxHeight";
 import Sidebar from "../../components/Sidebar";
 import { useNoteContext } from "../../hooks/useNoteContext";
 import { NoteType } from "../../types/NoteType";
+import { debounce } from "lodash";
 
 export default function EditorPage() {
   const { note, updateNote, loading } = useNoteContext();
@@ -35,20 +36,19 @@ export default function EditorPage() {
   const contentRef = useRef<HTMLIonContentElement>(null);
   const scrollHostRef = useRef<HTMLDivElement>(null);
 
-  function openModal(event: CustomEvent<RefresherEventDetail>) {
-    present({
-      onWillDismiss: (ev: CustomEvent<OverlayEventDetail>) => {
-        if (ev.detail.role === "confirm") {
-          console.log("confirmed");
-        }
-        event.detail.complete();
-      },
-    });
-  }
+  const debouncedUpdateNote = useCallback(
+    debounce((updatedNote: NoteType) => {
+      updateNote(updatedNote);
+    }, 500),
+    [updateNote]
+  );
 
   const handleTitleChange = (e: CustomEvent) => {
     const newTitle = e.detail.value as string;
-    updateNote({ ...note, title: newTitle } as NoteType);
+    if (note) {
+      const updatedNote = { ...note, title: newTitle } as NoteType;
+      debouncedUpdateNote(updatedNote);
+    }
   };
 
   const scrollToTop = () => {
@@ -60,12 +60,15 @@ export default function EditorPage() {
     }
   };
 
-  function handleTitle() {
-    if (note && note.title && !loading) {
-      return note.title;
-    } else {
-      return " ";
-    }
+  function openModal(event: CustomEvent<RefresherEventDetail>) {
+    present({
+      onWillDismiss: (ev: CustomEvent<OverlayEventDetail>) => {
+        if (ev.detail.role === "confirm") {
+          console.log("confirmed");
+        }
+        event.detail.complete();
+      },
+    });
   }
 
   return (
@@ -120,7 +123,7 @@ export default function EditorPage() {
               <IonToolbar>
                 <IonInput
                   className="ml-3 text-3xl font-extrabold"
-                  value={handleTitle()}
+                  value={note?.title || ""}
                   placeholder="Enter Title"
                   onIonChange={handleTitleChange}
                 />

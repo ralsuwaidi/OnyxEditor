@@ -41,7 +41,7 @@ const tagsInputRegex = /(?:^|\s)(#[^\s#]+\s|$)$/;
 /**
  * Matches tags text via `#` while pasting.
  */
-const tagsPasteRegex = /(?:^|\s)(#[^\s#]+)(?=\s|$)/g;
+const tagsPasteRegex = /(?:^|\s)(#(\w+))(?=\s|$)/g;
 
 /**
  * This extension allows you to mark text as tags.
@@ -69,7 +69,8 @@ export const Tags = Mark.create<TagsOptions>({
       "span",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
         "data-tags": true,
-        class: "text-blue-500 font-bold bg-blue-100 px-1 py-0.5 rounded-md",
+        class:
+          "inline-flex items-center rounded-md bg-gray-50 dark:bg-gray-800 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10 dark:ring-gray-500/20",
       }),
       0,
     ];

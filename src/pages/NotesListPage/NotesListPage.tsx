@@ -53,9 +53,9 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
   };
 
   const handleCreateNewNote = async () => {
-    const documentId = await FirestoreService.createNewNote();
+    const newNote = await FirestoreService.createNewNote();
+    setSelectedNoteMetadata(newNote);
     loadNotes();
-    setSelectedNoteMetadata(documentId);
     menuRef.current?.close();
   };
 
