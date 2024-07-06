@@ -32,24 +32,29 @@ import { useSetLink } from "../hooks/useSetLink";
 import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
-import { useNoteContext } from "../hooks/useNoteContext";
+// import { useNoteContext } from "../hooks/useNoteContext";
 import { IonSpinner } from "@ionic/react";
 import TableOfContents, {
   getHierarchicalIndexes,
 } from "@tiptap-pro/extension-table-of-contents";
-import { NoteType } from "../types/NoteType";
 import { useKeyboardSetup } from "../hooks/useKeyboardSetup";
 import { Tags } from "../extensions/tags";
+import useNoteStore from "../contexts/noteStore";
 
 const Editor = () => {
-  const {
-    setEditorInstance,
-    note,
-    updateNote,
-    setTOCItemsInstance,
-  } = useNoteContext();
+  // const {
+  //   setEditorInstance,
+  //   setNoteContent,
+  //   noteContent,
+  //   setTOCItemsInstance,
+  // } = useNoteContext();
 
-  if (!note?.content) {
+  const setEditor = useNoteStore((state) => state.setEditor);
+  const setTableOfContents = useNoteStore((state) => state.setTableOfContents);
+  const currentNote = useNoteStore((state) => state.currentNote);
+  const updateNoteContent = useNoteStore((state) => state.updateNoteContent);
+
+  if (currentNote == null) {
     return (
       <div className="flex items-center justify-center mt-4 ">
         <IonSpinner />
@@ -83,7 +88,7 @@ const Editor = () => {
     TableOfContents.configure({
       getIndex: getHierarchicalIndexes,
       onUpdate(content) {
-        setTOCItemsInstance(content);
+        setTableOfContents(content);
       },
     }),
 
@@ -117,7 +122,7 @@ const Editor = () => {
 
   const editor = useEditor({
     extensions,
-    content: note.content,
+    content: currentNote.content,
     editorProps: {
       attributes: {
         class:
@@ -125,10 +130,7 @@ const Editor = () => {
       },
     },
     onUpdate: ({ editor }) => {
-      updateNote({
-        ...note,
-        content: editor.getJSON(),
-      } as NoteType);
+      updateNoteContent(currentNote.id, editor.getJSON());
     },
   });
 
@@ -136,9 +138,9 @@ const Editor = () => {
 
   useEffect(() => {
     if (editor) {
-      setEditorInstance(editor);
+      setEditor(editor);
     }
-  }, [editor, setEditorInstance]);
+  }, [editor, setEditor]);
 
   const setLink = useSetLink(editor);
 

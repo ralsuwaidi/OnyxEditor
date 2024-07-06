@@ -31,7 +31,7 @@ const SearchNotesModal = ({
   useEffect(() => {
     const fetchNoteTitles = async () => {
       try {
-        const titlesData = await FirestoreService.getNoteTitles();
+        const titlesData = await FirestoreService.fetchAllNotes();
         setNoteTitles(titlesData);
         setResults(titlesData);
       } catch (error) {

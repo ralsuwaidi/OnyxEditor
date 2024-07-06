@@ -9,7 +9,7 @@ const useLoadNotes = () => {
   const loadAllNotes = useCallback(async () => {
     setLoading(true);
     try {
-      const fetchedNotes = await FirestoreService.getNoteTitles();
+      const fetchedNotes = await FirestoreService.fetchAllNotes();
       setNotes(fetchedNotes);
     } catch (error) {
       console.error("Failed to load notes", error);

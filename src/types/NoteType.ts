@@ -11,6 +11,7 @@ export interface NoteType {
   metadata?: {
     pin?: boolean;
     sample?: string;
+    tags?: string[];
   };
 }
 

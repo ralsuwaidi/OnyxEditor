@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef } from "react";
 import {
   IonContent,
   IonHeader,
@@ -13,6 +13,7 @@ import {
   IonRefresher,
   useIonModal,
   RefresherEventDetail,
+  IonLoading,
 } from "@ionic/react";
 import Editor from "../../components/Editor";
 import { chevronBack, ellipsisVertical } from "ionicons/icons";
@@ -21,33 +22,30 @@ import SearchModal from "../../components/SearchModal";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 import { useMaxHeight } from "../../hooks/useMaxHeight";
 import Sidebar from "../../components/Sidebar";
-import { useNoteContext } from "../../hooks/useNoteContext";
-import { NoteType } from "../../types/NoteType";
-import { debounce } from "lodash";
+// import { useNoteContext } from "../../hooks/useNoteContext";
+import useNoteStore from "../../contexts/noteStore";
 
 export default function EditorPage() {
-  const { note, updateNote, loading } = useNoteContext();
+  // const { note, setNoteMetadata, noteMetadata, loading } = useNoteContext();
+  const currentNote = useNoteStore((state) => state.currentNote);
+  const loading = useNoteStore((state) => state.loading);
+  const updateNoteMetadata = useNoteStore((state) => state.updateNoteMetadata);
+
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
   });
+
   const sidebarMenuRef = useRef<HTMLIonMenuElement | null>(null);
 
   const maxHeight = useMaxHeight();
   const contentRef = useRef<HTMLIonContentElement>(null);
   const scrollHostRef = useRef<HTMLDivElement>(null);
 
-  const debouncedUpdateNote = useCallback(
-    debounce((updatedNote: NoteType) => {
-      updateNote(updatedNote);
-    }, 500),
-    [updateNote]
-  );
-
   const handleTitleChange = (e: CustomEvent) => {
     const newTitle = e.detail.value as string;
-    if (note) {
-      const updatedNote = { ...note, title: newTitle } as NoteType;
-      debouncedUpdateNote(updatedNote);
+    if (currentNote) {
+      const updatedNote = { ...currentNote, title: newTitle };
+      updateNoteMetadata(updatedNote);
     }
   };
 
@@ -71,6 +69,14 @@ export default function EditorPage() {
     });
   }
 
+  if (currentNote == null) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <IonLoading />
+      </div>
+    );
+  }
+
   return (
     <>
       <NotesListPage contentId="main-content" />
@@ -90,7 +96,7 @@ export default function EditorPage() {
               </IonMenuToggle>
             </IonButtons>
             <IonTitle onClick={scrollToTop} style={{ cursor: "pointer" }}>
-              {!loading && note?.title ? note.title : " "}
+              {!loading && currentNote?.title ? currentNote.title : " "}
             </IonTitle>
             <IonButtons slot="primary">
               <IonMenuToggle menu="sidebarMenu">
@@ -123,7 +129,7 @@ export default function EditorPage() {
               <IonToolbar>
                 <IonInput
                   className="ml-3 text-3xl font-extrabold"
-                  value={note?.title || ""}
+                  value={currentNote?.title || ""}
                   placeholder="Enter Title"
                   onIonChange={handleTitleChange}
                 />

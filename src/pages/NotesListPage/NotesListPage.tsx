@@ -20,55 +20,59 @@ import {
   IonToast,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
-import FirestoreService from "../../services/FirestoreService";
 import { useEffect, useRef, useState } from "react";
 // Import Heroicons pin
 import { BookmarkIcon } from "@heroicons/react/16/solid";
 import { SortNotes } from "../../utils/sortNotes";
 import { NoteMetadataType } from "../../types/NoteType";
-import { useNoteContext } from "../../hooks/useNoteContext";
+import useNoteStore from "../../contexts/noteStore";
 
 interface NotesListPageProps {
   contentId: string;
 }
 
 export default function NotesListPage({ contentId }: NotesListPageProps) {
-  const {
-    notes,
-    loadAllNotes: loadNotes,
-    setSelectedNoteMetadata,
-  } = useNoteContext();
+  // const {
+  //   notes,
+  //   loadAllNotes: loadNotes,
+  //   setSelectedNoteMetadata,
+  // } = useNoteContext();
+
+  const allNotes = useNoteStore((state) => state.allNotes);
+  const fetchAllNotes = useNoteStore((state) => state.fetchAllNotes);
+  const createNote = useNoteStore((state) => state.createNote);
+  const togglePinNote = useNoteStore((state) => state.pinNote);
+  const deleteNoteById = useNoteStore((state) => state.deleteNoteById);
+  const setCurrentNoteById = useNoteStore((state) => state.setCurrentNoteById);
+
   const [results, setResults] = useState<NoteMetadataType[]>([]);
   const [showToast, setShowToast] = useState<string | null>(null);
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
   const slidingRef = useRef<{ [key: string]: boolean }>({});
 
   useEffect(() => {
-    setResults(notes);
-  }, [notes]);
+    console.log("hewwre", allNotes);
+    setResults(allNotes);
+  }, [allNotes]);
 
   const handleRefresh = async (event: CustomEvent) => {
-    await loadNotes();
+    await fetchAllNotes();
     event.detail.complete();
   };
 
   const handleCreateNewNote = async () => {
-    const newNote = await FirestoreService.createNewNote();
-    setSelectedNoteMetadata(newNote);
-    loadNotes();
+    await createNote();
     menuRef.current?.close();
   };
 
   const handlePinNote = async (
-    id: string,
-    pinned: boolean,
+    noteMetadata: NoteMetadataType,
     event: any,
     slidingItem: HTMLIonItemSlidingElement
   ) => {
     event.stopPropagation();
     try {
-      await FirestoreService.updateMetadata(id, { pin: !pinned });
-      loadNotes();
+      await togglePinNote(noteMetadata);
       setShowToast("Note pinned successfully");
     } catch (error) {
       console.error("Failed to pin note:", error);
@@ -80,8 +84,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
 
   const handleDeleteNote = async (id: string) => {
     try {
-      await FirestoreService.deleteNote(id);
-      loadNotes();
+      deleteNoteById(id);
       setShowToast("Note deleted successfully");
     } catch (error) {
       console.error("Failed to delete note:", error);
@@ -91,7 +94,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
 
   const handleSelectNote = (noteMetadata: NoteMetadataType) => {
     if (!slidingRef.current[noteMetadata.id]) {
-      setSelectedNoteMetadata(noteMetadata);
+      setCurrentNoteById(noteMetadata.id);
     }
     slidingRef.current[noteMetadata.id] = false;
   };
@@ -112,11 +115,11 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     const query =
       (ev.target as HTMLIonSearchbarElement).value?.toLowerCase() || "";
     setResults(
-      notes.filter((note) => note.title.toLowerCase().includes(query))
+      allNotes.filter((note) => note.title.toLowerCase().includes(query))
     );
   };
 
-  const sortedNotes = results.length > 0 ? results : notes;
+  const sortedNotes = results.length > 0 ? results : allNotes;
 
   return (
     <>
@@ -177,8 +180,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                     color="primary"
                     onClick={(event) =>
                       handlePinNote(
-                        note.id,
-                        note.metadata?.pin || false,
+                        note,
                         event,
                         event.currentTarget.closest("ion-item-sliding")!
                       )

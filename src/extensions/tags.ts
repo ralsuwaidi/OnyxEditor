@@ -36,7 +36,7 @@ declare module "@tiptap/core" {
 /**
  * Matches tags text via `#` as input.
  */
-const tagsInputRegex = /(?:^|\s)(#[^\s#]+\s|$)$/;
+const tagsInputRegex = /(?:^|\s)(#[^\s#]+)\b/g;
 
 /**
  * Matches tags text via `#` while pasting.

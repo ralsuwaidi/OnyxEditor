@@ -24,7 +24,7 @@ function getSample(content: JSONContent): string {
   return words.join(" ");
 }
 
-function extractTagsFromJSON(content: JSONContent): string[] {
+function extractTags(content: JSONContent): string[] {
   const tags: string[] = [];
 
   const extractTextAndFindTags = (nodes: any[]): void => {
@@ -48,4 +48,4 @@ function extractTagsFromJSON(content: JSONContent): string[] {
   return tags;
 }
 
-export { getSample, extractTagsFromJSON };
+export { getSample, extractTags };
