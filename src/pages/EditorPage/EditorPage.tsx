@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   IonContent,
   IonHeader,
@@ -28,6 +28,7 @@ export default function EditorPage() {
   const currentNote = useNoteStore((state) => state.currentNote);
   const loading = useNoteStore((state) => state.loading);
   const updateNoteMetadata = useNoteStore((state) => state.updateNoteMetadata);
+  const editor = useNoteStore((state) => state.editor);
 
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
@@ -44,6 +45,7 @@ export default function EditorPage() {
     if (currentNote) {
       const updatedNote = { ...currentNote, title: newTitle };
       updateNoteMetadata(updatedNote);
+      editor?.commands.focus();
     }
   };
 
@@ -66,6 +68,26 @@ export default function EditorPage() {
       },
     });
   }
+
+  useEffect(() => {
+    if (loading) {
+      console.log("loading", loading);
+      const modal = document.getElementById(
+        "my_modal_1"
+      ) as HTMLDialogElement | null;
+      if (modal) {
+        modal.showModal();
+      }
+    } else {
+      const modal = document.getElementById(
+        "my_modal_1"
+      ) as HTMLDialogElement | null;
+
+      if (modal) {
+        modal.close();
+      }
+    }
+  }, [loading]);
 
   if (currentNote == null) {
     return (
@@ -140,6 +162,11 @@ export default function EditorPage() {
             </div>
           </div>
         </IonContent>
+        <dialog id="my_modal_1" className="modal">
+          <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-background">
+            <IonSpinner className="text-gray-600 dark:text-gray-200" />
+          </div>
+        </dialog>
       </IonPage>
     </>
   );

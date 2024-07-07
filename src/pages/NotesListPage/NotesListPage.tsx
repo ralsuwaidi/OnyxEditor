@@ -21,23 +21,17 @@ import {
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
-// Import Heroicons pin
 import { BookmarkIcon } from "@heroicons/react/16/solid";
 import { SortNotes } from "../../utils/sortNotes";
 import { NoteMetadataType } from "../../types/NoteType";
 import useNoteStore from "../../contexts/noteStore";
+import SmallBadge from "../../components/common/SmallBadge";
 
 interface NotesListPageProps {
   contentId: string;
 }
 
 export default function NotesListPage({ contentId }: NotesListPageProps) {
-  // const {
-  //   notes,
-  //   loadAllNotes: loadNotes,
-  //   setSelectedNoteMetadata,
-  // } = useNoteContext();
-
   const allNotes = useNoteStore((state) => state.allNotes);
   const fetchAllNotes = useNoteStore((state) => state.fetchAllNotes);
   const createNote = useNoteStore((state) => state.createNote);
@@ -71,7 +65,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
   ) => {
     event.stopPropagation();
     try {
-      await togglePinNote(noteMetadata);
+      togglePinNote(noteMetadata);
       setShowToast("Note pinned successfully");
     } catch (error) {
       console.error("Failed to pin note:", error);
@@ -159,10 +153,10 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                   <IonItem button={true} onClick={() => handleSelectNote(note)}>
                     <IonLabel>
                       <h2>{note.title == "" ? "(No Title)" : note.title}</h2>
-                      <div className="line-clamp-2 text-sm text-gray-500">
+                      <div className="line-clamp-2 mb-1 text-sm text-gray-500">
                         {note.metadata?.sample ? note.metadata.sample : ""}
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <div className=" flex space-x-2 mr-2">
                           {note.metadata?.pin && (
                             <p>
@@ -174,16 +168,11 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                           </p>
                         </div>
                         <div>
-                          <div className="flex overflow-x-auto space-x-2">
+                          <div className="flex overflow-x-auto space-x-2 ">
                             {note.metadata &&
                               note.metadata.tags &&
                               note.metadata.tags.map((tag, index) => (
-                                <span
-                                  key={index}
-                                  className="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 whitespace-nowrap"
-                                >
-                                  {tag}
-                                </span>
+                                <SmallBadge key={index} tag={tag} />
                               ))}
                           </div>
                         </div>

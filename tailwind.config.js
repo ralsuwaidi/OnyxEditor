@@ -8,6 +8,7 @@ export default {
           DEFAULT: "rgb(219, 253, 173)",
           dark: "rgb(46, 80, 115)",
         },
+        background: "rgb(28, 30, 31)",
       },
     },
   },

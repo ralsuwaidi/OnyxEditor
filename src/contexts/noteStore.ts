@@ -17,7 +17,6 @@ interface NoteState {
   updateNoteMetadata: (note: NoteType) => Promise<void>;
   updateNoteContent: (id: string, content: JSONContent) => Promise<void>;
   deleteNoteById: (id: string) => Promise<void>;
-  setCurrentNote: (note: NoteType | null) => void;
   setCurrentNoteById: (id: string) => Promise<void>;
   setTableOfContents: (tableOfContents: TableOfContentData) => void;
   resetNotes: () => void;
@@ -67,7 +66,8 @@ const useNoteStore = create<NoteState>((set, get) => ({
       set((state) => ({
         allNotes: [...state.allNotes, newNoteMetadata],
       }));
-      get().setCurrentNote(newNote);
+
+      get().setCurrentNoteById(newNote.id);
     } catch (error) {
       console.error("Failed to create the note:", error);
     }
@@ -187,8 +187,6 @@ const useNoteStore = create<NoteState>((set, get) => ({
   setTableOfContents: (tableOfContents: TableOfContentData) => {
     set({ tableOfContents });
   },
-
-  setCurrentNote: (note: NoteType | null) => set({ currentNote: note }),
 
   setEditor: (editor: Editor) => {
     set({ editor });
