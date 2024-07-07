@@ -77,15 +77,12 @@ const useNoteStore = create<NoteState>((set, get) => ({
   },
 
   updateNoteMetadata: async (note: NoteType) => {
-    set({ loading: true });
     try {
       await FirestoreService.updateMetadata(note);
       const updatedNotes = await FirestoreService.fetchAllNotes();
       set({ allNotes: updatedNotes, currentNote: note });
     } catch (error) {
       console.error("Failed to update the note:", error);
-    } finally {
-      set({ loading: false });
     }
   },
 

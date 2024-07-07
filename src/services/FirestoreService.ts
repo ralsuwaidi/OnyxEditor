@@ -119,7 +119,7 @@ class FirestoreService implements FirestoreServiceInterface {
     const docRef = doc(this.collectionRef, noteMetadata.id);
     await this.handleError(
       updateDoc(docRef, {
-        metadata: noteMetadata.metadata,
+        ...noteMetadata,
         updatedAt: serverTimestamp(),
       }),
       "Error updating metadata:"

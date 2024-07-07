@@ -22,11 +22,9 @@ import SearchModal from "../../components/SearchModal";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 import { useMaxHeight } from "../../hooks/useMaxHeight";
 import Sidebar from "../../components/Sidebar";
-// import { useNoteContext } from "../../hooks/useNoteContext";
 import useNoteStore from "../../contexts/noteStore";
 
 export default function EditorPage() {
-  // const { note, setNoteMetadata, noteMetadata, loading } = useNoteContext();
   const currentNote = useNoteStore((state) => state.currentNote);
   const loading = useNoteStore((state) => state.loading);
   const updateNoteMetadata = useNoteStore((state) => state.updateNoteMetadata);
