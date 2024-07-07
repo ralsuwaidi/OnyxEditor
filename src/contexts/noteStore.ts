@@ -34,14 +34,11 @@ const useNoteStore = create<NoteState>((set, get) => ({
   loading: false,
 
   fetchAllNotes: async () => {
-    set({ loading: true });
     try {
       const notes = await FirestoreService.fetchAllNotes();
       set({ allNotes: notes });
     } catch (error) {
       console.error("Failed to fetch all notes:", error);
-    } finally {
-      set({ loading: false });
     }
   },
 
@@ -82,7 +79,7 @@ const useNoteStore = create<NoteState>((set, get) => ({
   updateNoteMetadata: async (note: NoteType) => {
     set({ loading: true });
     try {
-      await FirestoreService.updateNote(note);
+      await FirestoreService.updateMetadata(note);
       const updatedNotes = await FirestoreService.fetchAllNotes();
       set({ allNotes: updatedNotes, currentNote: note });
     } catch (error) {
@@ -94,7 +91,7 @@ const useNoteStore = create<NoteState>((set, get) => ({
 
   updateNoteContent: async (id: string, content: JSONContent) => {
     try {
-      console.log("hihi");
+      console.log(get().currentNote);
       await FirestoreService.updateNoteWithDebounce(id, content); // Assuming this method is debounced
       set((state) => ({
         currentNote:
@@ -137,7 +134,6 @@ const useNoteStore = create<NoteState>((set, get) => ({
   },
 
   pinNote: async (noteMetadata: NoteMetadataType) => {
-    set({ loading: true });
     try {
       const updatedNoteMetadata = {
         ...noteMetadata,
@@ -154,26 +150,24 @@ const useNoteStore = create<NoteState>((set, get) => ({
           note.id === updatedNoteMetadata.id ? updatedNoteMetadata : note
         );
 
-        let updatedCurrentNote = state.currentNote;
-        if (
-          state.currentNote &&
-          state.currentNote.id === updatedNoteMetadata.id
-        ) {
-          updatedCurrentNote = {
-            ...state.currentNote,
-            metadata: updatedNoteMetadata.metadata,
-          };
-        }
+        // let updatedCurrentNote = state.currentNote;
+        // if (
+        //   state.currentNote &&
+        //   state.currentNote.id === updatedNoteMetadata.id
+        // ) {
+        //   updatedCurrentNote = {
+        //     ...state.currentNote,
+        //     metadata: updatedNoteMetadata.metadata,
+        //   };
+        // }
 
         return {
           allNotes: updatedAllNotes,
-          currentNote: updatedCurrentNote,
+          //   currentNote: updatedCurrentNote,
         };
       });
     } catch (error) {
       console.error("Failed to pin the note:", error);
-    } finally {
-      set({ loading: false });
     }
   },
 
@@ -188,7 +182,6 @@ const useNoteStore = create<NoteState>((set, get) => ({
       );
       const latestNote = sortedNotes[0] || null; // Get the latest note or null if there are no notes
       await get().setCurrentNoteById(latestNote.id);
-      console.log("hehe");
       set({ allNotes: sortedNotes });
     } catch (error) {
       console.error("Failed to initialize store:", error);

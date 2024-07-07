@@ -51,7 +51,6 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
   const slidingRef = useRef<{ [key: string]: boolean }>({});
 
   useEffect(() => {
-    console.log("hewwre", allNotes);
     setResults(allNotes);
   }, [allNotes]);
 

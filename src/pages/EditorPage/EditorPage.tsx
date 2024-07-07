@@ -13,7 +13,7 @@ import {
   IonRefresher,
   useIonModal,
   RefresherEventDetail,
-  IonLoading,
+  IonSpinner,
 } from "@ionic/react";
 import Editor from "../../components/Editor";
 import { chevronBack, ellipsisVertical } from "ionicons/icons";
@@ -72,7 +72,7 @@ export default function EditorPage() {
   if (currentNote == null) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <IonLoading />
+        <IonSpinner />
       </div>
     );
   }

@@ -32,7 +32,6 @@ import { useSetLink } from "../hooks/useSetLink";
 import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
-// import { useNoteContext } from "../hooks/useNoteContext";
 import { IonSpinner } from "@ionic/react";
 import TableOfContents, {
   getHierarchicalIndexes,
@@ -42,13 +41,6 @@ import { Tags } from "../extensions/tags";
 import useNoteStore from "../contexts/noteStore";
 
 const Editor = () => {
-  // const {
-  //   setEditorInstance,
-  //   setNoteContent,
-  //   noteContent,
-  //   setTOCItemsInstance,
-  // } = useNoteContext();
-
   const setEditor = useNoteStore((state) => state.setEditor);
   const setTableOfContents = useNoteStore((state) => state.setTableOfContents);
   const currentNote = useNoteStore((state) => state.currentNote);

@@ -25,7 +25,7 @@ export interface FirestoreServiceInterface {
   getNotes(): Promise<NoteType[]>;
   fetchAllNotes(): Promise<Array<NoteMetadataType>>;
   updateNoteMetadata(noteMetadata: NoteMetadataType): Promise<void>;
-  updateMetadata(documentID: string, metadata: object): Promise<void>;
+  updateMetadata(noteMetadata: NoteMetadataType): Promise<void>;
   updateNoteWithDebounce: DebouncedFunc<
     (id: string, content: JSONContent) => Promise<void>
   >;
@@ -115,25 +115,15 @@ class FirestoreService implements FirestoreServiceInterface {
     return [];
   }
 
-  async updateMetadata(documentID: string, metadata: object): Promise<void> {
-    const docRef = doc(this.collectionRef, documentID);
+  async updateMetadata(noteMetadata: NoteMetadataType): Promise<void> {
+    const docRef = doc(this.collectionRef, noteMetadata.id);
     await this.handleError(
-      updateDoc(docRef, { metadata, updatedAt: serverTimestamp() }),
+      updateDoc(docRef, {
+        metadata: noteMetadata.metadata,
+        updatedAt: serverTimestamp(),
+      }),
       "Error updating metadata:"
     );
-  }
-
-  async isNotePinned(documentID: string): Promise<boolean> {
-    const docRef = doc(this.collectionRef, documentID);
-    const docSnap = await this.handleError(
-      getDoc(docRef),
-      "Error loading document:"
-    );
-    if (docSnap && docSnap.exists()) {
-      const savedData = docSnap.data();
-      return savedData.metadata?.pin === true;
-    }
-    return false;
   }
 
   updateNoteWithDebounce = debounce(
@@ -149,22 +139,20 @@ class FirestoreService implements FirestoreServiceInterface {
     // Generate the sample and update the metadata
     const sampleData = getSample(content);
     const tags = extractTags(content);
-    const updatedMetadata = {
-      sample: sampleData,
-      tags: tags,
-    };
 
     // Create the update object
     const updateData = {
       content: content,
-      metadata: updatedMetadata,
+      "metadata.sample": sampleData,
+      "metadata.tags": tags,
       updatedAt: serverTimestamp(),
     };
 
-    await this.handleError(
-      updateDoc(docRef, updateData),
-      "Error updating content:"
-    );
+    try {
+      await updateDoc(docRef, updateData);
+    } catch (error) {
+      console.error("Error updating content:", error);
+    }
   }
 
   async createNote(): Promise<NoteType> {
