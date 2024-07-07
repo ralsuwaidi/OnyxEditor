@@ -55,7 +55,6 @@ const useNoteStore = create<NoteState>((set, get) => ({
   },
 
   createNote: async () => {
-    set({ loading: true });
     try {
       const newNote = await FirestoreService.createNote();
       const newNoteMetadata: NoteMetadataType = {
@@ -67,12 +66,10 @@ const useNoteStore = create<NoteState>((set, get) => ({
       };
       set((state) => ({
         allNotes: [...state.allNotes, newNoteMetadata],
-        currentNote: newNote,
       }));
+      get().setCurrentNote(newNote);
     } catch (error) {
       console.error("Failed to create the note:", error);
-    } finally {
-      set({ loading: false });
     }
   },
 

@@ -162,20 +162,39 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                       <div className="line-clamp-2 text-sm text-gray-500">
                         {note.metadata?.sample ? note.metadata.sample : ""}
                       </div>
-                      <p>
-                        {note.metadata?.pin && (
-                          <>
-                            <BookmarkIcon className="h-3 w-3 mr-2 inline-block" />
-                          </>
-                        )}
-                        {formatDateWithoutYear(note.updatedAt)}
-                      </p>
+                      <div className="flex justify-between">
+                        <div className=" flex space-x-2 mr-2">
+                          {note.metadata?.pin && (
+                            <p>
+                              <BookmarkIcon className="h-3 w-3 inline-block" />
+                            </p>
+                          )}
+                          <p className="whitespace-nowrap">
+                            {formatDateWithoutYear(note.updatedAt)}
+                          </p>
+                        </div>
+                        <div>
+                          <div className="flex overflow-x-auto space-x-2">
+                            {note.metadata &&
+                              note.metadata.tags &&
+                              note.metadata.tags.map((tag, index) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 whitespace-nowrap"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                          </div>
+                        </div>
+                      </div>
                     </IonLabel>
                   </IonItem>
                 </IonMenuToggle>
 
                 <IonItemOptions side="start">
                   <IonItemOption
+                    className="min-w-24"
                     color="primary"
                     onClick={(event) =>
                       handlePinNote(
@@ -191,6 +210,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
 
                 <IonItemOptions>
                   <IonItemOption
+                    className="min-w-24"
                     color="danger"
                     onClick={() => handleDeleteNote(note.id)}
                   >
