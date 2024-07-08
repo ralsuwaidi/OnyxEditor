@@ -8,9 +8,6 @@ import {
   addDoc,
   serverTimestamp,
   updateDoc,
-  query,
-  orderBy,
-  limit,
   deleteDoc,
 } from "firebase/firestore";
 import { DebouncedFunc, debounce } from "lodash";
@@ -22,9 +19,7 @@ import { extractTags, getSample } from "../libs/utils";
 
 export interface FirestoreServiceInterface {
   fetchNoteById(id: string): Promise<NoteType>;
-  getNotes(): Promise<NoteType[]>;
   fetchAllNotes(): Promise<Array<NoteMetadataType>>;
-  updateNoteMetadata(noteMetadata: NoteMetadataType): Promise<void>;
   updateMetadata(noteMetadata: NoteMetadataType): Promise<void>;
   updateNoteWithDebounce: DebouncedFunc<
     (id: string, content: JSONContent) => Promise<void>
@@ -32,9 +27,6 @@ export interface FirestoreServiceInterface {
   updateFirestoreNote(id: string, content: JSONContent): Promise<void>;
   createNote(): Promise<NoteType>;
   deleteNoteById(noteId: string): Promise<void>;
-  getLatestNote(): Promise<Pick<NoteType, "id" | "title" | "updatedAt"> | null>;
-  updateFirestoreNoteTitle(noteId: string, title: string): Promise<void>;
-  updateNote: (note: NoteType) => Promise<void>;
 }
 
 class FirestoreService implements FirestoreServiceInterface {
@@ -72,27 +64,6 @@ class FirestoreService implements FirestoreServiceInterface {
     } else {
       throw new Error(`Note with ID ${id} does not exist.`);
     }
-  }
-
-  async getNotes(): Promise<NoteType[]> {
-    const querySnapshot = await this.handleError(
-      getDocs(this.collectionRef),
-      "Error loading documents:"
-    );
-    if (querySnapshot) {
-      return querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          content: data.content,
-          title: data.title,
-          createdAt: data.createdAt,
-          updatedAt: data.updatedAt,
-          metadata: data.metadata || {},
-        } as NoteType;
-      });
-    }
-    return [];
   }
 
   async fetchAllNotes(): Promise<NoteMetadataType[]> {
@@ -185,71 +156,9 @@ class FirestoreService implements FirestoreServiceInterface {
     }
   }
 
-  async getLatestNote(): Promise<Pick<
-    NoteType,
-    "id" | "title" | "updatedAt"
-  > | null> {
-    const notesQuery = query(
-      this.collectionRef,
-      orderBy("updatedAt", "desc"),
-      limit(1)
-    );
-    const querySnapshot = await this.handleError(
-      getDocs(notesQuery),
-      "Error getting latest note:"
-    );
-    if (querySnapshot && !querySnapshot.empty) {
-      const latestDoc = querySnapshot.docs[0];
-      const data = latestDoc.data();
-      return { id: latestDoc.id, title: data.title, updatedAt: data.updatedAt };
-    }
-    return null;
-  }
-
   async deleteNoteById(noteId: string): Promise<void> {
     const docRef = doc(this.collectionRef, noteId);
     await this.handleError(deleteDoc(docRef), "Error deleting note:");
-  }
-
-  async updateNoteMetadata(noteMetadata: NoteMetadataType): Promise<void> {
-    const docRef = doc(this.collectionRef, noteMetadata.id);
-    await this.handleError(
-      updateDoc(docRef, { ...noteMetadata, updatedAt: serverTimestamp() }),
-      "Error updating note metadata:"
-    );
-  }
-
-  async updateFirestoreNoteTitle(noteId: string, title: string): Promise<void> {
-    const docRef = doc(this.collectionRef, noteId);
-    await this.handleError(
-      updateDoc(docRef, { title, updatedAt: serverTimestamp() }),
-      "Error updating note title:"
-    );
-  }
-
-  async updateNote(note: NoteType): Promise<void> {
-    const docRef = doc(this.collectionRef, note.id);
-
-    // Generate the sample and update the metadata
-    const sampleData = getSample(note.content);
-    const tags = extractTags(note.content);
-    const updatedMetadata = {
-      ...note.metadata,
-      sample: sampleData,
-      tags: tags,
-    };
-
-    // Create the update object
-    const updateData = {
-      ...note,
-      metadata: updatedMetadata,
-      updatedAt: serverTimestamp(),
-    };
-
-    await this.handleError(
-      updateDoc(docRef, updateData),
-      "Error updating note:"
-    );
   }
 }
 
