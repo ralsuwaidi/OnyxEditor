@@ -1,4 +1,5 @@
 // src/hooks/useMaxHeight.ts
+import { isPlatform } from "@ionic/react";
 import { useState, useEffect } from "react";
 
 export const useMaxHeight = (): string => {
@@ -6,7 +7,7 @@ export const useMaxHeight = (): string => {
 
   useEffect(() => {
     const updateMaxHeight = () => {
-      const offset = 100;
+      const offset = isPlatform("desktop") ? 0 : 100;
       setMaxHeight(`calc(100vh - ${offset}px)`);
     };
 

@@ -3,6 +3,7 @@ import { NoteMetadataType, NoteType } from "../types/NoteType";
 import FirestoreService from "../services/FirestoreService";
 import { Editor, JSONContent } from "@tiptap/react";
 import { TableOfContentData } from "@tiptap-pro/extension-table-of-contents";
+import { debounce } from "lodash";
 
 interface NoteState {
   allNotes: NoteMetadataType[];
@@ -74,10 +75,13 @@ const useNoteStore = create<NoteState>((set, get) => ({
   },
 
   updateNoteMetadata: async (note: NoteType) => {
-    try {
+    const debouncedUpdate = debounce(async () => {
       await FirestoreService.updateMetadata(note);
       const updatedNotes = await FirestoreService.fetchAllNotes();
       set({ allNotes: updatedNotes, currentNote: note });
+    }, 1000);
+    try {
+      debouncedUpdate();
     } catch (error) {
       console.error("Failed to update the note:", error);
     }
@@ -85,7 +89,6 @@ const useNoteStore = create<NoteState>((set, get) => ({
 
   updateNoteContent: async (id: string, content: JSONContent) => {
     try {
-      console.log(get().currentNote);
       await FirestoreService.updateNoteWithDebounce(id, content); // Assuming this method is debounced
       set((state) => ({
         currentNote:
