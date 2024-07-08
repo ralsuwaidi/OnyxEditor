@@ -14,6 +14,7 @@ import Document from "@tiptap/extension-document";
 import Bold from "@tiptap/extension-bold";
 import Focus from "@tiptap/extension-focus";
 import Italic from "@tiptap/extension-italic";
+import History from "@tiptap/extension-history";
 import Image from "@tiptap/extension-image";
 import Strike from "@tiptap/extension-strike";
 import Blockquote from "@tiptap/extension-blockquote";
@@ -89,6 +90,9 @@ const Editor = () => {
     TableRow,
     TableHeader,
     Dropcursor,
+    History.configure({
+      depth: 10,
+    }),
     OrderedList,
     TableCell,
     HardBreak,

@@ -9,7 +9,6 @@ export const useKeyboardSetup = () => {
     } else {
       Keyboard.setAccessoryBarVisible({ isVisible: false });
       Keyboard.setResizeMode({ mode: KeyboardResize.None });
-      Keyboard.removeAllListeners();
     }
   }, []);
 };
