@@ -6,7 +6,7 @@ export const useMaxHeight = (): string => {
 
   useEffect(() => {
     const updateMaxHeight = () => {
-      const offset = 60;
+      const offset = 100;
       setMaxHeight(`calc(100vh - ${offset}px)`);
     };
 
