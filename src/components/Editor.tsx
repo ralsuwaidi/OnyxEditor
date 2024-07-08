@@ -36,7 +36,6 @@ import { IonSpinner } from "@ionic/react";
 import TableOfContents, {
   getHierarchicalIndexes,
 } from "@tiptap-pro/extension-table-of-contents";
-import { useKeyboardSetup } from "../hooks/useKeyboardSetup";
 import { Tags } from "../extensions/tags";
 import useNoteStore from "../contexts/noteStore";
 
@@ -118,15 +117,13 @@ const Editor = () => {
     editorProps: {
       attributes: {
         class:
-          "prose dark:prose-invert prose-sm sm:prose px-4 pt-4 lg:prose-lg xl:prose-2xl focus:outline-none pb-96 ",
+          "prose dark:prose-invert prose-sm sm:prose-lg px-4 pt-4 xl:prose-2xl focus:outline-none pb-96 max-w-none",
       },
     },
     onUpdate: ({ editor }) => {
       updateNoteContent(currentNote.id, editor.getJSON());
     },
   });
-
-  useKeyboardSetup();
 
   useEffect(() => {
     if (editor) {

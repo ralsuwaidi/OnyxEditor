@@ -144,17 +144,6 @@ const useNoteStore = create<NoteState>((set, get) => ({
           note.id === updatedNoteMetadata.id ? updatedNoteMetadata : note
         );
 
-        // let updatedCurrentNote = state.currentNote;
-        // if (
-        //   state.currentNote &&
-        //   state.currentNote.id === updatedNoteMetadata.id
-        // ) {
-        //   updatedCurrentNote = {
-        //     ...state.currentNote,
-        //     metadata: updatedNoteMetadata.metadata,
-        //   };
-        // }
-
         return {
           allNotes: updatedAllNotes,
           //   currentNote: updatedCurrentNote,

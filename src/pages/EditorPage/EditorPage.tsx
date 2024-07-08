@@ -155,8 +155,8 @@ export default function EditorPage() {
                 />
               </IonToolbar>
             </IonHeader>
-            <div className="flex justify-center">
-              <div className="w-full max-w-2xl">
+            <div className="flex items-center justify-center">
+              <div className="w-full max-w-4xl">
                 <Editor />
               </div>
             </div>
