@@ -66,9 +66,12 @@
     "classnames": "^2.5.1",
     "firebase": "^10.12.2",
     "lodash": "^4.17.21",
+    "markdown-it": "^14.1.0",
+    "markdown-it-mark": "^4.0.0",
     "marked": "^13.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "tiptap-markdown": "^0.8.10",
     "zustand": "^4.5.4"
   },
   "devDependencies": {

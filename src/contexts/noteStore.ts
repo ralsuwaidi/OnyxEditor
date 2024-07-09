@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { NoteMetadataType, NoteType } from "../types/NoteType";
 import FirestoreService from "../services/FirestoreService";
-import { Editor, JSONContent } from "@tiptap/react";
+import { Editor } from "@tiptap/react";
 import { TableOfContentData } from "@tiptap-pro/extension-table-of-contents";
 import { debounce } from "lodash";
 
@@ -16,7 +16,7 @@ interface NoteState {
   fetchNoteById: (id: string) => Promise<void>;
   createNote: () => Promise<void>;
   updateNoteMetadata: (note: NoteType) => Promise<void>;
-  updateNoteContent: (id: string, content: JSONContent) => Promise<void>;
+  updateNoteContent: (id: string, mdcontent: string) => Promise<void>;
   deleteNoteById: (id: string) => Promise<void>;
   setCurrentNoteById: (id: string) => Promise<void>;
   setTableOfContents: (tableOfContents: TableOfContentData) => void;
@@ -87,16 +87,16 @@ const useNoteStore = create<NoteState>((set, get) => ({
     }
   },
 
-  updateNoteContent: async (id: string, content: JSONContent) => {
+  updateNoteContent: async (id: string, mdcontent: string) => {
     try {
-      await FirestoreService.updateNoteWithDebounce(id, content); // Assuming this method is debounced
+      await FirestoreService.updateNoteWithDebounce(id, mdcontent); // Assuming this method is debounced
       set((state) => ({
         currentNote:
           state.currentNote && state.currentNote.id === id
-            ? { ...state.currentNote, content }
+            ? { ...state.currentNote, mdcontent }
             : state.currentNote,
         allNotes: state.allNotes.map((note) =>
-          note.id === id ? { ...note, content } : note
+          note.id === id ? { ...note, mdcontent } : note
         ),
       }));
     } catch (error) {
@@ -149,7 +149,6 @@ const useNoteStore = create<NoteState>((set, get) => ({
 
         return {
           allNotes: updatedAllNotes,
-          //   currentNote: updatedCurrentNote,
         };
       });
     } catch (error) {
@@ -185,9 +184,9 @@ const useNoteStore = create<NoteState>((set, get) => ({
   },
 
   updateEditor: () => {
-    get().editor?.commands.setContent(
-      get().currentNote?.content as JSONContent
-    );
+    const mdContent = get().currentNote?.mdcontent;
+
+    get().editor?.commands.setContent(mdContent!);
   },
 
   resetNotes: () => set({ allNotes: [], currentNote: null, loading: false }),

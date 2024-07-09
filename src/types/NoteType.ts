@@ -4,7 +4,7 @@ import { Timestamp } from "firebase/firestore";
 
 export interface NoteType {
   id: string;
-  content: object;
+  mdcontent: string;
   title: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
@@ -15,4 +15,4 @@ export interface NoteType {
   };
 }
 
-export type NoteMetadataType = Omit<NoteType, "content">;
+export type NoteMetadataType = Omit<NoteType, "mdcontent">;

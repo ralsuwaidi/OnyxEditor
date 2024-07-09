@@ -14,17 +14,14 @@ import { DebouncedFunc, debounce } from "lodash";
 import { NoteMetadataType, NoteType } from "../types/NoteType";
 import firestore from "./firebase";
 import { Timestamp } from "firebase/firestore";
-import { JSONContent } from "@tiptap/core";
 import { extractTags, getSample } from "../libs/utils";
 
 export interface FirestoreServiceInterface {
   fetchNoteById(id: string): Promise<NoteType>;
   fetchAllNotes(): Promise<Array<NoteMetadataType>>;
   updateMetadata(noteMetadata: NoteMetadataType): Promise<void>;
-  updateNoteWithDebounce: DebouncedFunc<
-    (id: string, content: JSONContent) => Promise<void>
-  >;
-  updateFirestoreNote(id: string, content: JSONContent): Promise<void>;
+  updateNoteWithDebounce: DebouncedFunc<(id: string) => Promise<void>>;
+  updateFirestoreNote(id: string, mdcontent: string): Promise<void>;
   createNote(): Promise<NoteType>;
   deleteNoteById(noteId: string): Promise<void>;
 }
@@ -57,6 +54,7 @@ class FirestoreService implements FirestoreServiceInterface {
         id: docRef.id,
         content: savedData.content,
         title: savedData.title,
+        mdcontent: savedData.mdcontent,
         createdAt: savedData.createdAt,
         updatedAt: savedData.updatedAt,
         metadata: savedData.metadata || {},
@@ -98,22 +96,22 @@ class FirestoreService implements FirestoreServiceInterface {
   }
 
   updateNoteWithDebounce = debounce(
-    async (id: string, content: JSONContent): Promise<void> => {
-      await this.updateFirestoreNote(id, content);
+    async (id: string, mdcontent: string): Promise<void> => {
+      await this.updateFirestoreNote(id, mdcontent);
     },
     1000
   );
 
-  async updateFirestoreNote(id: string, content: JSONContent): Promise<void> {
+  async updateFirestoreNote(id: string, mdcontent: string): Promise<void> {
     const docRef = doc(this.collectionRef, id);
 
     // Generate the sample and update the metadata
-    const sampleData = getSample(content);
-    const tags = extractTags(content);
+    const sampleData = getSample(mdcontent);
+    const tags = extractTags(mdcontent);
 
     // Create the update object
     const updateData = {
-      content: content,
+      mdcontent: mdcontent,
       "metadata.sample": sampleData,
       "metadata.tags": tags,
       updatedAt: serverTimestamp(),
@@ -129,10 +127,9 @@ class FirestoreService implements FirestoreServiceInterface {
   async createNote(): Promise<NoteType> {
     const timestamp = Timestamp.now();
     try {
-      const emptyContent = { type: "doc", content: [] };
       const newNote: Omit<NoteType, "id"> = {
-        content: emptyContent,
         title: "",
+        mdcontent: "",
         createdAt: timestamp,
         updatedAt: timestamp,
         metadata: {},
@@ -143,7 +140,7 @@ class FirestoreService implements FirestoreServiceInterface {
       const noteMetadata: NoteType = {
         id: docRef.id,
         title: newNote.title,
-        content: emptyContent,
+        mdcontent: newNote.mdcontent,
         createdAt: newNote.createdAt,
         updatedAt: newNote.updatedAt,
         metadata: newNote.metadata,

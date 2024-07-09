@@ -15,6 +15,7 @@ import Bold from "@tiptap/extension-bold";
 import Focus from "@tiptap/extension-focus";
 import Italic from "@tiptap/extension-italic";
 import History from "@tiptap/extension-history";
+import { Markdown } from "tiptap-markdown";
 import Image from "@tiptap/extension-image";
 import Strike from "@tiptap/extension-strike";
 import Blockquote from "@tiptap/extension-blockquote";
@@ -64,6 +65,12 @@ const Editor = () => {
     Italic,
     ListItem,
     TaskList,
+    Markdown.configure({
+      transformCopiedText: true,
+      linkify: true,
+      tightListClass: "tight",
+      transformPastedText: true,
+    }),
     Tags,
     TaskItem.configure({
       nested: true,
@@ -117,7 +124,7 @@ const Editor = () => {
 
   const editor = useEditor({
     extensions,
-    content: currentNote.content,
+    content: currentNote.mdcontent,
     editorProps: {
       attributes: {
         class:
@@ -125,7 +132,7 @@ const Editor = () => {
       },
     },
     onUpdate: ({ editor }) => {
-      updateNoteContent(currentNote.id, editor.getJSON());
+      updateNoteContent(currentNote.id, editor.storage.markdown.getMarkdown());
     },
   });
 
