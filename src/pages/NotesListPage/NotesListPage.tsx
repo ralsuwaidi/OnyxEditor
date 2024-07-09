@@ -5,8 +5,6 @@ import {
   IonTitle,
   IonToolbar,
   IonList,
-  IonItem,
-  IonLabel,
   IonButton,
   IonButtons,
   IonIcon,
@@ -21,11 +19,10 @@ import {
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
-import { BookmarkIcon } from "@heroicons/react/16/solid";
 import { SortNotes } from "../../utils/sortNotes";
 import { NoteMetadataType } from "../../types/NoteType";
 import useNoteStore from "../../contexts/noteStore";
-import SmallBadge from "../../components/common/SmallBadge";
+import NoteItem from "../../components/NoteItem";
 
 interface NotesListPageProps {
   contentId: string;
@@ -96,19 +93,18 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     slidingRef.current[id] = true;
   };
 
-  const formatDateWithoutYear = (date: any) => {
-    const options: Intl.DateTimeFormatOptions = {
-      month: "short",
-      day: "numeric",
-    };
-    return new Date(date.toDate()).toLocaleDateString(undefined, options);
-  };
-
   const handleInput = (ev: CustomEvent) => {
     const query =
       (ev.target as HTMLIonSearchbarElement).value?.toLowerCase() || "";
+
     setResults(
-      allNotes.filter((note) => note.title.toLowerCase().includes(query))
+      allNotes.filter((note) => {
+        const titleMatches = note.title.toLowerCase().includes(query);
+        const tagsMatch = note.metadata?.tags?.some((tag) =>
+          tag.toLowerCase().includes(query)
+        );
+        return titleMatches || tagsMatch;
+      })
     );
   };
 
@@ -150,35 +146,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
                 onIonDrag={() => handleSliding(note.id)}
               >
                 <IonMenuToggle>
-                  <IonItem button={true} onClick={() => handleSelectNote(note)}>
-                    <IonLabel>
-                      <h2>{note.title == "" ? "(No Title)" : note.title}</h2>
-                      <div className="line-clamp-2 mb-1 text-sm text-gray-500">
-                        {note.metadata?.sample ? note.metadata.sample : ""}
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <div className=" flex space-x-2 mr-2">
-                          {note.metadata?.pin && (
-                            <p>
-                              <BookmarkIcon className="h-3 w-3 inline-block" />
-                            </p>
-                          )}
-                          <p className="whitespace-nowrap">
-                            {formatDateWithoutYear(note.updatedAt)}
-                          </p>
-                        </div>
-                        <div>
-                          <div className="flex overflow-x-auto space-x-2 ">
-                            {note.metadata &&
-                              note.metadata.tags &&
-                              note.metadata.tags.map((tag, index) => (
-                                <SmallBadge key={index} tag={tag} />
-                              ))}
-                          </div>
-                        </div>
-                      </div>
-                    </IonLabel>
-                  </IonItem>
+                  <NoteItem note={note} handleSelectNote={handleSelectNote} />
                 </IonMenuToggle>
 
                 <IonItemOptions side="start">
