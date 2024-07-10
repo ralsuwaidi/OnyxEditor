@@ -6,47 +6,22 @@ import {
 } from "@tiptap/core";
 
 export interface TagsOptions {
-  /**
-   * HTML attributes to add to the tags element.
-   * @default {}
-   * @example { class: 'tags' }
-   */
   HTMLAttributes: Record<string, any>;
 }
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     tags: {
-      /**
-       * Set a tags mark
-       */
       setTags: () => ReturnType;
-      /**
-       * Toggle a tags mark
-       */
       toggleTags: () => ReturnType;
-      /**
-       * Unset a tags mark
-       */
       unsetTags: () => ReturnType;
     };
   }
 }
 
-/**
- * Matches tags text via `#` as input.
- */
 const tagsInputRegex = /(?:^|\s)(#[^\s#]+\s|$)$/;
-
-/**
- * Matches tags text via `#` while pasting.
- */
 const tagsPasteRegex = /(?:^|\s)(#(\w+))(?=\s|$)/g;
 
-/**
- * This extension allows you to mark text as tags.
- * @see https://tiptap.dev/api/marks/mark
- */
 export const Tags = Mark.create<TagsOptions>({
   name: "tags",
 
@@ -115,5 +90,16 @@ export const Tags = Mark.create<TagsOptions>({
         type: this.type,
       }),
     ];
+  },
+
+  addStorage() {
+    return {
+      markdown: {
+        serialize(state: any, mark: any) {
+          state.write(` #${mark.attrs.tag}`);
+          state.closeMark(mark);
+        },
+      },
+    };
   },
 });

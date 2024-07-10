@@ -52,7 +52,6 @@ class FirestoreService implements FirestoreServiceInterface {
       const savedData = docSnap.data();
       return {
         id: docRef.id,
-        content: savedData.content,
         title: savedData.title,
         mdcontent: savedData.mdcontent,
         createdAt: savedData.createdAt,
