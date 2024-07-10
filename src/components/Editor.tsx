@@ -40,6 +40,7 @@ import TableOfContents, {
 } from "@tiptap-pro/extension-table-of-contents";
 import { Tags } from "../extensions/tags";
 import useNoteStore from "../contexts/noteStore";
+import container from "../extensions/container";
 
 const Editor = () => {
   const setEditor = useNoteStore((state) => state.setEditor);
@@ -76,6 +77,7 @@ const Editor = () => {
       nested: true,
     }),
     Typography,
+    container,
     Strike,
     Image.configure({
       allowBase64: true,
@@ -102,6 +104,7 @@ const Editor = () => {
     }),
     OrderedList,
     TableCell,
+
     HardBreak,
     Heading.configure({
       levels: [1, 2, 3, 4, 5],
