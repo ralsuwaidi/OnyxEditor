@@ -40,6 +40,7 @@ import TableOfContents, {
 import useNoteStore from "../contexts/noteStore";
 import container from "../extensions/container";
 import Tag from "../extensions/tag";
+import { Footnotes, FootnoteReference, Footnote } from "tiptap-footnotes";
 
 const Editor = () => {
   const setEditor = useNoteStore((state) => state.setEditor);
@@ -57,7 +58,9 @@ const Editor = () => {
 
   const extensions = [
     Paragraph,
-    Document,
+    Document.extend({
+      content: "block+ footnotes",
+    }),
     Text,
     Bold,
     Blockquote,
@@ -116,6 +119,9 @@ const Editor = () => {
       },
     }),
     CustomCode,
+    Footnotes,
+    Footnote,
+    FootnoteReference,
     BulletList,
     Link.configure({
       openOnClick: true,
