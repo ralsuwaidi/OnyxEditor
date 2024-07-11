@@ -1,5 +1,9 @@
 function getSample(mdcontent: string): string {
-  const words = mdcontent.trim().split(/\s+/).slice(0, 30);
+  // Remove HTML tags
+  const contentWithoutTags = mdcontent.replace(/<[^>]*>/g, "");
+
+  // Split the content into words, take the first 30, and join them back into a string
+  const words = contentWithoutTags.trim().split(/\s+/).slice(0, 30);
 
   return words.join(" ");
 }

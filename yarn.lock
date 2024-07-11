@@ -225,6 +225,13 @@
   resolved "https://registry.npmjs.org/@fastify/busboy/-/busboy-2.1.1.tgz"
   integrity sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==
 
+"@fedify/markdown-it-hashtag@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@fedify/markdown-it-hashtag/-/markdown-it-hashtag-0.2.0.tgz#89dc03c408730c60489a7c217fa25e757f6368be"
+  integrity sha512-kg8LKcSzemcG356ZBjfV2WyRAIqUbZ1t1XTRgYOlmjv1HNrMaKQiQc6I2zYtZIb+8LKAJbDld7ZScVLCE/RSWQ==
+  dependencies:
+    markdown-it "^14.1.0"
+
 "@firebase/analytics-compat@0.2.10":
   version "0.2.10"
   resolved "https://registry.npmjs.org/@firebase/analytics-compat/-/analytics-compat-0.2.10.tgz"
@@ -1297,6 +1304,11 @@
   version "2.4.0"
   resolved "https://registry.npmjs.org/@tiptap/extension-task-list/-/extension-task-list-2.4.0.tgz"
   integrity sha512-vmUB3wEJU81QbiHUygBlselQW8YIW8/85UTwANvWx8+KEWyM7EUF4utcm5R2UobIprIcWb4hyVkvW/5iou25gg==
+
+"@tiptap/extension-text-style@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-text-style/-/extension-text-style-2.4.0.tgz#9f86d8de4606bc37090b7b02c2aaf40bb37a860f"
+  integrity sha512-H0uPWeZ4sXz3o836TDWnpd38qClqzEM2d6QJ9TK+cQ1vE5Gp8wQ5W4fwUV1KAHzpJKE/15+BXBjLyVYQdmXDaQ==
 
 "@tiptap/extension-text@^2.4.0":
   version "2.4.0"
@@ -2566,10 +2578,10 @@ markdown-it-container@^4.0.0:
   resolved "https://registry.yarnpkg.com/markdown-it-container/-/markdown-it-container-4.0.0.tgz#3912394f7da6e8ef3b43a0f58b1d0ded851f2a38"
   integrity sha512-HaNccxUH0l7BNGYbFbjmGpf5aLHAMTinqRZQAEQbMr2cdD3z91Q6kIo1oUn1CQndkT03jat6ckrdRYuwwqLlQw==
 
-markdown-it-hashtag@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/markdown-it-hashtag/-/markdown-it-hashtag-0.4.0.tgz#99824c44eb06a82167574cc271398fa80d79b631"
-  integrity sha512-+VCMH+f4/Ud5wPEtcAMrlLbUrrGViwR9JvjPy//X3Z7ZG1j5nQuHtDLTGZfMhkqYTMY+cTZgZkVNBsXMfU93Yg==
+markdown-it-hashtags@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/markdown-it-hashtags/-/markdown-it-hashtags-1.0.2.tgz#49e18bf37c48b70e4b759983825bec826ca3eb44"
+  integrity sha512-2x/8vzP/h8jr+PhBdgYkaqdf48ckGnAXPd8zDdgcioOuhK73lMQlOdNGMBPapEBucGe275C5Vr+cBPLyfgBy2A==
 
 markdown-it-mark@^4.0.0:
   version "4.0.0"

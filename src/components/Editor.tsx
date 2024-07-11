@@ -27,7 +27,6 @@ import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import TaskList from "@tiptap/extension-task-list";
 import CodeBlock from "@tiptap/extension-code-block";
 import TaskItem from "@tiptap/extension-task-item";
-import MarkdownPaste from "../extensions/MarkdownPaste";
 import BubbleMenu from "./BubbleMenu";
 import FloatingMenu from "./FloatingMenu";
 import { useSetLink } from "../hooks/useSetLink";
@@ -38,9 +37,9 @@ import { IonSpinner } from "@ionic/react";
 import TableOfContents, {
   getHierarchicalIndexes,
 } from "@tiptap-pro/extension-table-of-contents";
-import { Tags } from "../extensions/tags";
 import useNoteStore from "../contexts/noteStore";
 import container from "../extensions/container";
+import Tag from "../extensions/tag";
 
 const Editor = () => {
   const setEditor = useNoteStore((state) => state.setEditor);
@@ -63,16 +62,18 @@ const Editor = () => {
     Bold,
     Blockquote,
     CodeBlock,
+    Tag,
     Italic,
     ListItem,
+    // TextStyle,
     TaskList,
     Markdown.configure({
       transformCopiedText: true,
       linkify: true,
+      html: true,
       tightListClass: "tight",
       transformPastedText: true,
     }),
-    Tags,
     TaskItem.configure({
       nested: true,
     }),
@@ -104,7 +105,6 @@ const Editor = () => {
     }),
     OrderedList,
     TableCell,
-
     HardBreak,
     Heading.configure({
       levels: [1, 2, 3, 4, 5],
@@ -117,7 +117,6 @@ const Editor = () => {
     }),
     CustomCode,
     BulletList,
-    MarkdownPaste,
     Link.configure({
       openOnClick: true,
       autolink: true,
