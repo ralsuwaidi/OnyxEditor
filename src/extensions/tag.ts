@@ -5,6 +5,8 @@ import {
   mergeAttributes,
 } from "@tiptap/core";
 
+import markdownitHashtag from "markdown-it-hashtag";
+
 export interface TagOptions {
   /**
    * HTML attributes to add to the tag element.
@@ -48,6 +50,7 @@ export const Tag = Mark.create<TagOptions>({
   inline: true,
   inclusive: false,
   exitable: true,
+  spanning: false,
 
   addOptions() {
     return {
@@ -62,6 +65,10 @@ export const Tag = Mark.create<TagOptions>({
     return {
       tag: {
         default: null,
+        parseHTML: (element) => element.getAttribute("data-tag"),
+        renderHTML: (attributes) => ({
+          "data-tag": attributes.tag,
+        }),
       },
     };
   },
@@ -121,6 +128,39 @@ export const Tag = Mark.create<TagOptions>({
         }),
       }),
     ];
+  },
+
+  addStorage() {
+    return {
+      markdown: {
+        serialize: {
+          open() {
+            return ``;
+          },
+          close() {
+            return "";
+          },
+        },
+        parse: {
+          setup(markdownit: markdownit) {
+            markdownit.use(markdownitHashtag, {});
+
+            markdownit.renderer.rules.hashtag_open = function (tokens, idx) {
+              var tagName = tokens[idx].content.toLowerCase();
+              return '<span class="tag" data-tag="' + tagName + '">';
+            };
+
+            markdownit.renderer.rules.hashtag_text = function (tokens, idx) {
+              return "#" + tokens[idx].content;
+            };
+
+            markdownit.renderer.rules.hashtag_close = function () {
+              return "</span>";
+            };
+          },
+        },
+      },
+    };
   },
 });
 
