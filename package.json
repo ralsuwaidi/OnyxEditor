@@ -70,6 +70,7 @@
     "lodash": "^4.17.21",
     "markdown-it": "^14.1.0",
     "markdown-it-container": "^4.0.0",
+    "markdown-it-hashtag": "^0.4.0",
     "markdown-it-hashtags": "^1.0.2",
     "markdown-it-mark": "^4.0.0",
     "marked": "^13.0.1",
