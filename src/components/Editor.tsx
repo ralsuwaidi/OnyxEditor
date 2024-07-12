@@ -40,6 +40,7 @@ import TableOfContents, {
 import useNoteStore from "../contexts/noteStore";
 import container from "../extensions/container";
 import Tag from "../extensions/tag";
+import spoiler from "../extensions/spoiler";
 
 const Editor = () => {
   const setEditor = useNoteStore((state) => state.setEditor);
@@ -87,6 +88,7 @@ const Editor = () => {
     }),
     Underline,
     Focus,
+    spoiler,
     HorizontalRule,
     TableOfContents.configure({
       getIndex: getHierarchicalIndexes,
