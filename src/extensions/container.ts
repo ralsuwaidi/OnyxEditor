@@ -1,5 +1,5 @@
 import { Node, mergeAttributes } from "@tiptap/core";
-import markdownitContainer from "markdown-it-container";
+import { container } from "@mdit/plugin-container";
 
 // Define an interface for the options that will be passed to the Node.create function
 interface ContainerOptions {
@@ -52,7 +52,7 @@ export default Node.create<ContainerOptions>({
           setup: (markdownit: any) => {
             // Use markdown-it-container plugin for each class
             Object.keys(this.options.classes).forEach((className) => {
-              markdownit.use(markdownitContainer, className);
+              markdownit.use(container, { name: className });
             });
           },
         },
