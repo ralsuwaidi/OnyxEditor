@@ -1,4 +1,9 @@
-import { Mark, markInputRule, markPasteRule } from "@tiptap/core";
+import {
+  Mark,
+  markInputRule,
+  markPasteRule,
+  mergeAttributes,
+} from "@tiptap/core";
 
 export interface TagOptions {
   /**
@@ -41,18 +46,22 @@ export const tagPasteRegex = /(#\w+)\s/g;
 export const Tag = Mark.create<TagOptions>({
   name: "tag",
   inline: true,
-  atom: true,
-  isolating: true,
   inclusive: false,
   exitable: true,
-  spanning: false,
-  defining: true,
+
+  addOptions() {
+    return {
+      HTMLAttributes: {
+        class:
+          "tag inline-flex items-center rounded-md bg-gray-50 dark:bg-gray-800 no-underline px-1 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10 dark:ring-gray-500/20",
+      },
+    };
+  },
 
   addAttributes() {
     return {
-      class: {
-        default:
-          "tag inline-flex items-center rounded-md bg-gray-50 dark:bg-gray-800 no-underline px-1 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10 dark:ring-gray-500/20",
+      tag: {
+        default: null,
       },
     };
   },
@@ -61,12 +70,19 @@ export const Tag = Mark.create<TagOptions>({
     return [
       {
         tag: "span.tag",
+        getAttrs: (element) => ({
+          tag: element.getAttribute("data-tag"),
+        }),
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["span", HTMLAttributes, 0];
+    return [
+      "span",
+      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+      0,
+    ];
   },
 
   addCommands() {
@@ -89,7 +105,7 @@ export const Tag = Mark.create<TagOptions>({
         find: tagInputRegex,
         type: this.type,
         getAttributes: (match) => ({
-          tag: match,
+          tag: match[1],
         }),
       }),
     ];
@@ -100,35 +116,12 @@ export const Tag = Mark.create<TagOptions>({
       markPasteRule({
         find: tagPasteRegex,
         type: this.type,
-        getAttributes: (match) => ({ tag: match }),
+        getAttributes: (match) => ({
+          tag: match[1],
+        }),
       }),
     ];
   },
-
-  //   addStorage() {
-  //     return {
-  //       markdown: {
-  //         serialize: {
-  //           open(state, mark) {
-  //             console.log("Opening tag:", mark);
-  //             if (!mark) {
-  //               throw new Error("Tag attribute is missing");
-  //             }
-  //             state.write(`#${mark} `);
-  //           },
-  //           close(state, mark) {
-  //             console.log("Closing tag:", mark);
-  //           },
-  //         },
-
-  //         parse: {
-  //           setup(markdownit: any) {
-  //             markdownit.use(markdownitHashtag);
-  //           },
-  //         },
-  //       },
-  //     };
-  //   },
 });
 
 export default Tag;
