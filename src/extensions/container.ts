@@ -25,10 +25,12 @@ export default Node.create<ContainerOptions>({
     return {
       // Map semantic classes to Tailwind CSS classes
       classes: {
-        info: "bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4",
+        info:
+          "bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 dark:bg-blue-900 dark:border-blue-300 dark:text-blue-300",
         warning:
-          "bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4",
-        danger: "bg-red-100 border-l-4 border-red-500 text-red-700 p-4",
+          "bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 dark:bg-yellow-900 dark:border-yellow-300 dark:text-yellow-300",
+        danger:
+          "bg-red-100 border-l-4 border-red-500 text-red-700 p-4 dark:bg-red-900 dark:border-red-300 dark:text-red-300",
       },
     };
   },

@@ -857,6 +857,13 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@mdit/plugin-mark@^0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@mdit/plugin-mark/-/plugin-mark-0.12.0.tgz#c2a9f67548c5091e56a996d355b26db566853a91"
+  integrity sha512-BDFwbV/tbgUGL8KF2ymYNLEXT2KNBLe8D0rshDrbB4Iko1U2DywACQkmaUbYBJ1VCn7/dff35at9fWrm3QjrwQ==
+  dependencies:
+    "@types/markdown-it" "^14.1.1"
+
 "@mdit/plugin-spoiler@^0.12.0":
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/@mdit/plugin-spoiler/-/plugin-spoiler-0.12.0.tgz#e4d71b5144a97724b0d33fe612d3f7ebf84bccc7"

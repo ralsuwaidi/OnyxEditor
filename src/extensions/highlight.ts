@@ -1,5 +1,5 @@
 import Highlight from "@tiptap/extension-highlight";
-import markdownitMark from "markdown-it-mark";
+import { mark } from "@mdit/plugin-mark";
 
 // Extend the Highlight extension to add custom keyboard shortcuts and markdown parsing/serialization
 const CustomHighlight = Highlight.extend({
@@ -61,7 +61,7 @@ const CustomHighlight = Highlight.extend({
         },
         parse: {
           setup(markdownit: any) {
-            markdownit.use(markdownitMark);
+            markdownit.use(mark);
           },
           updateDOM(node: any) {
             if (node.tagName === "mark") {
