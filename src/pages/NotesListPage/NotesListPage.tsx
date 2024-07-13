@@ -1,28 +1,9 @@
-import {
-  IonContent,
-  IonHeader,
-  IonMenu,
-  IonTitle,
-  IonToolbar,
-  IonList,
-  IonButton,
-  IonButtons,
-  IonIcon,
-  IonRefresher,
-  IonRefresherContent,
-  IonMenuToggle,
-  IonSearchbar,
-  IonItemSliding,
-  IonItemOptions,
-  IonItemOption,
-  IonToast,
-} from "@ionic/react";
-import { add } from "ionicons/icons";
+import { IonMenu, IonToast } from "@ionic/react";
 import { useEffect, useRef, useState } from "react";
-import { SortNotes } from "../../utils/sortNotes";
 import { NoteMetadataType } from "../../types/NoteType";
 import useNoteStore from "../../contexts/noteStore";
-import NoteItem from "../../components/NoteItem";
+import NotesListHeader from "../../components/NoteListHeader";
+import NotesListContent from "../../components/NotesListContent";
 
 interface NotesListPageProps {
   contentId: string;
@@ -118,66 +99,19 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
         contentId={contentId}
         type="push"
       >
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Notes</IonTitle>
-            <IonButtons slot="end">
-              <IonButton onClick={handleCreateNewNote}>
-                <IonIcon icon={add} />
-              </IonButton>
-            </IonButtons>
-          </IonToolbar>
-          <IonToolbar>
-            <IonSearchbar
-              debounce={500}
-              onIonInput={handleInput}
-              placeholder="Search Note"
-            ></IonSearchbar>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
-            <IonRefresherContent />
-          </IonRefresher>
-          <IonList>
-            {sortedNotes.sort(SortNotes).map((note) => (
-              <IonItemSliding
-                key={note.id}
-                onIonDrag={() => handleSliding(note.id)}
-              >
-                <IonMenuToggle>
-                  <NoteItem note={note} handleSelectNote={handleSelectNote} />
-                </IonMenuToggle>
+        <NotesListHeader
+          handleCreateNewNote={handleCreateNewNote}
+          handleInput={handleInput}
+        />
 
-                <IonItemOptions side="start">
-                  <IonItemOption
-                    className="min-w-24"
-                    color="primary"
-                    onClick={(event) =>
-                      handlePinNote(
-                        note,
-                        event,
-                        event.currentTarget.closest("ion-item-sliding")!
-                      )
-                    }
-                  >
-                    {note.metadata?.pin ? "Unpin" : "Pin"}
-                  </IonItemOption>
-                </IonItemOptions>
-
-                <IonItemOptions>
-                  <IonItemOption
-                    className="min-w-24"
-                    color="danger"
-                    onClick={() => handleDeleteNote(note.id)}
-                  >
-                    Delete
-                  </IonItemOption>
-                </IonItemOptions>
-              </IonItemSliding>
-            ))}
-          </IonList>
-        </IonContent>
+        <NotesListContent
+          sortedNotes={sortedNotes}
+          handleRefresh={handleRefresh}
+          handleSliding={handleSliding}
+          handleSelectNote={handleSelectNote}
+          handlePinNote={handlePinNote}
+          handleDeleteNote={handleDeleteNote}
+        />
       </IonMenu>
       <IonToast
         isOpen={!!showToast}
