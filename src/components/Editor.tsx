@@ -22,6 +22,7 @@ import Blockquote from "@tiptap/extension-blockquote";
 import Underline from "@tiptap/extension-underline";
 import ListItem from "@tiptap/extension-list-item";
 import Typography from "@tiptap/extension-typography";
+import Placeholder from "@tiptap/extension-placeholder";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import TaskList from "@tiptap/extension-task-list";
@@ -68,7 +69,10 @@ const Editor = () => {
     Tag,
     Italic,
     ListItem,
-    // TextStyle,
+    Placeholder.configure({
+      placeholder: "Write something …",
+      // color using css
+    }),
     TaskList,
     Markdown.configure({
       transformCopiedText: true,
