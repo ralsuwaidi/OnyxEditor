@@ -1,0 +1,9 @@
+.notes-list-title-btn {
+  --color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+  .notes-list-title-btn {
+    --color: white;
+  }
+}

@@ -2,7 +2,7 @@ import { IonMenu, IonToast } from "@ionic/react";
 import { useEffect, useRef, useState } from "react";
 import { NoteMetadataType } from "../../types/NoteType";
 import useNoteStore from "../../contexts/noteStore";
-import NotesListHeader from "../../components/NoteListHeader";
+import NotesListHeader from "../../components/NotesListHeader/NoteListHeader";
 import NotesListContent from "../../components/NotesListContent";
 
 interface NotesListPageProps {
