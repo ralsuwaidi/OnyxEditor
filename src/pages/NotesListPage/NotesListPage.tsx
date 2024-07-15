@@ -1,11 +1,12 @@
 // components/NotesListPage.tsx
-import { IonMenu, IonToast } from "@ionic/react";
-import { useRef } from "react";
+import { IonMenu, IonToast, IonContent } from "@ionic/react";
+import { useRef, useState } from "react";
 import { useNotesList } from "../../hooks/useNotesList";
 import { useSliding } from "../../hooks/useSliding";
 import { NoteMetadataType } from "../../types/NoteType";
 import NotesListHeader from "../../components/NotesListHeader/NoteListHeader";
 import NotesListContent from "../../components/NotesListContent";
+import JournalEntries from "../../components/JournalEntries";
 
 interface NotesListPageProps {
   contentId: string;
@@ -25,6 +26,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
   } = useNotesList();
 
   const { handleSliding, isSliding, resetSliding } = useSliding();
+  const [currentView, setCurrentView] = useState<"notes" | "journal">("notes");
 
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
 
@@ -55,16 +57,24 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
               (ev.target as HTMLIonSearchbarElement).value?.toLowerCase() || ""
             )
           }
+          currentView={currentView}
+          switchView={setCurrentView}
         />
 
-        <NotesListContent
-          sortedNotes={sortedNotes}
-          handleRefresh={handleRefresh}
-          handleSliding={handleSliding}
-          handleSelectNote={handleNoteSelect}
-          handlePinNote={handlePinNote}
-          handleDeleteNote={handleDeleteNote}
-        />
+        <IonContent className="ion-padding">
+          {currentView === "notes" ? (
+            <NotesListContent
+              sortedNotes={sortedNotes}
+              handleRefresh={handleRefresh}
+              handleSliding={handleSliding}
+              handleSelectNote={handleNoteSelect}
+              handlePinNote={handlePinNote}
+              handleDeleteNote={handleDeleteNote}
+            />
+          ) : (
+            <JournalEntries />
+          )}
+        </IonContent>
       </IonMenu>
       <IonToast
         isOpen={!!showToast}

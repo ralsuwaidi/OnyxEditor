@@ -1,4 +1,5 @@
-import React from "react";
+// components/NotesListHeader/NotesListHeader.tsx
+import React, { useState } from "react";
 import {
   IonHeader,
   IonToolbar,
@@ -13,17 +14,28 @@ import {
   IonItem,
 } from "@ionic/react";
 import "./NotesListHeader.css";
-import { add, chevronDownOutline } from "ionicons/icons"; // Import the chevron icon
+import { add, chevronDownOutline } from "ionicons/icons";
 
 interface NotesListHeaderProps {
   handleCreateNewNote: () => void;
   handleInput: (ev: CustomEvent) => void;
+  currentView: "notes" | "journal";
+  switchView: (view: "notes" | "journal") => void;
 }
 
 const NotesListHeader: React.FC<NotesListHeaderProps> = ({
   handleCreateNewNote,
   handleInput,
+  currentView,
+  switchView,
 }) => {
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
+  const handleViewSwitch = (view: "notes" | "journal") => {
+    switchView(view);
+    setPopoverOpen(false);
+  };
+
   return (
     <IonHeader>
       <IonToolbar>
@@ -32,22 +44,51 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
             className="notes-list-title-btn font-semibold"
             fill="clear"
             id="notes-list-title-popover"
+            onClick={() => setPopoverOpen(true)}
           >
-            Notes
+            {currentView === "notes" ? "Notes" : "Journal"}
             <IonIcon
               size="small"
               icon={chevronDownOutline}
               style={{ marginLeft: "4px" }}
-            />{" "}
+            />
           </IonButton>
         </IonTitle>
 
-        <IonPopover trigger="notes-list-title-popover" dismissOnSelect={true}>
+        <IonPopover
+          isOpen={popoverOpen}
+          onDidDismiss={() => setPopoverOpen(false)}
+          trigger="notes-list-title-popover"
+          dismissOnSelect={true}
+        >
           <IonContent>
             <IonList>
-              <IonItem button={true} detail={false}>
-                Quick Note
-              </IonItem>
+              {currentView === "notes" ? (
+                <>
+                  <IonItem
+                    button={true}
+                    detail={false}
+                    onClick={() => handleViewSwitch("journal")}
+                  >
+                    Journal
+                  </IonItem>
+                  <IonItem
+                    button={true}
+                    detail={false}
+                    onClick={handleCreateNewNote}
+                  >
+                    Quick Note
+                  </IonItem>
+                </>
+              ) : (
+                <IonItem
+                  button={true}
+                  detail={false}
+                  onClick={() => handleViewSwitch("notes")}
+                >
+                  Notes
+                </IonItem>
+              )}
             </IonList>
           </IonContent>
         </IonPopover>
@@ -62,7 +103,9 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
         <IonSearchbar
           debounce={500}
           onIonInput={handleInput}
-          placeholder="Search Note"
+          placeholder={
+            currentView === "notes" ? "Search Note" : "Search Journal"
+          }
         ></IonSearchbar>
       </IonToolbar>
     </IonHeader>

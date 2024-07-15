@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  IonContent,
   IonRefresher,
   IonRefresherContent,
   IonList,
@@ -35,7 +34,7 @@ const NotesListContent: React.FC<NotesListContentProps> = ({
   handleDeleteNote,
 }) => {
   return (
-    <IonContent className="ion-padding">
+    <>
       <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
         <IonRefresherContent />
       </IonRefresher>
@@ -77,7 +76,7 @@ const NotesListContent: React.FC<NotesListContentProps> = ({
           </IonItemSliding>
         ))}
       </IonList>
-    </IonContent>
+    </>
   );
 };
 
