@@ -1,59 +1,9 @@
 // KeyboardToolbar.tsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import useNoteStore from "../../contexts/noteStore";
-import { Editor } from "@tiptap/core";
 import { toolbarIcons } from "./toolbarIcons";
-import { EditorState, ToolbarIcon } from "../../types/KeyboardToolbarType";
-
-const useEditorState = (editor: Editor | null): EditorState => {
-  const [state, setState] = useState<EditorState>({
-    canUndo: false,
-    canRedo: false,
-    canIndent: false,
-    canOutdent: false,
-    isListItemOrTaskItem: false,
-    isTextSelected: false,
-    currentHeaderLevel: null,
-    isHeader: false,
-  });
-
-  useEffect(() => {
-    if (!editor) return;
-
-    const updateToolbar = () => {
-      setState({
-        canUndo: editor.can().undo(),
-        canRedo: editor.can().redo(),
-        canIndent:
-          editor.can().sinkListItem("listItem") ||
-          editor.can().sinkListItem("taskItem"),
-        canOutdent:
-          editor.can().liftListItem("listItem") ||
-          editor.can().liftListItem("taskItem"),
-        isListItemOrTaskItem:
-          editor.isActive("listItem") || editor.isActive("taskItem"),
-        isTextSelected: editor.state.selection.empty === false,
-        currentHeaderLevel: [1, 2, 3, 4].find((level) =>
-          editor.isActive("heading", { level })
-        ) as EditorState["currentHeaderLevel"],
-        isHeader: [1, 2, 3, 4].some((level) =>
-          editor.isActive("heading", { level })
-        ),
-      });
-    };
-
-    updateToolbar();
-    editor.on("update", updateToolbar);
-    editor.on("selectionUpdate", updateToolbar);
-
-    return () => {
-      editor.off("update", updateToolbar);
-      editor.off("selectionUpdate", updateToolbar);
-    };
-  }, [editor]);
-
-  return state;
-};
+import { ToolbarIcon } from "../../types/KeyboardToolbarType";
+import { useKeyboardEditorState } from "../../hooks/useKeyboardEditorState";
 
 interface ToolbarButtonProps {
   icon: ToolbarIcon["icon"];
@@ -81,7 +31,7 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
 
 const KeyboardToolbar: React.FC = () => {
   const editor = useNoteStore((state) => state.editor);
-  const editorState = useEditorState(editor);
+  const editorState = useKeyboardEditorState(editor);
 
   const handleAction = (action: ToolbarIcon["action"]) => {
     if (editor && action) {
