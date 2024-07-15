@@ -198,7 +198,7 @@ export default function EditorPage() {
         </IonContent>
 
         {isVisible && isPlatform("ios") && (
-          <div className="h-8">
+          <div className="h-10">
             <KeyboardToolbar />
           </div>
         )}
