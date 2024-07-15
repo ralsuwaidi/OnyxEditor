@@ -21,6 +21,8 @@ import useNoteStore from "../../contexts/noteStore";
 import { isPlatform } from "@ionic/react";
 import MobileEditorHeader from "../../components/MobileEditorHeader";
 
+import KeyboardToolbar from "../../components/KeyboardToolbar/KeyboardToolbar";
+import { useKeyboardState } from "@ionic/react-hooks/keyboard";
 export default function EditorPage() {
   const currentNote = useNoteStore((state) => state.currentNote);
   const loading = useNoteStore((state) => state.loading);
@@ -34,6 +36,14 @@ export default function EditorPage() {
   const [present, dismiss] = useIonModal(SearchModal, {
     dismiss: (data: string, role: string) => dismiss(data, role),
   });
+  const { isOpen } = useKeyboardState();
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (isOpen !== undefined) {
+      setIsVisible(isOpen);
+    }
+  }, [isOpen]);
 
   function openModal(event: CustomEvent<RefresherEventDetail>) {
     present({
@@ -186,6 +196,13 @@ export default function EditorPage() {
             </div>
           </div>
         </IonContent>
+
+        {isVisible && isPlatform("ios") && (
+          <div className="h-8">
+            <KeyboardToolbar />
+          </div>
+        )}
+
         <dialog id="my_modal_1" className="modal">
           <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-background">
             <IonSpinner className="text-gray-600 dark:text-gray-200" />

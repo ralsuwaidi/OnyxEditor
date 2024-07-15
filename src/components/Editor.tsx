@@ -29,7 +29,6 @@ import TaskList from "@tiptap/extension-task-list";
 import CodeBlock from "@tiptap/extension-code-block";
 import TaskItem from "@tiptap/extension-task-item";
 import BubbleMenu from "./BubbleMenu";
-import FloatingMenu from "./FloatingMenu";
 import { useSetLink } from "../hooks/useSetLink";
 import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
@@ -158,7 +157,6 @@ const Editor = () => {
     <>
       <EditorContent editor={editor} />
       {editor && <BubbleMenu editor={editor} setLink={setLink} />}
-      {editor && <FloatingMenu editor={editor} />}
     </>
   );
 };
