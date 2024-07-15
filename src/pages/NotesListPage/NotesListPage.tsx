@@ -1,7 +1,9 @@
+// components/NotesListPage.tsx
 import { IonMenu, IonToast } from "@ionic/react";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
+import { useNotesList } from "../../hooks/useNotesList";
+import { useSliding } from "../../hooks/useSliding";
 import { NoteMetadataType } from "../../types/NoteType";
-import useNoteStore from "../../contexts/noteStore";
 import NotesListHeader from "../../components/NotesListHeader/NoteListHeader";
 import NotesListContent from "../../components/NotesListContent";
 
@@ -10,86 +12,33 @@ interface NotesListPageProps {
 }
 
 export default function NotesListPage({ contentId }: NotesListPageProps) {
-  const allNotes = useNoteStore((state) => state.allNotes);
-  const fetchAllNotes = useNoteStore((state) => state.fetchAllNotes);
-  const createNote = useNoteStore((state) => state.createNote);
-  const togglePinNote = useNoteStore((state) => state.pinNote);
-  const deleteNoteById = useNoteStore((state) => state.deleteNoteById);
-  const setCurrentNoteById = useNoteStore((state) => state.setCurrentNoteById);
+  const {
+    sortedNotes,
+    showToast,
+    setShowToast,
+    handleRefresh,
+    handleCreateNewNote,
+    handlePinNote,
+    handleDeleteNote,
+    handleSelectNote,
+    handleInput,
+  } = useNotesList();
 
-  const [results, setResults] = useState<NoteMetadataType[]>([]);
-  const [showToast, setShowToast] = useState<string | null>(null);
+  const { handleSliding, isSliding, resetSliding } = useSliding();
+
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
-  const slidingRef = useRef<{ [key: string]: boolean }>({});
 
-  useEffect(() => {
-    setResults(allNotes);
-  }, [allNotes]);
-
-  const handleRefresh = async (event: CustomEvent) => {
-    await fetchAllNotes();
-    event.detail.complete();
+  const handleNoteSelect = (noteMetadata: NoteMetadataType) => {
+    if (!isSliding(noteMetadata.id)) {
+      handleSelectNote(noteMetadata);
+    }
+    resetSliding(noteMetadata.id);
   };
 
-  const handleCreateNewNote = async () => {
-    await createNote();
+  const handleCreateNote = async () => {
+    await handleCreateNewNote();
     menuRef.current?.close();
   };
-
-  const handlePinNote = async (
-    noteMetadata: NoteMetadataType,
-    event: any,
-    slidingItem: HTMLIonItemSlidingElement
-  ) => {
-    event.stopPropagation();
-    try {
-      togglePinNote(noteMetadata);
-      setShowToast("Note pinned successfully");
-    } catch (error) {
-      console.error("Failed to pin note:", error);
-      setShowToast("Failed to pin note");
-    } finally {
-      slidingItem.close();
-    }
-  };
-
-  const handleDeleteNote = async (id: string) => {
-    try {
-      deleteNoteById(id);
-      setShowToast("Note deleted successfully");
-    } catch (error) {
-      console.error("Failed to delete note:", error);
-      setShowToast("Failed to delete note");
-    }
-  };
-
-  const handleSelectNote = (noteMetadata: NoteMetadataType) => {
-    if (!slidingRef.current[noteMetadata.id]) {
-      setCurrentNoteById(noteMetadata.id);
-    }
-    slidingRef.current[noteMetadata.id] = false;
-  };
-
-  const handleSliding = (id: string) => {
-    slidingRef.current[id] = true;
-  };
-
-  const handleInput = (ev: CustomEvent) => {
-    const query =
-      (ev.target as HTMLIonSearchbarElement).value?.toLowerCase() || "";
-
-    setResults(
-      allNotes.filter((note) => {
-        const titleMatches = note.title.toLowerCase().includes(query);
-        const tagsMatch = note.metadata?.tags?.some((tag) =>
-          tag.toLowerCase().includes(query)
-        );
-        return titleMatches || tagsMatch;
-      })
-    );
-  };
-
-  const sortedNotes = results.length > 0 ? results : allNotes;
 
   return (
     <>
@@ -100,15 +49,19 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
         type="push"
       >
         <NotesListHeader
-          handleCreateNewNote={handleCreateNewNote}
-          handleInput={handleInput}
+          handleCreateNewNote={handleCreateNote}
+          handleInput={(ev: CustomEvent) =>
+            handleInput(
+              (ev.target as HTMLIonSearchbarElement).value?.toLowerCase() || ""
+            )
+          }
         />
 
         <NotesListContent
           sortedNotes={sortedNotes}
           handleRefresh={handleRefresh}
           handleSliding={handleSliding}
-          handleSelectNote={handleSelectNote}
+          handleSelectNote={handleNoteSelect}
           handlePinNote={handlePinNote}
           handleDeleteNote={handleDeleteNote}
         />
