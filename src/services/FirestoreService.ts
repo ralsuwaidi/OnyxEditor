@@ -9,8 +9,12 @@ import {
   serverTimestamp,
   updateDoc,
   deleteDoc,
+  Firestore,
+  DocumentReference,
+  QuerySnapshot,
+  DocumentSnapshot,
 } from "firebase/firestore";
-import { DebouncedFunc, debounce } from "lodash";
+import { debounce, DebouncedFunc } from "lodash";
 import { NoteMetadataType, NoteType } from "../types/NoteType";
 import firestore from "./firebase";
 import { Timestamp } from "firebase/firestore";
@@ -18,37 +22,47 @@ import { extractTags, getSample } from "../libs/utils";
 
 export interface FirestoreServiceInterface {
   fetchNoteById(id: string): Promise<NoteType>;
-  fetchAllNotes(): Promise<Array<NoteMetadataType>>;
+  fetchAllNotes(): Promise<NoteMetadataType[]>;
   updateMetadata(noteMetadata: NoteMetadataType): Promise<void>;
-  updateNoteWithDebounce: DebouncedFunc<(id: string) => Promise<void>>;
+  updateNoteWithDebounce: DebouncedFunc<
+    (id: string, mdcontent: string) => Promise<void>
+  >;
   updateFirestoreNote(id: string, mdcontent: string): Promise<void>;
   createNote(): Promise<NoteType>;
   deleteNoteById(noteId: string): Promise<void>;
 }
 
 class FirestoreService implements FirestoreServiceInterface {
-  private collectionRef = collection(firestore, "documents");
+  private readonly collectionRef: ReturnType<typeof collection>;
+
+  constructor(private readonly db: Firestore) {
+    this.collectionRef = collection(this.db, "documents");
+  }
 
   private async handleError<T>(
     promise: Promise<T>,
     errorMessage: string
-  ): Promise<T | null> {
+  ): Promise<T> {
     try {
       return await promise;
     } catch (error) {
       console.error(errorMessage, error);
-      return null;
+      throw new Error(errorMessage);
     }
   }
 
+  private getDocRef(id: string): DocumentReference {
+    return doc(this.collectionRef, id);
+  }
+
   async fetchNoteById(id: string): Promise<NoteType> {
-    const docRef = doc(this.collectionRef, id);
-    const docSnap = await this.handleError(
+    const docRef = this.getDocRef(id);
+    const docSnap = await this.handleError<DocumentSnapshot>(
       getDoc(docRef),
-      "Error loading document:"
+      `Error loading document with ID ${id}`
     );
 
-    if (docSnap && docSnap.exists()) {
+    if (docSnap.exists()) {
       const savedData = docSnap.data();
       return {
         id: docRef.id,
@@ -64,98 +78,86 @@ class FirestoreService implements FirestoreServiceInterface {
   }
 
   async fetchAllNotes(): Promise<NoteMetadataType[]> {
-    const querySnapshot = await this.handleError(
+    const querySnapshot = await this.handleError<QuerySnapshot>(
       getDocs(this.collectionRef),
-      "Error loading document titles:"
+      "Error loading document titles"
     );
-    if (querySnapshot) {
-      return querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          title: data.title,
-          createdAt: data.createdAt,
-          updatedAt: data.updatedAt,
-          metadata: data.metadata || {},
-        } as NoteMetadataType;
-      });
-    }
-    return [];
+
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+        metadata: data.metadata || {},
+      } as NoteMetadataType;
+    });
   }
 
   async updateMetadata(noteMetadata: NoteMetadataType): Promise<void> {
-    const docRef = doc(this.collectionRef, noteMetadata.id);
+    const docRef = this.getDocRef(noteMetadata.id);
     await this.handleError(
       updateDoc(docRef, {
         ...noteMetadata,
         updatedAt: serverTimestamp(),
       }),
-      "Error updating metadata:"
+      `Error updating metadata for note with ID ${noteMetadata.id}`
     );
   }
 
-  updateNoteWithDebounce = debounce(
-    async (id: string, mdcontent: string): Promise<void> => {
-      await this.updateFirestoreNote(id, mdcontent);
-    },
-    1000
-  );
+  updateNoteWithDebounce: DebouncedFunc<
+    (id: string, mdcontent: string) => Promise<void>
+  > = debounce(async (id: string, mdcontent: string): Promise<void> => {
+    await this.updateFirestoreNote(id, mdcontent);
+  }, 1000);
 
   async updateFirestoreNote(id: string, mdcontent: string): Promise<void> {
-    const docRef = doc(this.collectionRef, id);
-
-    // Generate the sample and update the metadata
+    const docRef = this.getDocRef(id);
     const sampleData = getSample(mdcontent);
     const tags = extractTags(mdcontent);
 
-    // Create the update object
     const updateData = {
-      mdcontent: mdcontent,
+      mdcontent,
       "metadata.sample": sampleData,
       "metadata.tags": tags,
       updatedAt: serverTimestamp(),
     };
 
-    try {
-      await updateDoc(docRef, updateData);
-    } catch (error) {
-      console.error("Error updating content:", error);
-    }
+    await this.handleError(
+      updateDoc(docRef, updateData),
+      `Error updating content for note with ID ${id}`
+    );
   }
 
   async createNote(): Promise<NoteType> {
     const timestamp = Timestamp.now();
-    try {
-      const newNote: Omit<NoteType, "id"> = {
-        title: "",
-        mdcontent: "",
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        metadata: {},
-      };
+    const newNote: Omit<NoteType, "id"> = {
+      title: "",
+      mdcontent: "",
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      metadata: {},
+    };
 
-      const docRef = await addDoc(this.collectionRef, newNote);
+    const docRef = await this.handleError(
+      addDoc(this.collectionRef, newNote),
+      "Error creating new note"
+    );
 
-      const noteMetadata: NoteType = {
-        id: docRef.id,
-        title: newNote.title,
-        mdcontent: newNote.mdcontent,
-        createdAt: newNote.createdAt,
-        updatedAt: newNote.updatedAt,
-        metadata: newNote.metadata,
-      };
-
-      return noteMetadata;
-    } catch (error) {
-      console.error("Error creating new note:", error);
-      throw new Error("Failed to create new note");
-    }
+    return {
+      id: docRef.id,
+      ...newNote,
+    };
   }
 
   async deleteNoteById(noteId: string): Promise<void> {
-    const docRef = doc(this.collectionRef, noteId);
-    await this.handleError(deleteDoc(docRef), "Error deleting note:");
+    const docRef = this.getDocRef(noteId);
+    await this.handleError(
+      deleteDoc(docRef),
+      `Error deleting note with ID ${noteId}`
+    );
   }
 }
 
-export default new FirestoreService();
+export default new FirestoreService(firestore);
