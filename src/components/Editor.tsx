@@ -28,8 +28,6 @@ import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import TaskList from "@tiptap/extension-task-list";
 import CodeBlock from "@tiptap/extension-code-block";
 import TaskItem from "@tiptap/extension-task-item";
-import BubbleMenu from "./BubbleMenu";
-import { useSetLink } from "../hooks/useSetLink";
 import CustomHighlight from "../extensions/highlight";
 import CustomCode from "../extensions/code";
 import Link from "@tiptap/extension-link";
@@ -151,12 +149,9 @@ const Editor = () => {
     }
   }, [editor, setEditor]);
 
-  const setLink = useSetLink(editor);
-
   return (
     <>
       <EditorContent editor={editor} />
-      {editor && <BubbleMenu editor={editor} setLink={setLink} />}
     </>
   );
 };
