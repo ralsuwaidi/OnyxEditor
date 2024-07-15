@@ -112,6 +112,6 @@ export const toolbarIcons: ToolbarIcon[] = [
   {
     name: "close",
     icon: X,
-    action: () => {}, // Add your close action here
+    action: (editor: Editor) => editor.commands.blur(),
   },
 ];
