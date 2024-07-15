@@ -11,7 +11,6 @@ import {
   Link,
 } from "@phosphor-icons/react";
 import useNoteStore from "../../contexts/noteStore";
-import "./KeyboardToolbar.css";
 
 const KeyboardToolbar = () => {
   const editor = useNoteStore((state) => state.editor);
@@ -20,7 +19,7 @@ const KeyboardToolbar = () => {
   const [canRedo, setCanRedo] = useState(false);
   const [canIndent, setCanIndent] = useState(false);
   const [canOutdent, setCanOutdent] = useState(false);
-  const [isListItem, setIsListItem] = useState(false);
+  const [isListItemOrTaskItem, setIsListItemOrTaskItem] = useState(false);
   const [isTextSelected, setIsTextSelected] = useState(false);
 
   useEffect(() => {
@@ -28,9 +27,17 @@ const KeyboardToolbar = () => {
       const updateToolbar = () => {
         setCanUndo(editor.can().undo());
         setCanRedo(editor.can().redo());
-        setCanIndent(editor.can().sinkListItem("listItem"));
-        setCanOutdent(editor.can().liftListItem("listItem"));
-        setIsListItem(editor.isActive("listItem"));
+        setCanIndent(
+          editor.can().sinkListItem("listItem") ||
+            editor.can().sinkListItem("taskItem")
+        );
+        setCanOutdent(
+          editor.can().liftListItem("listItem") ||
+            editor.can().liftListItem("taskItem")
+        );
+        setIsListItemOrTaskItem(
+          editor.isActive("listItem") || editor.isActive("taskItem")
+        );
         setIsTextSelected(editor.state.selection.empty === false);
       };
 
@@ -62,13 +69,15 @@ const KeyboardToolbar = () => {
 
   const handleIndent = () => {
     if (editor) {
-      editor.chain().focus().sinkListItem("listItem").run();
+      editor.chain().focus().sinkListItem("listItem").run() ||
+        editor.chain().focus().sinkListItem("taskItem").run();
     }
   };
 
   const handleOutdent = () => {
     if (editor) {
-      editor.chain().focus().liftListItem("listItem").run();
+      editor.chain().focus().liftListItem("listItem").run() ||
+        editor.chain().focus().liftListItem("taskItem").run();
     }
   };
 
@@ -100,9 +109,7 @@ const KeyboardToolbar = () => {
   };
 
   return (
-    <div
-      className={`absolute inset-x-0 dark:bg-[#2B2B2B] bg-[#CACDD2] bottom-0 flex justify-between items-center px-4`}
-    >
+    <div className="absolute inset-x-0 dark:bg-[#2B2B2B] bg-[#CACDD2] bottom-0 flex justify-between items-center px-4">
       <div className="flex space-x-4 py-2">
         <ArrowBendUpLeft
           className={canUndo ? "" : "text-gray-400 dark:text-gray-600"}
@@ -114,7 +121,7 @@ const KeyboardToolbar = () => {
           onClick={handleRedo}
           size={24}
         />
-        {isListItem && (
+        {isListItemOrTaskItem && (
           <>
             <TextIndent
               className={canIndent ? "" : "text-gray-400 dark:text-gray-600"}
