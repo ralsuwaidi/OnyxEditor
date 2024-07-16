@@ -59,6 +59,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
           }
           currentView={currentView}
           switchView={setCurrentView}
+          allNotes={sortedNotes}
         />
 
         <IonContent className="ion-padding">

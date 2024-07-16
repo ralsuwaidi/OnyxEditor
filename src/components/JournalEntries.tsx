@@ -59,7 +59,7 @@ const JournalEntries: React.FC<JournalEntriesProps> = ({
       <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
         <IonRefresherContent />
       </IonRefresher>
-      <ol className="relative border-s border-gray-200 dark:border-gray-700">
+      <ol className="relative border-s border-gray-200 px-2 dark:border-gray-700">
         {sortedDates.map((date: string) => (
           <li key={date} className="mb-7 ms-4">
             <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
@@ -79,7 +79,7 @@ const JournalEntries: React.FC<JournalEntriesProps> = ({
               .map((entry: NoteMetadataType) => (
                 <IonMenuToggle key={entry.id} autoHide={false}>
                   <div
-                    className="border rounded p-3 hover:bg-gray-100 hover:cursor-pointer mb-2"
+                    className="border dark:border-gray-700 rounded p-3 hover:cursor-pointer mb-2"
                     onClick={() => handleSelectNote(entry)}
                   >
                     <div className="flex flex-col">
