@@ -191,10 +191,13 @@ const useNoteStore = create<NoteStore>((set, get) => {
           const dateB = b.updatedAt?.toDate?.() || new Date(0);
           return dateB.getTime() - dateA.getTime();
         });
-        const latestNote = sortedNotes[0];
+        const latestNote = sortedNotes.find(
+          (note) => note.metadata?.type === "note" || !note.metadata?.type
+        );
         if (latestNote) {
           await get().setCurrentNoteById(latestNote.id);
         }
+
         set({
           allNotes: sortedNotes,
           journalEntries: sortedNotes.filter(

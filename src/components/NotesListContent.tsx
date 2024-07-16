@@ -10,7 +10,7 @@ import {
 } from "@ionic/react";
 import { NoteMetadataType } from "../types/NoteType";
 import NoteItem from "./NoteItem";
-import { SortNotes } from "../utils/sortNotes"; // Ensure this path is correct based on your project structure
+import { SortNotes } from "../utils/sortNotes";
 
 interface NotesListContentProps {
   sortedNotes: NoteMetadataType[];
@@ -39,42 +39,47 @@ const NotesListContent: React.FC<NotesListContentProps> = ({
         <IonRefresherContent />
       </IonRefresher>
       <IonList>
-        {sortedNotes.sort(SortNotes).map((note) => (
-          <IonItemSliding
-            key={note.id}
-            onIonDrag={() => handleSliding(note.id)}
-          >
-            <IonMenuToggle>
-              <NoteItem note={note} handleSelectNote={handleSelectNote} />
-            </IonMenuToggle>
+        {sortedNotes
+          .filter(
+            (note) => note.metadata?.type === "note" || !note.metadata?.type
+          )
+          .sort(SortNotes)
+          .map((note) => (
+            <IonItemSliding
+              key={note.id}
+              onIonDrag={() => handleSliding(note.id)}
+            >
+              <IonMenuToggle>
+                <NoteItem note={note} handleSelectNote={handleSelectNote} />
+              </IonMenuToggle>
 
-            <IonItemOptions side="start">
-              <IonItemOption
-                className="min-w-24"
-                color="primary"
-                onClick={(event) =>
-                  handlePinNote(
-                    note,
-                    event,
-                    event.currentTarget.closest("ion-item-sliding")!
-                  )
-                }
-              >
-                {note.metadata?.pin ? "Unpin" : "Pin"}
-              </IonItemOption>
-            </IonItemOptions>
+              <IonItemOptions side="start">
+                <IonItemOption
+                  className="min-w-24"
+                  color="primary"
+                  onClick={(event) =>
+                    handlePinNote(
+                      note,
+                      event,
+                      event.currentTarget.closest("ion-item-sliding")!
+                    )
+                  }
+                >
+                  {note.metadata?.pin ? "Unpin" : "Pin"}
+                </IonItemOption>
+              </IonItemOptions>
 
-            <IonItemOptions>
-              <IonItemOption
-                className="min-w-24"
-                color="danger"
-                onClick={() => handleDeleteNote(note.id)}
-              >
-                Delete
-              </IonItemOption>
-            </IonItemOptions>
-          </IonItemSliding>
-        ))}
+              <IonItemOptions>
+                <IonItemOption
+                  className="min-w-24"
+                  color="danger"
+                  onClick={() => handleDeleteNote(note.id)}
+                >
+                  Delete
+                </IonItemOption>
+              </IonItemOptions>
+            </IonItemSliding>
+          ))}
       </IonList>
     </>
   );
