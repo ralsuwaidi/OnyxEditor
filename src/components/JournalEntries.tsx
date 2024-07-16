@@ -8,11 +8,51 @@ interface JournalEntriesProps {
   handleRefresh: (event: CustomEvent) => void;
 }
 
+interface GroupedEntries {
+  [date: string]: NoteMetadataType[];
+}
+
 const JournalEntries: React.FC<JournalEntriesProps> = ({
   handleSelectNote,
   handleRefresh,
 }) => {
   const journalEntries = useNoteStore((state) => state.journalEntries);
+
+  const today = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayString = yesterday.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  // Group entries by date
+  const groupedEntries: GroupedEntries = journalEntries.reduce(
+    (acc: GroupedEntries, entry: NoteMetadataType) => {
+      const date = entry.createdAt.toDate().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(entry);
+      return acc;
+    },
+    {}
+  );
+
+  // Sort dates in descending order
+  const sortedDates: string[] = Object.keys(groupedEntries).sort(
+    (a: string, b: string) => new Date(b).getTime() - new Date(a).getTime()
+  );
 
   return (
     <>
@@ -20,49 +60,44 @@ const JournalEntries: React.FC<JournalEntriesProps> = ({
         <IonRefresherContent />
       </IonRefresher>
       <ol className="relative border-s border-gray-200 dark:border-gray-700">
-        {journalEntries
-          .sort(
-            (a, b) =>
-              b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()
-          )
-          .map((entry) => (
-            <li key={entry.id} className="mb-10 ms-4">
-              <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
-              <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-                {entry.createdAt.toDate().toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-              <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
-                {entry.metadata?.sample}
-              </p>
-              <IonMenuToggle>
-                <button
-                  onClick={() => handleSelectNote(entry)}
-                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-                >
-                  Read Entry
-                  <svg
-                    className="w-3 h-3 ms-2 rtl:rotate-180"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 14 10"
+        {sortedDates.map((date: string) => (
+          <li key={date} className="mb-7 ms-4">
+            <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+            <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+              {date === today
+                ? "Today"
+                : date === yesterdayString
+                ? "Yesterday"
+                : date}
+            </time>
+            {groupedEntries[date]
+              .sort(
+                (a, b) =>
+                  b.createdAt.toDate().getTime() -
+                  a.createdAt.toDate().getTime()
+              )
+              .map((entry: NoteMetadataType) => (
+                <IonMenuToggle key={entry.id} autoHide={false}>
+                  <div
+                    className="border rounded p-3 hover:bg-gray-100 hover:cursor-pointer mb-2"
+                    onClick={() => handleSelectNote(entry)}
                   >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M1 5h12m0 0L9 1m4 4L9 9"
-                    />
-                  </svg>
-                </button>
-              </IonMenuToggle>
-            </li>
-          ))}
+                    <div className="flex flex-col">
+                      <p className="text-sm md:text-base font-normal text-gray-600 dark:text-gray-400">
+                        {entry.metadata?.sample}
+                      </p>
+                      <time className="text-xs font-normal leading-none text-gray-400 dark:text-gray-500 self-end mt-2">
+                        {entry.createdAt.toDate().toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </time>
+                    </div>
+                  </div>
+                </IonMenuToggle>
+              ))}
+          </li>
+        ))}
       </ol>
     </>
   );
