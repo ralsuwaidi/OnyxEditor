@@ -26,7 +26,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
   } = useNotesList();
 
   const { handleSliding, isSliding, resetSliding } = useSliding();
-  const [currentView, setCurrentView] = useState<"notes" | "journal">("notes");
+  const [currentView, setCurrentView] = useState<"note" | "journal">("note");
 
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
 
@@ -37,8 +37,8 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     resetSliding(noteMetadata.id);
   };
 
-  const handleCreateNote = async () => {
-    await handleCreateNewNote();
+  const handleCreateNote = async (type: "journal" | "note") => {
+    await handleCreateNewNote(type);
     menuRef.current?.close();
   };
 
@@ -51,7 +51,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
         type="push"
       >
         <NotesListHeader
-          handleCreateNewNote={handleCreateNote}
+          handleCreateNewNote={() => handleCreateNote(currentView)}
           handleInput={(ev: CustomEvent) =>
             handleInput(
               (ev.target as HTMLIonSearchbarElement).value?.toLowerCase() || ""
@@ -62,7 +62,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
         />
 
         <IonContent className="ion-padding">
-          {currentView === "notes" ? (
+          {currentView === "note" ? (
             <NotesListContent
               sortedNotes={sortedNotes}
               handleRefresh={handleRefresh}
@@ -72,7 +72,10 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
               handleDeleteNote={handleDeleteNote}
             />
           ) : (
-            <JournalEntries />
+            <JournalEntries
+              handleRefresh={handleRefresh}
+              handleSelectNote={handleNoteSelect}
+            />
           )}
         </IonContent>
       </IonMenu>

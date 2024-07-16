@@ -1,4 +1,3 @@
-// components/NotesListHeader/NotesListHeader.tsx
 import React, { useState } from "react";
 import {
   IonHeader,
@@ -17,10 +16,10 @@ import "./NotesListHeader.css";
 import { add, chevronDownOutline } from "ionicons/icons";
 
 interface NotesListHeaderProps {
-  handleCreateNewNote: () => void;
+  handleCreateNewNote: (type: "note" | "journal") => void;
   handleInput: (ev: CustomEvent) => void;
-  currentView: "notes" | "journal";
-  switchView: (view: "notes" | "journal") => void;
+  currentView: "note" | "journal";
+  switchView: (view: "note" | "journal") => void;
 }
 
 const NotesListHeader: React.FC<NotesListHeaderProps> = ({
@@ -31,7 +30,7 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
 }) => {
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  const handleViewSwitch = (view: "notes" | "journal") => {
+  const handleViewSwitch = (view: "note" | "journal") => {
     switchView(view);
     setPopoverOpen(false);
   };
@@ -46,7 +45,7 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
             id="notes-list-title-popover"
             onClick={() => setPopoverOpen(true)}
           >
-            {currentView === "notes" ? "Notes" : "Journal"}
+            {currentView === "note" ? "Notes" : "Journal"}
             <IonIcon
               size="small"
               icon={chevronDownOutline}
@@ -63,7 +62,7 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
         >
           <IonContent>
             <IonList>
-              {currentView === "notes" ? (
+              {currentView === "note" ? (
                 <>
                   <IonItem
                     button={true}
@@ -75,7 +74,7 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
                   <IonItem
                     button={true}
                     detail={false}
-                    onClick={handleCreateNewNote}
+                    onClick={() => handleCreateNewNote("note")}
                   >
                     Quick Note
                   </IonItem>
@@ -84,7 +83,7 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
                 <IonItem
                   button={true}
                   detail={false}
-                  onClick={() => handleViewSwitch("notes")}
+                  onClick={() => handleViewSwitch("note")}
                 >
                   Notes
                 </IonItem>
@@ -94,7 +93,7 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
         </IonPopover>
 
         <IonButtons slot="end">
-          <IonButton onClick={handleCreateNewNote}>
+          <IonButton onClick={() => handleCreateNewNote(currentView)}>
             <IonIcon icon={add} />
           </IonButton>
         </IonButtons>
@@ -104,7 +103,7 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
           debounce={500}
           onIonInput={handleInput}
           placeholder={
-            currentView === "notes" ? "Search Note" : "Search Journal"
+            currentView === "note" ? "Search Note" : "Search Journal"
           }
         ></IonSearchbar>
       </IonToolbar>

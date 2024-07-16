@@ -1,5 +1,3 @@
-// src/types/NoteType.ts
-
 import { Timestamp } from "firebase/firestore";
 
 export interface NoteType {
@@ -12,6 +10,7 @@ export interface NoteType {
     pin?: boolean;
     sample?: string;
     tags?: string[];
+    type?: "journal" | "quick note" | "note";
   };
 }
 

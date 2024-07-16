@@ -9,6 +9,7 @@ interface NoteState {
   allNotes: NoteMetadataType[];
   currentNote: NoteType | null;
   editor: Editor | null;
+  journalEntries: NoteMetadataType[];
   tableOfContents: TableOfContentData;
   loading: boolean;
 }
@@ -17,7 +18,7 @@ interface NoteActions {
   setEditor: (editor: Editor) => void;
   fetchAllNotes: () => Promise<void>;
   fetchNoteById: (id: string) => Promise<void>;
-  createNote: () => Promise<void>;
+  createNote: (type?: "journal" | "note") => Promise<void>;
   updateNoteMetadata: (note: NoteType) => Promise<void>;
   updateNoteContent: (id: string, mdcontent: string) => Promise<void>;
   deleteNoteById: (id: string) => Promise<void>;
@@ -33,6 +34,7 @@ type NoteStore = NoteState & NoteActions;
 
 const initialState: NoteState = {
   allNotes: [],
+  journalEntries: [],
   currentNote: null,
   editor: null,
   tableOfContents: [],
@@ -44,7 +46,13 @@ const useNoteStore = create<NoteStore>((set, get) => {
     try {
       await FirestoreService.updateMetadata(note);
       const updatedNotes = await FirestoreService.fetchAllNotes();
-      set({ allNotes: updatedNotes, currentNote: note });
+      set({
+        allNotes: updatedNotes,
+        journalEntries: updatedNotes.filter(
+          (note) => note.metadata?.type === "journal"
+        ),
+        currentNote: note,
+      });
     } catch (error) {
       console.error("Failed to update the note:", error);
     }
@@ -58,7 +66,12 @@ const useNoteStore = create<NoteStore>((set, get) => {
     fetchAllNotes: async () => {
       try {
         const notes = await FirestoreService.fetchAllNotes();
-        set({ allNotes: notes });
+        set({
+          allNotes: notes,
+          journalEntries: notes.filter(
+            (note) => note.metadata?.type === "journal"
+          ),
+        });
       } catch (error) {
         console.error("Failed to fetch all notes:", error);
       }
@@ -76,11 +89,15 @@ const useNoteStore = create<NoteStore>((set, get) => {
       }
     },
 
-    createNote: async () => {
+    createNote: async (type: "journal" | "note" = "note") => {
       try {
-        const newNote = await FirestoreService.createNote();
+        const newNote = await FirestoreService.createNote(type);
         set((state) => ({
           allNotes: [...state.allNotes, newNote],
+          journalEntries:
+            newNote.metadata?.type === "journal"
+              ? [...state.journalEntries, newNote]
+              : state.journalEntries,
         }));
         await get().setCurrentNoteById(newNote.id);
       } catch (error) {
@@ -103,6 +120,9 @@ const useNoteStore = create<NoteStore>((set, get) => {
           allNotes: state.allNotes.map((note) =>
             note.id === id ? { ...note, mdcontent } : note
           ),
+          journalEntries: state.allNotes.filter(
+            (note) => note.metadata?.type === "journal"
+          ),
         }));
       } catch (error) {
         console.error("Failed to update the note:", error);
@@ -114,7 +134,12 @@ const useNoteStore = create<NoteStore>((set, get) => {
       try {
         await FirestoreService.deleteNoteById(id);
         const updatedNotes = await FirestoreService.fetchAllNotes();
-        set({ allNotes: updatedNotes });
+        set({
+          allNotes: updatedNotes,
+          journalEntries: updatedNotes.filter(
+            (note) => note.metadata?.type === "journal"
+          ),
+        });
       } catch (error) {
         console.error("Failed to delete the note:", error);
       } finally {
@@ -170,7 +195,12 @@ const useNoteStore = create<NoteStore>((set, get) => {
         if (latestNote) {
           await get().setCurrentNoteById(latestNote.id);
         }
-        set({ allNotes: sortedNotes });
+        set({
+          allNotes: sortedNotes,
+          journalEntries: sortedNotes.filter(
+            (note) => note.metadata?.type === "journal"
+          ),
+        });
       } catch (error) {
         console.error("Failed to initialize store:", error);
       } finally {

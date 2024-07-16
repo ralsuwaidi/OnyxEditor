@@ -40,14 +40,28 @@ const KeyboardToolbar: React.FC = () => {
   };
 
   return (
-    <div className="absolute py-2 inset-x-0 dark:bg-[#2B2B2B] bg-[#CACDD2] bottom-0 flex justify-between items-center">
-      <div className="flex-1 overflow-x-auto scrollbar-hide">
-        <div className="flex space-x-4 px-4 min-w-max">
-          {toolbarIcons
-            .filter((icon) => icon.name !== "close")
-            .map((icon) =>
-              icon.isVisible ? (
-                icon.isVisible(editorState) && (
+    <div className="h-10">
+      <div className="absolute py-2 inset-x-0 dark:bg-[#2B2B2B] bg-[#CACDD2] bottom-0 flex justify-between items-center">
+        <div className="flex-1 overflow-x-auto scrollbar-hide">
+          <div className="flex space-x-4 px-4 min-w-max">
+            {toolbarIcons
+              .filter((icon) => icon.name !== "close")
+              .map((icon) =>
+                icon.isVisible ? (
+                  icon.isVisible(editorState) && (
+                    <ToolbarButton
+                      key={icon.name}
+                      icon={icon.icon}
+                      onClick={() => handleAction(icon.action)}
+                      disabled={
+                        icon.isDisabled ? icon.isDisabled(editorState) : false
+                      }
+                      isActive={
+                        icon.isActive ? icon.isActive(editorState) : false
+                      }
+                    />
+                  )
+                ) : (
                   <ToolbarButton
                     key={icon.name}
                     icon={icon.icon}
@@ -60,25 +74,15 @@ const KeyboardToolbar: React.FC = () => {
                     }
                   />
                 )
-              ) : (
-                <ToolbarButton
-                  key={icon.name}
-                  icon={icon.icon}
-                  onClick={() => handleAction(icon.action)}
-                  disabled={
-                    icon.isDisabled ? icon.isDisabled(editorState) : false
-                  }
-                  isActive={icon.isActive ? icon.isActive(editorState) : false}
-                />
-              )
-            )}
+              )}
+          </div>
         </div>
-      </div>
-      <div className="flex-shrink-0 px-4">
-        <ToolbarButton
-          icon={toolbarIcons.find((icon) => icon.name === "close")!.icon}
-          onClick={() => {}}
-        />
+        <div className="flex-shrink-0 px-4">
+          <ToolbarButton
+            icon={toolbarIcons.find((icon) => icon.name === "close")!.icon}
+            onClick={() => {}}
+          />
+        </div>
       </div>
     </div>
   );

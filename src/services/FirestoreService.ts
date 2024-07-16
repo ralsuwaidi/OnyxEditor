@@ -130,14 +130,22 @@ class FirestoreService implements FirestoreServiceInterface {
     );
   }
 
-  async createNote(): Promise<NoteType> {
+  async createNote(type: "journal" | "note" = "note"): Promise<NoteType> {
     const timestamp = Timestamp.now();
+    const dateString = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }); // "July 15, 2024"
+
     const newNote: Omit<NoteType, "id"> = {
-      title: "",
+      title: type === "journal" ? dateString : "",
       mdcontent: "",
       createdAt: timestamp,
       updatedAt: timestamp,
-      metadata: {},
+      metadata: {
+        type: type,
+      },
     };
 
     const docRef = await this.handleError(

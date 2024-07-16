@@ -23,8 +23,8 @@ export function useNotesList() {
     event.detail.complete();
   };
 
-  const handleCreateNewNote = async () => {
-    await createNote();
+  const handleCreateNewNote = async (type: "note" | "journal") => {
+    await createNote(type);
   };
 
   const handlePinNote = async (noteMetadata: NoteMetadataType) => {
