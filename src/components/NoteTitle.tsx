@@ -1,5 +1,5 @@
 import React from "react";
-import { IonHeader, IonToolbar, IonInput } from "@ionic/react";
+import { IonHeader, IonToolbar, IonTextarea } from "@ionic/react";
 
 interface NoteTitleProps {
   title: string;
@@ -15,12 +15,13 @@ const NoteTitle: React.FC<NoteTitleProps> = ({
   if (isDesktop) {
     return (
       <div className="flex justify-center mt-12">
-        <input
-          type="text"
+        <textarea
           placeholder="Note Title"
-          className="input w-full max-w-4xl mx-auto px-4 font-extrabold text-5xl focus:outline-none"
+          className="input w-full dark:bg-background max-w-4xl mx-auto px-4 font-extrabold text-5xl focus:outline-none resize-none overflow-hidden"
           onChange={(e) => onChange(e.target.value)}
           value={title}
+          rows={1}
+          style={{ minHeight: "1.5em" }}
         />
       </div>
     );
@@ -29,11 +30,13 @@ const NoteTitle: React.FC<NoteTitleProps> = ({
   return (
     <IonHeader collapse="condense">
       <IonToolbar>
-        <IonInput
+        <IonTextarea
           className="ml-3 text-3xl font-extrabold"
           value={title}
           placeholder="Enter Title"
           onIonChange={(e) => onChange(e.detail.value!)}
+          autoGrow={true}
+          rows={1}
         />
       </IonToolbar>
     </IonHeader>

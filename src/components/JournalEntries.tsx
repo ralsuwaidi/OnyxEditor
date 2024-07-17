@@ -1,7 +1,8 @@
 import React from "react";
 import useNoteStore from "../contexts/noteStore";
 import { NoteMetadataType } from "../types/NoteType";
-import { IonMenuToggle, IonRefresher, IonRefresherContent } from "@ionic/react";
+import { IonRefresher, IonRefresherContent } from "@ionic/react";
+import JournalEntryItem from "./JournalEntryItem";
 
 interface JournalEntriesProps {
   handleSelectNote: (noteMetadata: NoteMetadataType) => void;
@@ -77,24 +78,11 @@ const JournalEntries: React.FC<JournalEntriesProps> = ({
                   a.createdAt.toDate().getTime()
               )
               .map((entry: NoteMetadataType) => (
-                <IonMenuToggle key={entry.id} autoHide={false}>
-                  <div
-                    className="border dark:border-gray-700 rounded p-3 hover:cursor-pointer mb-2"
-                    onClick={() => handleSelectNote(entry)}
-                  >
-                    <div className="flex flex-col">
-                      <p className="text-sm md:text-base font-normal text-gray-600 dark:text-gray-400">
-                        {entry.metadata?.sample}
-                      </p>
-                      <time className="text-xs font-normal leading-none text-gray-400 dark:text-gray-500 self-end mt-2">
-                        {entry.createdAt.toDate().toLocaleTimeString("en-US", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </time>
-                    </div>
-                  </div>
-                </IonMenuToggle>
+                <JournalEntryItem
+                  key={entry.id}
+                  entry={entry}
+                  handleSelectNote={handleSelectNote}
+                />
               ))}
           </li>
         ))}
