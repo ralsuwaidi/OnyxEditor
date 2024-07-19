@@ -63,8 +63,8 @@ const JournalEntries: React.FC<JournalEntriesProps> = ({
       <ol className="relative border-s border-gray-200 px-2 dark:border-gray-700">
         {sortedDates.map((date: string) => (
           <li key={date} className="mb-7 ms-4">
-            <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
-            <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+            <div className="absolute w-3 h-3 bg-slate-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+            <time className="mb-2 text-sm font-normal leading-none text-slate-800 dark:text-text-color-dark">
               {date === today
                 ? "Today"
                 : date === yesterdayString

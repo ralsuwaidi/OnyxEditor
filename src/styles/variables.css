@@ -95,7 +95,6 @@ http://ionicframework.com/docs/theming/ */
   --tasklist-checkbox-bg: #ffffff;
 
   --highlight-color: rgb(219, 253, 173); /* Light mode highlight color */
-
   --onyx-dark-color-bg: rgb(28, 30, 31);
 }
 
@@ -235,10 +234,10 @@ http://ionicframework.com/docs/theming/ */
      */
 
   .md body {
-    --ion-background-color: var(--onyx-dark-color-bg);
+    --ion-background-color: @apply dark:bg-background-dark;
     --ion-background-color-rgb: 18, 18, 18;
 
-    --ion-text-color: #ffffff;
+    --ion-text-color: @apply dark:text-text-color-dark;
     --ion-text-color-rgb: 255, 255, 255;
 
     --ion-border-color: #222222;

@@ -18,7 +18,7 @@ const JournalEntryItem: React.FC<JournalEntryItemProps> = ({
     <IonMenuToggle key={entry.id} autoHide={false}>
       <div
         className={classNames("rounded-lg p-3 hover:cursor-pointer mb-2", {
-          "border-2 border-purple-700 bg-purple-50 dark:border-purple-900 dark:bg-purple-200": hasDreamTag,
+          "border border-dracula-400 bg-dracula-100 dark:border-dracula-800 dark:bg-dracula-950": hasDreamTag,
           "border dark:border-gray-700": !hasDreamTag,
         })}
         onClick={() => handleSelectNote(entry)}
@@ -28,14 +28,22 @@ const JournalEntryItem: React.FC<JournalEntryItemProps> = ({
             className={classNames(
               `line-clamp-3 text-ellipsis text-sm md:text-base font-normal `,
               {
-                "text-purple-900": hasDreamTag,
+                " text-black dark:text-text-color-dark": hasDreamTag,
                 "text-gray-600 dark:text-gray-400": !hasDreamTag,
               }
             )}
           >
             {entry.metadata?.sample}
           </div>
-          <time className="text-xs font-normal leading-none text-gray-400 dark:text-gray-500 self-end mt-2">
+          <time
+            className={classNames(
+              "text-xs font-normal leading-none dark:text-gray-500 self-end mt-2",
+              {
+                " text-black text-opacity-80 dark:text-text-color-dark": hasDreamTag,
+                "text-gray-600 dark:text-gray-400": !hasDreamTag,
+              }
+            )}
+          >
             {entry.createdAt.toDate().toLocaleTimeString("en-US", {
               hour: "2-digit",
               minute: "2-digit",

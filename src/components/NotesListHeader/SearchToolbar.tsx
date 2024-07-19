@@ -1,4 +1,4 @@
-import { IonChip, IonSearchbar, IonToolbar } from "@ionic/react";
+import { IonSearchbar, IonToolbar } from "@ionic/react";
 
 const SearchToolbar: React.FC<{
   currentView: "note" | "journal";
@@ -27,19 +27,19 @@ const SearchToolbar: React.FC<{
         onTouchStart={stopPropagation}
         onTouchMove={stopPropagation}
       >
-        <div className="flex w-full overflow-x-scroll no-scrollbar space-x-2">
+        <div className="flex w-full overflow-x-scroll no-scrollbar space-x-2 pl-3">
           {sortedUniqueTags.map((tag) => (
-            <IonChip
+            <div
               key={tag}
-              className={`text-xs py-1 px-2 flex-shrink-0 ${
+              className={`text-xs py-0.5 px-1 flex-shrink-0 ${
                 selectedTags.includes(tag)
-                  ? "bg-primary text-white"
-                  : "bg-gray-200 text-gray-700"
+                  ? "border rounded bg-slate-950 text-white dark:border-slate-700 "
+                  : " rounded bg-[#e5e5e5] dark:bg-gray-400/10 dark:text-gray-400 dark:ring-1 dark:ring-inset dark:ring-gray-400/20"
               }`}
               onClick={() => handleChipSelect(tag)}
             >
               {tag}
-            </IonChip>
+            </div>
           ))}
         </div>
       </div>
