@@ -1,4 +1,4 @@
-import { NoteMetadataType } from "../types/NoteType";
+import { NoteMetadataType } from "../types/note.types";
 
 export const SortNotes = (a: NoteMetadataType, b: NoteMetadataType) => {
   // Sort pinned notes first

@@ -15,7 +15,7 @@ import {
   DocumentSnapshot,
 } from "firebase/firestore";
 import { debounce, DebouncedFunc } from "lodash";
-import { NoteMetadataType, NoteType } from "../types/NoteType";
+import { NoteMetadataType, NoteType } from "../types/note.types";
 import firestore from "./firebase";
 import { Timestamp } from "firebase/firestore";
 import { extractTags, getSample } from "../libs/utils";

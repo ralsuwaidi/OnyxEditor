@@ -8,9 +8,10 @@ import {
   IonItemOption,
   IonMenuToggle,
 } from "@ionic/react";
-import { NoteMetadataType } from "../types/NoteType";
+import { NoteMetadataType } from "../types/note.types";
 import NoteItem from "./NoteItem";
 import { SortNotes } from "../utils/sortNotes";
+import useDocumentStore from "../contexts/useDocumentStore";
 
 interface NotesListContentProps {
   sortedNotes: NoteMetadataType[];
@@ -33,9 +34,17 @@ const NotesListContent: React.FC<NotesListContentProps> = ({
   handlePinNote,
   handleDeleteNote,
 }) => {
+  const { loadDocuments } = useDocumentStore();
+
+  const handleLocalRefresh = (event: CustomEvent) => {
+    // TODO: add await on load docs
+    loadDocuments();
+    handleRefresh(event);
+  };
+
   return (
     <>
-      <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+      <IonRefresher slot="fixed" onIonRefresh={handleLocalRefresh}>
         <IonRefresherContent />
       </IonRefresher>
       <IonList>

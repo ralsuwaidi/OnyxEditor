@@ -13,6 +13,8 @@ import { useEditorPageLogic } from "../../hooks/useEditorPageLogic";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import NoteTitle from "../../components/NoteTitle";
 import EditorWrapper from "../../components/EditorWrapper";
+import { useUpdateDocument } from "../../hooks/useUpdateDocument";
+import useDocumentStore from "../../contexts/useDocumentStore";
 
 const EditorPage: React.FC = () => {
   const {
@@ -28,10 +30,19 @@ const EditorPage: React.FC = () => {
     scrollToTop,
     openSearchModal,
   } = useEditorPageLogic();
+  const { updateDocument } = useUpdateDocument();
+  const { selectedDocument } = useDocumentStore();
 
   if (!currentNote) {
     return <LoadingSpinner />;
   }
+
+  const handleDocumentTitle = (newTitle: string) => {
+    handleTitleChange(newTitle);
+    if (selectedDocument) {
+      updateDocument(selectedDocument.id, { title: newTitle });
+    }
+  };
 
   return (
     <>
@@ -57,7 +68,7 @@ const EditorPage: React.FC = () => {
             <SearchRefresher onRefresh={openSearchModal} />
             <NoteTitle
               title={title}
-              onChange={handleTitleChange}
+              onChange={handleDocumentTitle}
               isDesktop={isPlatform("desktop")}
             />
             <EditorWrapper>

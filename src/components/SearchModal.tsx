@@ -14,7 +14,7 @@ import {
 } from "@ionic/react";
 import { useRef, useState, useEffect } from "react";
 import FirestoreService from "../services/FirestoreService";
-import { NoteMetadataType } from "../types/NoteType";
+import { NoteMetadataType } from "../types/note.types";
 
 const SearchNotesModal = ({
   dismiss,

@@ -3,7 +3,7 @@ import { IonMenu, IonToast, IonContent } from "@ionic/react";
 import { useRef, useState } from "react";
 import { useNotesList } from "../../hooks/useNotesList";
 import { useSliding } from "../../hooks/useSliding";
-import { NoteMetadataType } from "../../types/NoteType";
+import { NoteMetadataType } from "../../types/note.types";
 import NotesListHeader from "../../components/NotesListHeader/NoteListHeader";
 import NotesListContent from "../../components/NotesListContent";
 import JournalEntries from "../../components/JournalEntries";
@@ -25,6 +25,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     handleInput,
   } = useNotesList();
 
+
   const { handleSliding, isSliding, resetSliding } = useSliding();
   const [currentView, setCurrentView] = useState<"note" | "journal">("note");
 
@@ -37,10 +38,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
     resetSliding(noteMetadata.id);
   };
 
-  const handleCreateNote = async (type: "journal" | "note") => {
-    await handleCreateNewNote(type);
-    menuRef.current?.close();
-  };
+
 
   return (
     <>
@@ -51,7 +49,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
         type="push"
       >
         <NotesListHeader
-          handleCreateNewNote={() => handleCreateNote(currentView)}
+          handleCreateNewNote={handleCreateNewNote}
           handleInput={(ev: CustomEvent) =>
             handleInput(
               (ev.target as HTMLIonSearchbarElement).value?.toLowerCase() || ""

@@ -1,6 +1,6 @@
 import React from "react";
 import useNoteStore from "../contexts/noteStore";
-import { NoteMetadataType } from "../types/NoteType";
+import { NoteMetadataType } from "../types/note.types";
 import { IonRefresher, IonRefresherContent } from "@ionic/react";
 import JournalEntryItem from "./JournalEntryItem";
 

@@ -1,4 +1,4 @@
-import { NoteMetadataType } from "../../types/NoteType";
+import { NoteMetadataType } from "../../types/note.types";
 
 const countTagOccurrences = (notes: NoteMetadataType[]) => {
   const tagCounts: { [key: string]: number } = {};

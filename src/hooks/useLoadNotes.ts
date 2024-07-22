@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import FirestoreService from "../services/FirestoreService";
-import { NoteMetadataType } from "../types/NoteType";
+import { NoteMetadataType } from "../types/note.types";
 
 const useLoadNotes = () => {
   const [loading, setLoading] = useState<boolean>(false);

@@ -1,7 +1,7 @@
 // hooks/useNotesList.ts
 import { useState, useEffect } from "react";
 import useNoteStore from "../contexts/noteStore";
-import { NoteMetadataType } from "../types/NoteType";
+import { NoteMetadataType } from "../types/note.types";
 
 export function useNotesList() {
   const allNotes = useNoteStore((state) => state.allNotes);

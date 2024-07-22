@@ -1,7 +1,6 @@
 // import "./App.css";
 
 import { IonApp, setupIonicReact } from "@ionic/react";
-
 import EditorPage from "./pages/EditorPage/EditorPage";
 import { useEffect } from "react";
 import useNoteStore from "./contexts/noteStore";
@@ -19,7 +18,7 @@ function App() {
     if (!currentNote) {
       initializeStore();
     }
-  }, [initializeStore]);
+  }, [initializeStore, currentNote]);
 
   return (
     <>

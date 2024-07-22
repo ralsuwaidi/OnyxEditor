@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { NoteMetadataType, NoteType } from "../types/NoteType";
+import { NoteMetadataType, NoteType } from "../types/note.types";
 import FirestoreService from "../services/FirestoreService";
 import { Editor } from "@tiptap/react";
 import { TableOfContentData } from "@tiptap-pro/extension-table-of-contents";

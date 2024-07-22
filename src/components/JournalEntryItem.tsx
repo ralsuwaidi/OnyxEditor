@@ -1,5 +1,5 @@
 import React from "react";
-import { NoteMetadataType } from "../types/NoteType";
+import { NoteMetadataType } from "../types/note.types";
 import { IonMenuToggle } from "@ionic/react";
 import classNames from "classnames";
 

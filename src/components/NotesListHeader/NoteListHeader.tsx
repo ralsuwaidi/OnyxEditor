@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { IonHeader } from "@ionic/react";
 import "./NotesListHeader.css";
-import { NoteMetadataType } from "../../types/NoteType";
+import { NoteMetadataType } from "../../types/note.types";
 import TitleToolbar from "./TitleToolbar";
 import ViewSwitcherPopover from "./ViewSwitcherPopover";
 import SearchToolbar from "./SearchToolbar";
