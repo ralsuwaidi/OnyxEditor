@@ -8,38 +8,35 @@ import {
   IonItemOption,
   IonMenuToggle,
 } from "@ionic/react";
-import { NoteMetadataType } from "../types/note.types";
 import NoteItem from "./NoteItem";
-import { SortNotes } from "../utils/sortNotes";
 import useDocumentStore from "../contexts/useDocumentStore";
 
 interface NotesListContentProps {
-  sortedNotes: NoteMetadataType[];
-  handleRefresh: (event: CustomEvent) => void;
   handleSliding: (id: string) => void;
-  handleSelectNote: (noteMetadata: NoteMetadataType) => void;
-  handlePinNote: (
-    noteMetadata: NoteMetadataType,
-    event: any,
-    slidingItem: HTMLIonItemSlidingElement
-  ) => void;
-  handleDeleteNote: (id: string) => void;
 }
 
 const NotesListContent: React.FC<NotesListContentProps> = ({
-  sortedNotes,
-  handleRefresh,
   handleSliding,
-  handleSelectNote,
-  handlePinNote,
-  handleDeleteNote,
 }) => {
-  const { loadDocuments } = useDocumentStore();
+  const {
+    loadDocuments,
+    documents,
+    selectDocument,
+    togglePin,
+    deleteDocument,
+  } = useDocumentStore();
 
-  const handleLocalRefresh = (event: CustomEvent) => {
-    // TODO: add await on load docs
-    loadDocuments();
-    handleRefresh(event);
+  const handleLocalRefresh = async (event: CustomEvent) => {
+    await loadDocuments();
+    event.detail.complete();
+  };
+
+  const handlePinNote = async (
+    id: string,
+    event: React.MouseEvent<HTMLIonItemOptionElement, MouseEvent>
+  ) => {
+    await togglePin(id);
+    event.currentTarget.closest("ion-item-sliding")!;
   };
 
   return (
@@ -48,33 +45,27 @@ const NotesListContent: React.FC<NotesListContentProps> = ({
         <IonRefresherContent />
       </IonRefresher>
       <IonList>
-        {sortedNotes
-          .filter(
-            (note) => note.metadata?.type === "note" || !note.metadata?.type
-          )
-          .sort(SortNotes)
-          .map((note) => (
+        {documents
+          .filter((document) => document.type === "note")
+          .map((document) => (
             <IonItemSliding
-              key={note.id}
-              onIonDrag={() => handleSliding(note.id)}
+              key={document.id}
+              onIonDrag={() => handleSliding(document.id)}
             >
               <IonMenuToggle>
-                <NoteItem note={note} handleSelectNote={handleSelectNote} />
+                <NoteItem
+                  document={document}
+                  handleSelectNote={selectDocument}
+                />
               </IonMenuToggle>
 
               <IonItemOptions side="start">
                 <IonItemOption
                   className="min-w-24"
                   color="primary"
-                  onClick={(event) =>
-                    handlePinNote(
-                      note,
-                      event,
-                      event.currentTarget.closest("ion-item-sliding")!
-                    )
-                  }
+                  onClick={(event) => handlePinNote(document.id, event)}
                 >
-                  {note.metadata?.pin ? "Unpin" : "Pin"}
+                  {document.pinned ? "Unpin" : "Pin"}
                 </IonItemOption>
               </IonItemOptions>
 
@@ -82,7 +73,7 @@ const NotesListContent: React.FC<NotesListContentProps> = ({
                 <IonItemOption
                   className="min-w-24"
                   color="danger"
-                  onClick={() => handleDeleteNote(note.id)}
+                  onClick={() => deleteDocument(document.id)}
                 >
                   Delete
                 </IonItemOption>

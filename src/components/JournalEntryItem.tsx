@@ -1,18 +1,17 @@
 import React from "react";
-import { NoteMetadataType } from "../types/note.types";
 import { IonMenuToggle } from "@ionic/react";
 import classNames from "classnames";
+import { Documents } from "../types/document.types";
+import useDocumentStore from "../contexts/useDocumentStore";
 
 interface JournalEntryItemProps {
-  entry: NoteMetadataType;
-  handleSelectNote: (noteMetadata: NoteMetadataType) => void;
+  entry: Documents;
 }
 
-const JournalEntryItem: React.FC<JournalEntryItemProps> = ({
-  entry,
-  handleSelectNote,
-}) => {
-  const hasDreamTag = entry.metadata?.tags?.includes("dream");
+const JournalEntryItem: React.FC<JournalEntryItemProps> = ({ entry }) => {
+  const hasDreamTag = entry.tags.includes("dream");
+
+  const { selectDocument } = useDocumentStore();
 
   return (
     <IonMenuToggle key={entry.id} autoHide={false}>
@@ -21,7 +20,7 @@ const JournalEntryItem: React.FC<JournalEntryItemProps> = ({
           "border border-dracula-400 bg-dracula-100 dark:border-dracula-800 dark:bg-dracula-950": hasDreamTag,
           "border dark:border-gray-700": !hasDreamTag,
         })}
-        onClick={() => handleSelectNote(entry)}
+        onClick={() => selectDocument(entry.id)}
       >
         <div className="flex flex-col ">
           <div
@@ -33,7 +32,7 @@ const JournalEntryItem: React.FC<JournalEntryItemProps> = ({
               }
             )}
           >
-            {entry.metadata?.sample}
+            {entry.content}
           </div>
           <time
             className={classNames(
@@ -44,7 +43,7 @@ const JournalEntryItem: React.FC<JournalEntryItemProps> = ({
               }
             )}
           >
-            {entry.createdAt.toDate().toLocaleTimeString("en-US", {
+            {new Date(entry.created_at).toLocaleTimeString("en-US", {
               hour: "2-digit",
               minute: "2-digit",
             })}

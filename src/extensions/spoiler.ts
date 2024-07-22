@@ -52,9 +52,6 @@ export default Spoiler.extend({
           setup(markdownit: any) {
             markdownit.use(spoiler);
           },
-          updateDOM(element: any) {
-            console.log(element);
-          },
         },
       },
     };

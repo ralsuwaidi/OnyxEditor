@@ -13,32 +13,26 @@ import { useEditorPageLogic } from "../../hooks/useEditorPageLogic";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import NoteTitle from "../../components/NoteTitle";
 import EditorWrapper from "../../components/EditorWrapper";
-import { useUpdateDocument } from "../../hooks/useUpdateDocument";
 import useDocumentStore from "../../contexts/useDocumentStore";
 
 const EditorPage: React.FC = () => {
   const {
-    currentNote,
     loading,
-    title,
     isKeyboardVisible,
     maxHeight,
     contentRef,
     scrollHostRef,
     sidebarMenuRef,
-    handleTitleChange,
     scrollToTop,
     openSearchModal,
   } = useEditorPageLogic();
-  const { updateDocument } = useUpdateDocument();
-  const { selectedDocument } = useDocumentStore();
+  const { selectedDocument, updateDocument } = useDocumentStore();
 
-  if (!currentNote) {
+  if (!selectedDocument) {
     return <LoadingSpinner />;
   }
 
   const handleDocumentTitle = (newTitle: string) => {
-    handleTitleChange(newTitle);
     if (selectedDocument) {
       updateDocument(selectedDocument.id, { title: newTitle });
     }
@@ -52,11 +46,7 @@ const EditorPage: React.FC = () => {
         {isPlatform("desktop") ? (
           <DesktopHeader />
         ) : (
-          <MobileEditorHeader
-            loading={loading}
-            currentNoteTitle={currentNote.title}
-            scrollToTop={scrollToTop}
-          />
+          <MobileEditorHeader loading={loading} scrollToTop={scrollToTop} />
         )}
 
         <IonContent ref={contentRef} scrollY={false} fullscreen={false}>
@@ -67,7 +57,7 @@ const EditorPage: React.FC = () => {
           >
             <SearchRefresher onRefresh={openSearchModal} />
             <NoteTitle
-              title={title}
+              title={selectedDocument.title || ""}
               onChange={handleDocumentTitle}
               isDesktop={isPlatform("desktop")}
             />

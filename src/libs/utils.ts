@@ -20,8 +20,8 @@ function extractTags(mdcontent: string): string[] {
   return tags;
 }
 
-const formatDateWithoutYear = (date: any) => {
-  const inputDate = new Date(date.toDate());
+const formatDateWithoutYear = (date: string) => {
+  const inputDate = new Date(date); // Directly convert the Supabase timestamp string to a Date object
   const today = new Date();
   const sixDaysAgo = new Date();
   sixDaysAgo.setDate(today.getDate() - 6);

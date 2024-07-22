@@ -7,13 +7,12 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { TableOfContents } from "./TableOfContents/TableOfContents";
-import useNoteStore from "../contexts/noteStore";
+import useEditorStore from "../contexts/useEditorStore";
 
 const MemorizedToC = React.memo(TableOfContents);
 
 const Sidebar = forwardRef<HTMLIonMenuElement>((_, ref) => {
-  const editor = useNoteStore((state) => state.editor);
-  const tableOfContents = useNoteStore((state) => state.tableOfContents);
+  const { editor, tableOfContents } = useEditorStore();
 
   return (
     <IonMenu ref={ref} side="end" contentId="main-content" menuId="sidebarMenu">

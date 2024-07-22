@@ -35,18 +35,19 @@ import { IonSpinner } from "@ionic/react";
 import TableOfContents, {
   getHierarchicalIndexes,
 } from "@tiptap-pro/extension-table-of-contents";
-import useNoteStore from "../contexts/noteStore";
 import container from "../extensions/container";
 import Tag from "../extensions/tag";
 import spoiler from "../extensions/spoiler";
+import useDocumentStore from "../contexts/useDocumentStore";
+import useEditorStore from "../contexts/useEditorStore";
 
 const Editor = () => {
-  const setEditor = useNoteStore((state) => state.setEditor);
-  const setTableOfContents = useNoteStore((state) => state.setTableOfContents);
-  const currentNote = useNoteStore((state) => state.currentNote);
-  const updateNoteContent = useNoteStore((state) => state.updateNoteContent);
+  const { setEditor } = useEditorStore();
+  const { setTableOfContents } = useEditorStore();
+  const { selectedDocument } = useDocumentStore();
+  const { updateContent } = useDocumentStore();
 
-  if (currentNote == null) {
+  if (selectedDocument == null) {
     return (
       <div className="flex items-center justify-center mt-4 ">
         <IonSpinner />
@@ -131,7 +132,7 @@ const Editor = () => {
   const editor = useEditor({
     extensions,
 
-    content: currentNote.mdcontent,
+    content: selectedDocument.content,
     editorProps: {
       attributes: {
         class:
@@ -139,9 +140,16 @@ const Editor = () => {
       },
     },
     onUpdate: ({ editor }) => {
-      updateNoteContent(currentNote.id, editor.storage.markdown.getMarkdown());
+      console.log("updated comtemt");
+      updateContent(selectedDocument.id, editor.storage.markdown.getMarkdown());
     },
   });
+
+  useEffect(() => {
+    if (selectedDocument) {
+      editor?.commands.setContent(selectedDocument.content);
+    }
+  }, [selectedDocument]);
 
   useEffect(() => {
     if (editor) {

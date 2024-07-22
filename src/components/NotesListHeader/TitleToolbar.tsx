@@ -11,18 +11,12 @@ import useDocumentStore from "../../contexts/useDocumentStore";
 const TitleToolbar: React.FC<{
   currentView: "note" | "journal";
   setPopoverOpen: (open: boolean) => void;
-  handleCreateNewNote: (type: "note" | "journal") => void;
-}> = ({ currentView, setPopoverOpen, handleCreateNewNote }) => {
+}> = ({ currentView, setPopoverOpen }) => {
   const { createDocument } = useDocumentStore();
-
-
-
 
   const handleCreate = async (type: "journal" | "note") => {
     createDocument(type);
-    handleCreateNewNote(type)
   };
-
 
   return (
     <IonToolbar>
@@ -47,8 +41,7 @@ const TitleToolbar: React.FC<{
         </IonButton>
       </IonButtons>
     </IonToolbar>
-  )
-
+  );
 };
 
 export default TitleToolbar;

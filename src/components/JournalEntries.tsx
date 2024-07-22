@@ -1,23 +1,25 @@
 import React from "react";
-import useNoteStore from "../contexts/noteStore";
-import { NoteMetadataType } from "../types/note.types";
 import { IonRefresher, IonRefresherContent } from "@ionic/react";
 import JournalEntryItem from "./JournalEntryItem";
+import useDocumentStore from "../contexts/useDocumentStore";
+import { Documents } from "../types/document.types";
 
-interface JournalEntriesProps {
-  handleSelectNote: (noteMetadata: NoteMetadataType) => void;
-  handleRefresh: (event: CustomEvent) => void;
-}
+interface JournalEntriesProps {}
 
 interface GroupedEntries {
-  [date: string]: NoteMetadataType[];
+  [date: string]: Documents[];
 }
 
-const JournalEntries: React.FC<JournalEntriesProps> = ({
-  handleSelectNote,
-  handleRefresh,
-}) => {
-  const journalEntries = useNoteStore((state) => state.journalEntries);
+const JournalEntries: React.FC<JournalEntriesProps> = ({}) => {
+  const journalEntries = useDocumentStore((state) =>
+    state.documents.filter((document) => document.type == "journal")
+  );
+  const { loadDocuments } = useDocumentStore();
+
+  const handleLocalRefresh = async (event: CustomEvent) => {
+    await loadDocuments();
+    event.detail.complete();
+  };
 
   const today = new Date().toLocaleDateString("en-US", {
     year: "numeric",
@@ -35,8 +37,8 @@ const JournalEntries: React.FC<JournalEntriesProps> = ({
 
   // Group entries by date
   const groupedEntries: GroupedEntries = journalEntries.reduce(
-    (acc: GroupedEntries, entry: NoteMetadataType) => {
-      const date = entry.createdAt.toDate().toLocaleDateString("en-US", {
+    (acc: GroupedEntries, entry: Documents) => {
+      const date = new Date(entry.created_at).toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -57,7 +59,7 @@ const JournalEntries: React.FC<JournalEntriesProps> = ({
 
   return (
     <>
-      <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+      <IonRefresher slot="fixed" onIonRefresh={handleLocalRefresh}>
         <IonRefresherContent />
       </IonRefresher>
       <ol className="relative border-s border-gray-200 px-2 dark:border-gray-700">
@@ -74,15 +76,11 @@ const JournalEntries: React.FC<JournalEntriesProps> = ({
             {groupedEntries[date]
               .sort(
                 (a, b) =>
-                  b.createdAt.toDate().getTime() -
-                  a.createdAt.toDate().getTime()
+                  new Date(b.created_at).getTime() -
+                  new Date(a.created_at).getTime()
               )
-              .map((entry: NoteMetadataType) => (
-                <JournalEntryItem
-                  key={entry.id}
-                  entry={entry}
-                  handleSelectNote={handleSelectNote}
-                />
+              .map((entry: Documents) => (
+                <JournalEntryItem key={entry.id} entry={entry} />
               ))}
           </li>
         ))}

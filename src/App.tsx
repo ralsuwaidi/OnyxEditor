@@ -3,22 +3,45 @@
 import { IonApp, setupIonicReact } from "@ionic/react";
 import EditorPage from "./pages/EditorPage/EditorPage";
 import { useEffect } from "react";
-import useNoteStore from "./contexts/noteStore";
 import { useKeyboardSetup } from "./hooks/useKeyboardSetup";
+import useDocumentStore from "./contexts/useDocumentStore";
 
 setupIonicReact();
 
 function App() {
-  const initializeStore = useNoteStore((state) => state.initializeStore);
-  const currentNote = useNoteStore((state) => state.currentNote);
+  const {
+    loadDocuments,
+    selectDocument,
+    selectedDocument,
+    documents,
+  } = useDocumentStore();
 
   useKeyboardSetup();
 
   useEffect(() => {
-    if (!currentNote) {
-      initializeStore();
-    }
-  }, [initializeStore, currentNote]);
+    const fetchData = async () => {
+      if (selectedDocument == null) {
+        loadDocuments();
+        const firstNote = documents.find((doc) => doc.type === "note");
+        if (firstNote) {
+          selectDocument(firstNote.id);
+        }
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (selectedDocument == null) {
+        const firstNote = documents.find((doc) => doc.type === "note");
+        if (firstNote) {
+          selectDocument(firstNote.id);
+        }
+      }
+    };
+    fetchData();
+  }, [documents]);
 
   return (
     <>

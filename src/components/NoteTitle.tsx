@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { IonHeader, IonToolbar, IonTextarea } from "@ionic/react";
 
 interface NoteTitleProps {
@@ -13,13 +13,15 @@ const NoteTitle: React.FC<NoteTitleProps> = ({
   isDesktop,
 }) => {
   if (isDesktop) {
+    const [initialTitle, setInitialTitle] = useState(title);
     return (
       <div className="flex justify-center mt-12">
         <textarea
           placeholder="Note Title"
           className="input w-full dark:bg-background max-w-4xl mx-auto px-4 font-extrabold text-5xl focus:outline-none resize-none overflow-hidden"
-          onChange={(e) => onChange(e.target.value)}
-          value={title}
+          onBlur={(e) => onChange(e.target.value)}
+          onChange={(e) => setInitialTitle(e.target.value)}
+          value={initialTitle}
           rows={1}
           style={{ minHeight: "1.5em" }}
         />

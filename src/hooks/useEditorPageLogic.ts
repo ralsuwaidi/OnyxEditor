@@ -2,15 +2,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useIonModal } from "@ionic/react";
 import { useKeyboardState } from "@ionic/react-hooks/keyboard";
-import useNoteStore from "../contexts/noteStore";
 import { useMaxHeight } from "./useMaxHeight";
 import SearchNotesModal from "../components/SearchModal";
+import useDocumentStore from "../contexts/useDocumentStore";
+import useEditorStore from "../contexts/useEditorStore";
 
 export const useEditorPageLogic = () => {
-  const currentNote = useNoteStore((state) => state.currentNote);
-  const loading = useNoteStore((state) => state.loading);
-  const updateNoteMetadata = useNoteStore((state) => state.updateNoteMetadata);
-  const editor = useNoteStore((state) => state.editor);
+  const currentNote = useDocumentStore((state) => state.selectedDocument);
+  const loading = useDocumentStore((state) => state.isLoading);
+  const editor = useEditorStore((state) => state.editor);
   const [title, setTitle] = useState(currentNote?.title || "");
   const sidebarMenuRef = useRef<HTMLIonMenuElement | null>(null);
   const maxHeight = useMaxHeight();
@@ -34,15 +34,6 @@ export const useEditorPageLogic = () => {
   useEffect(() => {
     setTitle(currentNote?.title || "");
   }, [currentNote]);
-
-  const handleTitleChange = (newTitle: string) => {
-    setTitle(newTitle);
-    if (currentNote) {
-      const updatedNote = { ...currentNote, title: newTitle };
-      updateNoteMetadata(updatedNote);
-      editor?.commands.focus();
-    }
-  };
 
   const scrollToTop = () => {
     scrollHostRef.current?.scrollTo({ top: 0, behavior: "smooth" });
@@ -68,7 +59,6 @@ export const useEditorPageLogic = () => {
     contentRef,
     scrollHostRef,
     sidebarMenuRef,
-    handleTitleChange,
     scrollToTop,
     openSearchModal,
   };

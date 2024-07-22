@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { IonHeader } from "@ionic/react";
 import "./NotesListHeader.css";
-import { NoteMetadataType } from "../../types/note.types";
 import TitleToolbar from "./TitleToolbar";
 import ViewSwitcherPopover from "./ViewSwitcherPopover";
 import SearchToolbar from "./SearchToolbar";
@@ -10,24 +9,22 @@ import {
   moveSelectedTagsToFront,
   sortTagsByFrequency,
 } from "./utils";
+import useDocumentStore from "../../contexts/useDocumentStore";
 
 interface NotesListHeaderProps {
-  handleCreateNewNote: (type: "note" | "journal") => void;
   handleInput: (ev: CustomEvent) => void;
   currentView: "note" | "journal";
   switchView: (view: "note" | "journal") => void;
-  allNotes: NoteMetadataType[];
 }
 
 const NotesListHeader: React.FC<NotesListHeaderProps> = ({
-  handleCreateNewNote,
   handleInput,
   currentView,
   switchView,
-  allNotes,
 }) => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const { documents } = useDocumentStore();
 
   const handleViewSwitch = (view: "note" | "journal") => {
     switchView(view);
@@ -55,20 +52,17 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
   };
 
   const sortedUniqueTags = useMemo(() => {
-    const tagCounts = countTagOccurrences(allNotes);
+    console.log("i must", documents);
+    const tagCounts = countTagOccurrences(documents);
     const sortedTags = sortTagsByFrequency(tagCounts);
     return moveSelectedTagsToFront(sortedTags, selectedTags);
-  }, [allNotes, selectedTags]);
+  }, [documents, selectedTags]);
 
   const stopPropagation = (e: React.TouchEvent) => e.stopPropagation();
 
   return (
     <IonHeader>
-      <TitleToolbar
-        currentView={currentView}
-        setPopoverOpen={setPopoverOpen}
-        handleCreateNewNote={handleCreateNewNote}
-      />
+      <TitleToolbar currentView={currentView} setPopoverOpen={setPopoverOpen} />
       <ViewSwitcherPopover
         popoverOpen={popoverOpen}
         setPopoverOpen={setPopoverOpen}

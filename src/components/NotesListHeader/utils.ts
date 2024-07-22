@@ -1,11 +1,15 @@
-import { NoteMetadataType } from "../../types/note.types";
+import { Documents } from "../../types/document.types";
 
-const countTagOccurrences = (notes: NoteMetadataType[]) => {
+const countTagOccurrences = (documents: Documents[]) => {
   const tagCounts: { [key: string]: number } = {};
-  notes.forEach((note) => {
-    if (Array.isArray(note.metadata?.tags)) {
-      note.metadata.tags.forEach((tag) => {
-        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+  documents.forEach((document) => {
+    // Ensure tags is an array
+    if (Array.isArray(document.tags)) {
+      document.tags.forEach((tag) => {
+        if (tag) {
+          // Ensure the tag is not empty
+          tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+        }
       });
     }
   });

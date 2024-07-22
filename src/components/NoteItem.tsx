@@ -2,42 +2,39 @@ import React from "react";
 import { IonItem, IonLabel } from "@ionic/react";
 import { BookmarkIcon } from "@heroicons/react/16/solid";
 import SmallBadge from "./common/SmallBadge";
-import { NoteMetadataType } from "../types/note.types";
 import { formatDateWithoutYear } from "../libs/utils";
-// import useDocumentStore from "../contexts/useDocumentStore";
+import { Documents } from "../types/document.types";
 
 interface NoteItemProps {
-  note: NoteMetadataType;
-  handleSelectNote: (note: NoteMetadataType) => void;
+  document: Documents;
+  handleSelectNote: (id: string) => void;
 }
 
-const NoteItem: React.FC<NoteItemProps> = ({ note, handleSelectNote }) => {
-  // const { setSelectedDocument } = useDocumentStore();
+const NoteItem: React.FC<NoteItemProps> = ({ document, handleSelectNote }) => {
   return (
-    <IonItem button={true} onClick={() => handleSelectNote(note)}>
+    <IonItem button={true} onClick={() => handleSelectNote(document.id)}>
       <IonLabel>
         <h2 className=" md:text-lg md:font-bold">
-          {note.title === "" ? "(No Title)" : note.title}
+          {document.title === "" ? "(No Title)" : document.title}
         </h2>
         <div className="line-clamp-2 mb-1 text-sm md:text-base text-gray-500">
-          {note.metadata?.sample ? note.metadata.sample : ""}
+          {document.content}
         </div>
         <div className="flex justify-between items-center">
           <div className=" flex space-x-2 mr-2">
-            {note.metadata?.pin && (
+            {document.pinned && (
               <p>
                 <BookmarkIcon className="h-3 w-3 inline-block" />
               </p>
             )}
             <p className="whitespace-nowrap">
-              {formatDateWithoutYear(note.updatedAt)}
+              {formatDateWithoutYear(document.updated_at!)}
             </p>
           </div>
           <div>
             <div className="flex overflow-x-auto space-x-2 ">
-              {note.metadata &&
-                note.metadata.tags &&
-                note.metadata.tags.map((tag, index) => (
+              {document.tags &&
+                document.tags.map((tag, index) => (
                   <SmallBadge key={index} tag={tag} />
                 ))}
             </div>

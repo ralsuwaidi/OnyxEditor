@@ -14,28 +14,22 @@ import {
   IonItem,
 } from "@ionic/react";
 import { chevronBack, ellipsisVertical, trash } from "ionicons/icons";
-import { useNotesList } from "../hooks/useNotesList";
-import useNoteStore from "../contexts/noteStore";
+import useDocumentStore from "../contexts/useDocumentStore";
 
 interface HeaderProps {
   loading: boolean;
-  currentNoteTitle: string | undefined;
   scrollToTop: () => void;
 }
 
 const MobileEditorHeader: React.FC<HeaderProps> = ({
   loading,
-  currentNoteTitle,
   scrollToTop,
 }) => {
   const [popoverState, setPopoverState] = useState({
     showPopover: false,
     event: undefined,
   });
-
-  const { handleDeleteNote } = useNotesList();
-
-  const { currentNote } = useNoteStore();
+  const { deleteDocument, selectedDocument } = useDocumentStore();
 
   const openPopover = (e: any) => {
     e.persist();
@@ -43,8 +37,8 @@ const MobileEditorHeader: React.FC<HeaderProps> = ({
   };
 
   const deleteNote = () => {
-    if (currentNote) {
-      handleDeleteNote(currentNote.id);
+    if (selectedDocument) {
+      deleteDocument(selectedDocument.id);
     }
     setPopoverState({ showPopover: false, event: undefined });
   };
@@ -64,7 +58,7 @@ const MobileEditorHeader: React.FC<HeaderProps> = ({
           </IonMenuToggle>
         </IonButtons>
         <IonTitle onClick={scrollToTop} style={{ cursor: "pointer" }}>
-          {!loading && currentNoteTitle ? currentNoteTitle : " "}
+          {!loading && selectedDocument ? selectedDocument.title : " "}
         </IonTitle>
         <IonButtons slot="primary">
           <IonButton onClick={openPopover}>

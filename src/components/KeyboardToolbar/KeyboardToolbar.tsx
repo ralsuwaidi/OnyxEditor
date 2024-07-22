@@ -1,9 +1,9 @@
 // KeyboardToolbar.tsx
 import React from "react";
-import useNoteStore from "../../contexts/noteStore";
 import { toolbarIcons } from "./toolbarIcons";
 import { ToolbarIcon } from "../../types/KeyboardToolbarType";
 import { useKeyboardEditorState } from "../../hooks/useKeyboardEditorState";
+import useEditorStore from "../../contexts/useEditorStore";
 
 interface ToolbarButtonProps {
   icon: ToolbarIcon["icon"];
@@ -30,7 +30,7 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
 );
 
 const KeyboardToolbar: React.FC = () => {
-  const editor = useNoteStore((state) => state.editor);
+  const { editor } = useEditorStore();
   const editorState = useKeyboardEditorState(editor);
 
   const handleAction = (action: ToolbarIcon["action"]) => {
