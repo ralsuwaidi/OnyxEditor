@@ -4,7 +4,7 @@ import { BookmarkIcon } from "@heroicons/react/16/solid";
 import SmallBadge from "./common/SmallBadge";
 import { NoteMetadataType } from "../types/note.types";
 import { formatDateWithoutYear } from "../libs/utils";
-import useDocumentStore from "../contexts/useDocumentStore";
+// import useDocumentStore from "../contexts/useDocumentStore";
 
 interface NoteItemProps {
   note: NoteMetadataType;
@@ -12,7 +12,7 @@ interface NoteItemProps {
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({ note, handleSelectNote }) => {
-  const { setSelectedDocument } = useDocumentStore();
+  // const { setSelectedDocument } = useDocumentStore();
   return (
     <IonItem button={true} onClick={() => handleSelectNote(note)}>
       <IonLabel>
