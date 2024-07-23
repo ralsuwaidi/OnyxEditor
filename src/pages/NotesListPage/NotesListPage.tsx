@@ -21,13 +21,6 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
 
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
 
-  // const handleNoteSelect = (noteMetadata: NoteMetadataType) => {
-  //   if (!isSliding(noteMetadata.id)) {
-  //     handleSelectNote(noteMetadata);
-  //   }
-  //   resetSliding(noteMetadata.id);
-  // };
-
   return (
     <>
       <IonMenu

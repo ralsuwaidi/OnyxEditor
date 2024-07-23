@@ -140,7 +140,6 @@ const Editor = () => {
       },
     },
     onUpdate: ({ editor }) => {
-      console.log("updated comtemt");
       updateContent(selectedDocument.id, editor.storage.markdown.getMarkdown());
     },
   });

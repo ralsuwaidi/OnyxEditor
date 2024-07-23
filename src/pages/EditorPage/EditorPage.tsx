@@ -26,17 +26,11 @@ const EditorPage: React.FC = () => {
     scrollToTop,
     openSearchModal,
   } = useEditorPageLogic();
-  const { selectedDocument, updateDocument } = useDocumentStore();
+  const { selectedDocument } = useDocumentStore();
 
   if (!selectedDocument) {
     return <LoadingSpinner />;
   }
-
-  const handleDocumentTitle = (newTitle: string) => {
-    if (selectedDocument) {
-      updateDocument(selectedDocument.id, { title: newTitle });
-    }
-  };
 
   return (
     <>
@@ -58,7 +52,6 @@ const EditorPage: React.FC = () => {
             <SearchRefresher onRefresh={openSearchModal} />
             <NoteTitle
               title={selectedDocument.title || ""}
-              onChange={handleDocumentTitle}
               isDesktop={isPlatform("desktop")}
             />
             <EditorWrapper>

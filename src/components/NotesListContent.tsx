@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   IonRefresher,
   IonRefresherContent,
@@ -26,17 +26,22 @@ const NotesListContent: React.FC<NotesListContentProps> = ({
     deleteDocument,
   } = useDocumentStore();
 
+  // Create a ref to store references to all sliding items
+  const slidingItemsRef = useRef<{ [key: string]: HTMLIonItemSlidingElement }>(
+    {}
+  );
+
   const handleLocalRefresh = async (event: CustomEvent) => {
     await loadDocuments();
     event.detail.complete();
   };
 
-  const handlePinNote = async (
-    id: string,
-    event: React.MouseEvent<HTMLIonItemOptionElement, MouseEvent>
-  ) => {
+  const handlePinNote = async (id: string) => {
     await togglePin(id);
-    event.currentTarget.closest("ion-item-sliding")!;
+    // Close the sliding item
+    if (slidingItemsRef.current[id]) {
+      slidingItemsRef.current[id].close();
+    }
   };
 
   return (
@@ -51,6 +56,11 @@ const NotesListContent: React.FC<NotesListContentProps> = ({
             <IonItemSliding
               key={document.id}
               onIonDrag={() => handleSliding(document.id)}
+              ref={(el) => {
+                if (el) {
+                  slidingItemsRef.current[document.id] = el;
+                }
+              }}
             >
               <IonMenuToggle>
                 <NoteItem
@@ -63,7 +73,7 @@ const NotesListContent: React.FC<NotesListContentProps> = ({
                 <IonItemOption
                   className="min-w-24"
                   color="primary"
-                  onClick={(event) => handlePinNote(document.id, event)}
+                  onClick={() => handlePinNote(document.id)}
                 >
                   {document.pinned ? "Unpin" : "Pin"}
                 </IonItemOption>
