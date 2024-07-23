@@ -17,7 +17,6 @@ import useDocumentStore from "../../contexts/useDocumentStore";
 
 const EditorPage: React.FC = () => {
   const {
-    loading,
     isKeyboardVisible,
     maxHeight,
     contentRef,
@@ -26,7 +25,7 @@ const EditorPage: React.FC = () => {
     scrollToTop,
     openSearchModal,
   } = useEditorPageLogic();
-  const { selectedDocument } = useDocumentStore();
+  const { selectedDocument, isLoading } = useDocumentStore();
 
   if (!selectedDocument) {
     return <LoadingSpinner />;
@@ -40,7 +39,7 @@ const EditorPage: React.FC = () => {
         {isPlatform("desktop") ? (
           <DesktopHeader />
         ) : (
-          <MobileEditorHeader loading={loading} scrollToTop={scrollToTop} />
+          <MobileEditorHeader loading={isLoading} scrollToTop={scrollToTop} />
         )}
 
         <IonContent ref={contentRef} scrollY={false} fullscreen={false}>
@@ -61,7 +60,7 @@ const EditorPage: React.FC = () => {
         </IonContent>
 
         {isKeyboardVisible && isPlatform("ios") && <KeyboardToolbar />}
-        <LoadingModal isOpen={loading} />
+        <LoadingModal isOpen={isLoading} />
       </IonPage>
     </>
   );
