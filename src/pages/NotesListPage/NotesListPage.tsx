@@ -6,7 +6,6 @@ import { useSliding } from "../../hooks/useSliding";
 import NotesListHeader from "../../components/NotesListHeader/NoteListHeader";
 import NotesListContent from "../../components/NotesListContent";
 import JournalEntries from "../../components/JournalEntries";
-import useDocumentStore from "../../contexts/useDocumentStore";
 
 interface NotesListPageProps {
   contentId: string;
@@ -17,7 +16,6 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
 
   const { handleSliding } = useSliding();
   const [currentView, setCurrentView] = useState<"note" | "journal">("note");
-  const { setSearchText } = useDocumentStore();
 
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
 
@@ -30,11 +28,6 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
         type="push"
       >
         <NotesListHeader
-          handleInput={(ev: CustomEvent) =>
-            setSearchText(
-              (ev.target as HTMLIonSearchbarElement).value?.toLowerCase() || ""
-            )
-          }
           currentView={currentView}
           switchView={setCurrentView}
         />

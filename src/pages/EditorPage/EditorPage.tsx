@@ -8,7 +8,6 @@ import NotesListPage from "../NotesListPage/NotesListPage";
 import Sidebar from "../../components/Sidebar";
 import KeyboardToolbar from "../../components/KeyboardToolbar/KeyboardToolbar";
 import LoadingModal from "../../components/LoadingModal";
-import SearchRefresher from "../../components/SearchRefresher";
 import { useEditorPageLogic } from "../../hooks/useEditorPageLogic";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import NoteTitle from "../../components/NoteTitle";
@@ -23,7 +22,6 @@ const EditorPage: React.FC = () => {
     scrollHostRef,
     sidebarMenuRef,
     scrollToTop,
-    openSearchModal,
   } = useEditorPageLogic();
   const { selectedDocument, isLoading } = useDocumentStore();
 
@@ -48,7 +46,6 @@ const EditorPage: React.FC = () => {
             className="ion-content-scroll-host overflow-auto overscroll-contain"
             style={{ maxHeight }}
           >
-            <SearchRefresher onRefresh={openSearchModal} />
             <NoteTitle
               title={selectedDocument.title || ""}
               isDesktop={isPlatform("desktop")}

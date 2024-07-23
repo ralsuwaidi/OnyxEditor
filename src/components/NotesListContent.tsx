@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, useState } from "react";
+import React, { useRef, useCallback } from "react";
 import {
   IonRefresher,
   IonRefresherContent,
@@ -10,7 +10,7 @@ import {
 } from "@ionic/react";
 import NoteItem from "./NoteItem";
 import useDocumentStore from "../contexts/useDocumentStore";
-import { Documents } from "../types/document.types";
+import useFilteredNoteList from "../hooks/useFilteredNoteList";
 
 interface NotesListContentProps {
   handleSliding: (id: string) => void;
@@ -20,12 +20,12 @@ const NotesListContent: React.FC<NotesListContentProps> = React.memo(
   ({ handleSliding }) => {
     const {
       loadDocuments,
-      documents,
       selectDocument,
       togglePin,
       deleteDocument,
     } = useDocumentStore();
-    const [filteredDocs, setFilteredDocs] = useState<Documents[]>([]);
+
+    const filteredDocs = useFilteredNoteList();
 
     // Create a ref to store references to all sliding items
     const slidingItemsRef = useRef<{
@@ -50,24 +50,6 @@ const NotesListContent: React.FC<NotesListContentProps> = React.memo(
       },
       [togglePin]
     );
-
-    useEffect(() => {
-      const sortedAndFilteredDocs = documents
-        .filter((document) => document.type === "note")
-        .sort((a, b) => {
-          // First, sort by pinned status
-          if (a.pinned && !b.pinned) return -1;
-          if (!a.pinned && b.pinned) return 1;
-
-          // If both are pinned or both are unpinned, sort by updated_at
-          const dateA = a.updated_at ? new Date(a.updated_at).getTime() : 0;
-          const dateB = b.updated_at ? new Date(b.updated_at).getTime() : 0;
-
-          return dateB - dateA;
-        });
-
-      setFilteredDocs(sortedAndFilteredDocs);
-    }, [documents]);
 
     return (
       <>
