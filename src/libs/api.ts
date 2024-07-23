@@ -38,9 +38,16 @@ export async function updateDocument(
   updatedFields: Partial<Documents>
 ): Promise<Documents> {
   console.log(`Updating document ${id}:`, updatedFields);
+
+  // Add the current timestamp to updatedFields
+  const fieldsWithTimestamp = {
+    ...updatedFields,
+    updated_at: new Date().toISOString(),
+  };
+
   const { data, error } = await supabase
     .from("documents")
-    .update(updatedFields)
+    .update(fieldsWithTimestamp)
     .eq("id", id)
     .select();
 
@@ -85,19 +92,7 @@ export async function fetchDocumentById(id: string): Promise<Documents> {
 export const debouncedUpdateDocument = debounce(
   async (id: string, updatedFields: Partial<Documents>): Promise<Documents> => {
     console.log(`Debounced update for document ${id}:`, updatedFields);
-    const { data, error } = await supabase
-      .from("documents")
-      .update(updatedFields)
-      .eq("id", id)
-      .select();
-
-    if (error) {
-      console.error("Error in debounced update:", error.message);
-      throw new Error(error.message);
-    }
-
-    console.log("Debounced update successful:", data![0]);
-    return data![0];
+    return updateDocument(id, updatedFields);
   },
   1000 // 1 second debounce time, adjust as needed
 );

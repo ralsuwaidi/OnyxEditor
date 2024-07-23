@@ -52,7 +52,6 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
   };
 
   const sortedUniqueTags = useMemo(() => {
-    console.log("i must", documents);
     const tagCounts = countTagOccurrences(documents);
     const sortedTags = sortTagsByFrequency(tagCounts);
     return moveSelectedTagsToFront(sortedTags, selectedTags);

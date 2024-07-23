@@ -8,6 +8,7 @@ import {
   deleteDocument as deleteDoc,
   debouncedUpdateDocument,
 } from "../libs/api";
+import { extractTags } from "../libs/utils";
 
 interface DocumentStore {
   documents: Documents[];
@@ -98,30 +99,33 @@ const useDocumentStore = create<DocumentStore>((set, get) => ({
   },
 
   updateContent: (id: string, content: string) => {
-    const currentDocuments = get().documents;
-    const updatedDocuments = currentDocuments.map((doc) =>
-      doc.id === id ? { ...doc, content } : doc
-    );
-    set({ documents: updatedDocuments });
-
     // Use the debounced API update function
-    debouncedUpdateDocument(id, { content })!
-      .then((updatedDoc) => {
-        // Optionally update the store with the response from the server
-        const currentDocuments = get().documents;
-        const updatedDocuments = currentDocuments.map((doc) =>
-          doc.id === id ? updatedDoc : doc
-        );
-        set({ documents: updatedDocuments });
-      })
-      .catch((error) => {
-        set({
-          error:
-            error instanceof Error
-              ? error.message
-              : "An unknown error occurred",
+    const tags = extractTags(content);
+    const updatePromise = debouncedUpdateDocument(id, { content, tags });
+
+    if (updatePromise) {
+      updatePromise
+        .then((updatedDoc) => {
+          // Update the store with the response from the server
+          const currentDocuments = get().documents;
+          const updatedDocuments = currentDocuments.map((doc) =>
+            doc.id === id ? updatedDoc : doc
+          );
+          set({ documents: updatedDocuments });
+        })
+        .catch((error) => {
+          set({
+            error:
+              error instanceof Error
+                ? error.message
+                : "An unknown error occurred",
+          });
         });
+    } else {
+      set({
+        error: "Update function did not return a promise.",
       });
+    }
   },
 
   updateDocument: async (id, updatedFields) => {
@@ -132,8 +136,7 @@ const useDocumentStore = create<DocumentStore>((set, get) => ({
       const updatedDocuments = currentDocuments.map((doc) =>
         doc.id === id ? document : doc
       );
-      console.log(updatedDocuments);
-      // set({ documents: updatedDocuments });
+      set({ documents: updatedDocuments });
       return document;
     } catch (error) {
       set({

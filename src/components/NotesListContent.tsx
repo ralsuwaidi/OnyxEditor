@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useCallback, useEffect, useState } from "react";
 import {
   IonRefresher,
   IonRefresherContent,
@@ -10,49 +10,72 @@ import {
 } from "@ionic/react";
 import NoteItem from "./NoteItem";
 import useDocumentStore from "../contexts/useDocumentStore";
+import { Documents } from "../types/document.types";
 
 interface NotesListContentProps {
   handleSliding: (id: string) => void;
 }
 
-const NotesListContent: React.FC<NotesListContentProps> = ({
-  handleSliding,
-}) => {
-  const {
-    loadDocuments,
-    documents,
-    selectDocument,
-    togglePin,
-    deleteDocument,
-  } = useDocumentStore();
+const NotesListContent: React.FC<NotesListContentProps> = React.memo(
+  ({ handleSliding }) => {
+    const {
+      loadDocuments,
+      documents,
+      selectDocument,
+      togglePin,
+      deleteDocument,
+    } = useDocumentStore();
+    const [filteredDocs, setFilteredDocs] = useState<Documents[]>([]);
 
-  // Create a ref to store references to all sliding items
-  const slidingItemsRef = useRef<{ [key: string]: HTMLIonItemSlidingElement }>(
-    {}
-  );
+    // Create a ref to store references to all sliding items
+    const slidingItemsRef = useRef<{
+      [key: string]: HTMLIonItemSlidingElement;
+    }>({});
 
-  const handleLocalRefresh = async (event: CustomEvent) => {
-    await loadDocuments();
-    event.detail.complete();
-  };
+    const handleLocalRefresh = useCallback(
+      async (event: CustomEvent) => {
+        await loadDocuments();
+        event.detail.complete();
+      },
+      [loadDocuments]
+    );
 
-  const handlePinNote = async (id: string) => {
-    await togglePin(id);
-    // Close the sliding item
-    if (slidingItemsRef.current[id]) {
-      slidingItemsRef.current[id].close();
-    }
-  };
+    const handlePinNote = useCallback(
+      async (id: string) => {
+        await togglePin(id);
+        // Close the sliding item
+        if (slidingItemsRef.current[id]) {
+          slidingItemsRef.current[id].close();
+        }
+      },
+      [togglePin]
+    );
 
-  return (
-    <>
-      <IonRefresher slot="fixed" onIonRefresh={handleLocalRefresh}>
-        <IonRefresherContent />
-      </IonRefresher>
-      <IonList>
-        {documents
-          .filter((document) => document.type === "note")
-          .map((document) => (
+    useEffect(() => {
+      const sortedAndFilteredDocs = documents
+        .filter((document) => document.type === "note")
+        .sort((a, b) => {
+          // First, sort by pinned status
+          if (a.pinned && !b.pinned) return -1;
+          if (!a.pinned && b.pinned) return 1;
+
+          // If both are pinned or both are unpinned, sort by updated_at
+          const dateA = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+          const dateB = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+
+          return dateB - dateA;
+        });
+
+      setFilteredDocs(sortedAndFilteredDocs);
+    }, [documents]);
+
+    return (
+      <>
+        <IonRefresher slot="fixed" onIonRefresh={handleLocalRefresh}>
+          <IonRefresherContent />
+        </IonRefresher>
+        <IonList>
+          {filteredDocs.map((document) => (
             <IonItemSliding
               key={document.id}
               onIonDrag={() => handleSliding(document.id)}
@@ -90,9 +113,10 @@ const NotesListContent: React.FC<NotesListContentProps> = ({
               </IonItemOptions>
             </IonItemSliding>
           ))}
-      </IonList>
-    </>
-  );
-};
+        </IonList>
+      </>
+    );
+  }
+);
 
 export default NotesListContent;
