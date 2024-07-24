@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { IonHeader, IonToolbar, IonTextarea } from "@ionic/react";
+import { IonHeader, IonToolbar, IonTextarea, isPlatform } from "@ionic/react";
 import useDocumentStore from "../contexts/useDocumentStore";
 
-interface NoteTitleProps {
-  title: string;
-  isDesktop: boolean;
-}
-
-const NoteTitle: React.FC<NoteTitleProps> = ({ title, isDesktop }) => {
-  const [initialTitle, setInitialTitle] = useState(title);
-  const { selectedDocument, updateDocument } = useDocumentStore();
+const NoteTitle: React.FC = () => {
+  const [initialTitle, setInitialTitle] = useState(" ");
+  const { selectedDocument, updateDocument, isLoading } = useDocumentStore();
 
   useEffect(() => {
-    if (selectedDocument) {
+    if (selectedDocument && isLoading) {
+      setInitialTitle(" ");
+    }
+
+    if (selectedDocument && !isLoading) {
       setInitialTitle(
         selectedDocument.type == "note"
           ? selectedDocument.title || ""
           : new Date(selectedDocument.created_at).toLocaleDateString()
       );
     }
-  }, [selectedDocument]);
+  }, [isLoading, selectedDocument]);
 
   const handleDocumentTitle = (newTitle: string) => {
     if (selectedDocument) {
@@ -39,7 +38,7 @@ const NoteTitle: React.FC<NoteTitleProps> = ({ title, isDesktop }) => {
     handleDocumentTitle(newTitle);
   };
 
-  if (isDesktop) {
+  if (isPlatform("desktop")) {
     return (
       <div className="flex justify-center mt-12">
         <textarea

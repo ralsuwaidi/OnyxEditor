@@ -46,14 +46,7 @@ const EditorPage: React.FC = () => {
             className="ion-content-scroll-host overflow-auto overscroll-contain"
             style={{ maxHeight }}
           >
-            <NoteTitle
-              title={
-                selectedDocument.type == "note"
-                  ? selectedDocument.title || ""
-                  : new Date(selectedDocument.created_at).toLocaleDateString()
-              }
-              isDesktop={isPlatform("desktop")}
-            />
+            <NoteTitle />
             <EditorWrapper>
               <Editor />
             </EditorWrapper>
