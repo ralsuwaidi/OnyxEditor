@@ -1,7 +1,7 @@
 import React from "react";
 import { IonMenuToggle } from "@ionic/react";
 
-const DesktopHeader: React.FC = () => (
+const EditorDesktopHeader: React.FC = () => (
   <IonMenuToggle>
     <div className="fixed top-3 left-3 m-4 z-10">
       <button className="btn btn-square bg-gray-100 p-2 rounded">
@@ -24,4 +24,4 @@ const DesktopHeader: React.FC = () => (
   </IonMenuToggle>
 );
 
-export default DesktopHeader;
+export default EditorDesktopHeader;

@@ -22,7 +22,7 @@ interface HeaderProps {
   scrollToTop: () => void;
 }
 
-const MobileEditorHeader: React.FC<HeaderProps> = ({
+const EditorMobileHeader: React.FC<HeaderProps> = ({
   loading,
   scrollToTop,
 }) => {
@@ -100,4 +100,4 @@ const MobileEditorHeader: React.FC<HeaderProps> = ({
   );
 };
 
-export default MobileEditorHeader;
+export default EditorMobileHeader;

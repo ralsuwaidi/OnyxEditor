@@ -1,8 +1,8 @@
 // EditorPage.tsx
 import React from "react";
 import { IonPage, IonContent, isPlatform } from "@ionic/react";
-import DesktopHeader from "../../components/DesktopHeader";
-import MobileEditorHeader from "../../components/MobileEditorHeader";
+import EditorDesktopHeader from "../../components/EditorDesktopHeader";
+import EditorMobileHeader from "../../components/EditorMobileHeader";
 import Editor from "../../components/Editor";
 import NotesListPage from "../NotesListPage/NotesListPage";
 import Sidebar from "../../components/Sidebar";
@@ -35,9 +35,9 @@ const EditorPage: React.FC = () => {
       <Sidebar ref={sidebarMenuRef} />
       <IonPage id="main-content">
         {isPlatform("desktop") ? (
-          <DesktopHeader />
+          <EditorDesktopHeader />
         ) : (
-          <MobileEditorHeader loading={isLoading} scrollToTop={scrollToTop} />
+          <EditorMobileHeader loading={isLoading} scrollToTop={scrollToTop} />
         )}
 
         <IonContent ref={contentRef} scrollY={false} fullscreen={false}>
