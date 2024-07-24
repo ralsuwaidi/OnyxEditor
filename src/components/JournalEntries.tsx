@@ -1,8 +1,11 @@
+// JournalEntries.tsx
 import React from "react";
 import { IonRefresher, IonRefresherContent } from "@ionic/react";
 import JournalEntryItem from "./JournalEntryItem";
 import useDocumentStore from "../contexts/useDocumentStore";
+import useFilterStore from "../contexts/useFilterStore";
 import { Documents } from "../types/document.types";
+import dayjs from "dayjs";
 
 interface JournalEntriesProps {}
 
@@ -15,6 +18,7 @@ const JournalEntries: React.FC<JournalEntriesProps> = ({}) => {
     state.documents.filter((document) => document.type == "journal")
   );
   const { loadDocuments } = useDocumentStore();
+  const selectedDate = useFilterStore((state) => state.selectedDate);
 
   const handleLocalRefresh = async (event: CustomEvent) => {
     await loadDocuments();
@@ -35,8 +39,15 @@ const JournalEntries: React.FC<JournalEntriesProps> = ({}) => {
     day: "numeric",
   });
 
+  // Filter entries based on selected date
+  const filteredEntries = selectedDate
+    ? journalEntries.filter((entry) =>
+        dayjs(entry.created_at).isSame(selectedDate, "day")
+      )
+    : journalEntries;
+
   // Group entries by date
-  const groupedEntries: GroupedEntries = journalEntries.reduce(
+  const groupedEntries: GroupedEntries = filteredEntries.reduce(
     (acc: GroupedEntries, entry: Documents) => {
       const date = new Date(entry.created_at).toLocaleDateString("en-US", {
         year: "numeric",
