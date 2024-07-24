@@ -7,6 +7,7 @@ import {
   sortTagsByFrequency,
 } from "./utils";
 import useDocumentStore from "../../contexts/useDocumentStore";
+import TagRibbon from "../TagRibbon";
 
 const SearchToolbar: React.FC<{
   currentView: "note" | "journal";
@@ -50,27 +51,12 @@ const SearchToolbar: React.FC<{
         value={filterText}
       />
       {currentView === "note" && (
-        <div
-          className="flex overflow-x-hidden w-full mb-2"
-          onTouchStart={stopPropagation}
-          onTouchMove={stopPropagation}
-        >
-          <div className="flex w-full overflow-x-scroll no-scrollbar space-x-2 pl-3">
-            {sortedUniqueTags.map((tag) => (
-              <div
-                key={tag}
-                className={`text-xs py-0.5 px-1 flex-shrink-0 ${
-                  filterTags.includes(tag)
-                    ? "border rounded bg-slate-950 text-white dark:border-slate-700"
-                    : "rounded bg-[#e5e5e5] dark:bg-gray-400/10 dark:text-gray-400 dark:ring-1 dark:ring-inset dark:ring-gray-400/20"
-                }`}
-                onClick={() => handleTagClick(tag)}
-              >
-                {tag}
-              </div>
-            ))}
-          </div>
-        </div>
+        <TagRibbon
+          sortedUniqueTags={sortedUniqueTags}
+          filterTags={filterTags}
+          handleTagClick={handleTagClick}
+          stopPropagation={stopPropagation}
+        />
       )}
     </IonToolbar>
   );
