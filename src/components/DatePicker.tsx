@@ -6,12 +6,12 @@ import {
   PickersDay,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useFilterStore from "../contexts/useFilterStore";
 import useDocumentStore from "../contexts/useDocumentStore";
-import { Badge } from "@mui/material";
+import { Badge, Button } from "@mui/material";
 
 const DatePicker: React.FC = () => {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -30,6 +30,14 @@ const DatePicker: React.FC = () => {
 
   const handleDateChange = (date: Dayjs | null) => {
     setSelectedDate(date);
+  };
+
+  const handleClearFilter = () => {
+    setSelectedDate(null);
+  };
+
+  const handleSetToday = () => {
+    setSelectedDate(dayjs());
   };
 
   // Create a Set of dates that have documents
@@ -70,17 +78,28 @@ const DatePicker: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="text-black dark:text-white">
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DateCalendar
-            value={selectedDate}
-            onChange={handleDateChange}
-            slots={{
-              day: CustomDay,
-            }}
-          />
-        </LocalizationProvider>
+      <div className="flex justify-center mb-4">
+        <Button
+          variant="text"
+          color="primary"
+          disabled={!selectedDate}
+          onClick={handleClearFilter}
+        >
+          Clear
+        </Button>
+        <Button variant="text" color="primary" onClick={handleSetToday}>
+          Today
+        </Button>
       </div>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DateCalendar
+          value={selectedDate}
+          onChange={handleDateChange}
+          slots={{
+            day: CustomDay,
+          }}
+        />
+      </LocalizationProvider>
     </ThemeProvider>
   );
 };

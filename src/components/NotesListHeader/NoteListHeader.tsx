@@ -4,8 +4,6 @@ import "./NotesListHeader.css";
 import TitleToolbar from "./TitleToolbar";
 import ViewSwitcherPopover from "./ViewSwitcherPopover";
 import SearchToolbar from "./SearchToolbar";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Collapse } from "@mui/material";
 import DatePicker from "../DatePicker";
 
@@ -47,13 +45,13 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
           stopPropagation={stopPropagation}
         />
       )}
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      {currentView === "journal" && (
         <Collapse in={calendarOpen}>
-          <IonToolbar>
+          <IonToolbar style={{ "--padding-top": "0", "--padding-bottom": "0" }}>
             <DatePicker />
           </IonToolbar>
         </Collapse>
-      </LocalizationProvider>
+      )}
     </IonHeader>
   );
 };
