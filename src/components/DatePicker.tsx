@@ -78,7 +78,7 @@ const DatePicker: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center m-2">
         <Button
           variant="text"
           color="primary"

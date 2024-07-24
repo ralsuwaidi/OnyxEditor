@@ -1,0 +1,7 @@
+@media (prefers-color-scheme: dark) {
+  .ion-page-black-background {
+    --ion-background-color: black;
+    --ion-item-background: black;
+    --ion-toolbar-background: black;
+  }
+}

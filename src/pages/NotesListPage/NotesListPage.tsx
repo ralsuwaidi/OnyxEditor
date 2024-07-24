@@ -1,11 +1,12 @@
 // components/NotesListPage.tsx
-import { IonMenu, IonToast, IonContent } from "@ionic/react";
+import { IonMenu, IonToast, IonContent, IonPage } from "@ionic/react";
 import { useRef, useState } from "react";
 import { useNotesList } from "../../hooks/useNotesList";
 import { useSliding } from "../../hooks/useSliding";
 import NotesListHeader from "../../components/NotesListHeader/NoteListHeader";
 import NotesListContent from "../../components/NotesListContent";
 import JournalEntries from "../../components/JournalEntries";
+import "./notesListPage.css";
 
 interface NotesListPageProps {
   contentId: string;
@@ -20,7 +21,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
 
   return (
-    <>
+    <IonPage className="ion-page-black-background">
       <IonMenu
         className="full-menu"
         ref={menuRef}
@@ -46,6 +47,6 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
         duration={3000}
         onDidDismiss={() => setShowToast(null)}
       />
-    </>
+    </IonPage>
   );
 }

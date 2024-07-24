@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IonHeader, IonToolbar } from "@ionic/react";
+import { IonHeader } from "@ionic/react";
 import "./NotesListHeader.css";
 import TitleToolbar from "./TitleToolbar";
 import ViewSwitcherPopover from "./ViewSwitcherPopover";
@@ -46,11 +46,11 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
         />
       )}
       {currentView === "journal" && (
-        <Collapse in={calendarOpen}>
-          <IonToolbar>
+        <div className="bg-[--onyx-dark-color-bg]">
+          <Collapse in={calendarOpen}>
             <DatePicker />
-          </IonToolbar>
-        </Collapse>
+          </Collapse>
+        </div>
       )}
     </IonHeader>
   );
