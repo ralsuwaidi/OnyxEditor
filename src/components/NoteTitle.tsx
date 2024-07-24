@@ -12,7 +12,13 @@ const NoteTitle: React.FC<NoteTitleProps> = ({ title, isDesktop }) => {
   const { selectedDocument, updateDocument } = useDocumentStore();
 
   useEffect(() => {
-    setInitialTitle(selectedDocument?.title || "");
+    if (selectedDocument) {
+      setInitialTitle(
+        selectedDocument.type == "note"
+          ? selectedDocument.title || ""
+          : new Date(selectedDocument.created_at).toLocaleDateString()
+      );
+    }
   }, [selectedDocument]);
 
   const handleDocumentTitle = (newTitle: string) => {

@@ -47,7 +47,11 @@ const EditorPage: React.FC = () => {
             style={{ maxHeight }}
           >
             <NoteTitle
-              title={selectedDocument.title || ""}
+              title={
+                selectedDocument.type == "note"
+                  ? selectedDocument.title || ""
+                  : new Date(selectedDocument.created_at).toLocaleDateString()
+              }
               isDesktop={isPlatform("desktop")}
             />
             <EditorWrapper>

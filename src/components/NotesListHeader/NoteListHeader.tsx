@@ -47,7 +47,7 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
       )}
       {currentView === "journal" && (
         <Collapse in={calendarOpen}>
-          <IonToolbar style={{ "--padding-top": "0", "--padding-bottom": "0" }}>
+          <IonToolbar>
             <DatePicker />
           </IonToolbar>
         </Collapse>

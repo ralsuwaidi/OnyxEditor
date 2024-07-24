@@ -72,7 +72,7 @@ const useDocumentStore = create<DocumentStore>((set, get) => ({
       created_at: date.toISOString(),
       pinned: false,
       sample: null,
-      title: "",
+      title: documentType == "journal" ? date.toLocaleDateString() : "",
       tags: [],
       type: documentType,
       updated_at: date.toISOString(),

@@ -16,8 +16,3 @@
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
-
-.date-picker-toolbar {
-  --padding-top: 0 !important;
-  --padding-bottom: 0 !important;
-}

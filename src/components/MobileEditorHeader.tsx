@@ -15,6 +15,7 @@ import {
 } from "@ionic/react";
 import { chevronBack, ellipsisVertical, trash } from "ionicons/icons";
 import useDocumentStore from "../contexts/useDocumentStore";
+import { Documents } from "../types/document.types";
 
 interface HeaderProps {
   loading: boolean;
@@ -43,6 +44,12 @@ const MobileEditorHeader: React.FC<HeaderProps> = ({
     setPopoverState({ showPopover: false, event: undefined });
   };
 
+  const getTitle = (document: Documents) => {
+    const title =
+      document.type == "note" ? document.title || "" : document.created_at;
+    return title;
+  };
+
   return (
     <IonHeader translucent={false}>
       <IonToolbar>
@@ -58,7 +65,7 @@ const MobileEditorHeader: React.FC<HeaderProps> = ({
           </IonMenuToggle>
         </IonButtons>
         <IonTitle onClick={scrollToTop} style={{ cursor: "pointer" }}>
-          {!loading && selectedDocument ? selectedDocument.title : " "}
+          {!loading && selectedDocument ? getTitle(selectedDocument) : " "}
         </IonTitle>
         <IonButtons slot="primary">
           <IonButton onClick={openPopover}>
