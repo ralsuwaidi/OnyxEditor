@@ -1,4 +1,10 @@
-import { IonButton, IonButtons, IonTitle, IonToolbar } from "@ionic/react";
+import {
+  IonButton,
+  IonButtons,
+  IonMenuToggle,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/react";
 import { Plus, CaretDown, Calendar } from "@phosphor-icons/react";
 import useDocumentStore from "../../contexts/useDocumentStore";
 
@@ -40,7 +46,9 @@ const TitleToolbar: React.FC<{
 
       <IonButtons slot="end">
         <IonButton onClick={() => handleCreate(currentView)}>
-          <Plus size={24} />
+          <IonMenuToggle>
+            <Plus size={24} />
+          </IonMenuToggle>
         </IonButton>
       </IonButtons>
     </IonToolbar>
