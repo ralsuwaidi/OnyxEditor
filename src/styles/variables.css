@@ -185,6 +185,7 @@ http://ionicframework.com/docs/theming/ */
     --tasklist-checkbox-color: var(--ion-background-color);
     --tasklist-checkbox-border: #ffffff; /* White border for dark mode */
     --tasklist-checkbox-bg: #333333;
+    /* --ion-toolbar-background: #f7f7f7; */
 
     --highlight-color: rgb(46, 80, 115); /* Dark mode highlight color */
   }

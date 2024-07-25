@@ -46,7 +46,7 @@ const NotesListHeader: React.FC<NotesListHeaderProps> = ({
         />
       )}
       {currentView === "journal" && (
-        <div className="bg-[--onyx-dark-color-bg]">
+        <div className="bg-[#f7f7f7] dark:bg-[--onyx-dark-color-bg]">
           <Collapse in={calendarOpen}>
             <DatePicker />
           </Collapse>
