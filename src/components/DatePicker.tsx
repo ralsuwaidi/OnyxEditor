@@ -1,4 +1,3 @@
-// DatePicker.tsx
 import React from "react";
 import {
   LocalizationProvider,
@@ -76,6 +75,10 @@ const DatePicker: React.FC = () => {
     );
   };
 
+  const isTodaySelected = selectedDate
+    ? selectedDate.isSame(dayjs(), "day")
+    : false;
+
   return (
     <ThemeProvider theme={theme}>
       <div className="flex justify-center m-2">
@@ -87,7 +90,12 @@ const DatePicker: React.FC = () => {
         >
           Clear
         </Button>
-        <Button variant="text" color="primary" onClick={handleSetToday}>
+        <Button
+          variant="text"
+          color="primary"
+          onClick={handleSetToday}
+          disabled={isTodaySelected}
+        >
           Today
         </Button>
       </div>
