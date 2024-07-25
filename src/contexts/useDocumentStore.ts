@@ -9,6 +9,7 @@ import {
   debouncedUpdateDocument,
 } from "../libs/api";
 import { extractTags } from "../libs/utils";
+import useUIStateStore from "./useUiStateStore";
 
 interface DocumentStore {
   documents: Documents[];
@@ -86,12 +87,14 @@ const useDocumentStore = create<DocumentStore>((set, get) => ({
         documents: [...currentDocuments, document],
         selectedDocument: document,
       });
+      useUIStateStore.getState().setToast("Note created");
       return document;
     } catch (error) {
       set({
         error:
           error instanceof Error ? error.message : "An unknown error occurred",
       });
+      useUIStateStore.getState().setToast("Failed to create document");
       return null;
     } finally {
       set({ isLoading: false });
@@ -120,6 +123,7 @@ const useDocumentStore = create<DocumentStore>((set, get) => ({
                 ? error.message
                 : "An unknown error occurred",
           });
+          useUIStateStore.getState().setToast("Failed to update document");
         });
     } else {
       set({
@@ -143,6 +147,7 @@ const useDocumentStore = create<DocumentStore>((set, get) => ({
         error:
           error instanceof Error ? error.message : "An unknown error occurred",
       });
+      useUIStateStore.getState().setToast("Failed to update document");
       return null;
     } finally {
       set({ isLoading: false });
@@ -156,11 +161,13 @@ const useDocumentStore = create<DocumentStore>((set, get) => ({
       const currentDocuments = get().documents;
       const updatedDocuments = currentDocuments.filter((doc) => doc.id !== id);
       set({ documents: updatedDocuments });
+      useUIStateStore.getState().setToast("Note deleted");
     } catch (error) {
       set({
         error:
           error instanceof Error ? error.message : "An unknown error occurred",
       });
+      useUIStateStore.getState().setToast("Failed to delete document");
     } finally {
       set({ isLoading: false });
     }
@@ -176,6 +183,7 @@ const useDocumentStore = create<DocumentStore>((set, get) => ({
         error:
           error instanceof Error ? error.message : "An unknown error occurred",
       });
+      useUIStateStore.getState().setToast("Failed to select document");
     } finally {
       set({ isLoading: false });
     }
@@ -198,11 +206,15 @@ const useDocumentStore = create<DocumentStore>((set, get) => ({
       );
 
       set({ documents: updatedDocuments });
+      useUIStateStore
+        .getState()
+        .setToast(`Note ${updatedFields.pinned ? "pinned" : "unpinned"} `);
     } catch (error) {
       set({
         error:
           error instanceof Error ? error.message : "An unknown error occurred",
       });
+      useUIStateStore.getState().setToast("Failed to toggle pin");
     } finally {
       set({ isLoading: false });
     }

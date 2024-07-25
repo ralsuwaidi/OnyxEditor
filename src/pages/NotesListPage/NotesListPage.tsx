@@ -1,24 +1,24 @@
 // components/NotesListPage.tsx
 import { IonMenu, IonToast, IonContent, IonPage } from "@ionic/react";
 import { useRef, useState } from "react";
-import { useNotesList } from "../../hooks/useNotesList";
 import { useSliding } from "../../hooks/useSliding";
 import NotesListHeader from "../../components/NotesListHeader/NoteListHeader";
 import NotesListContent from "../../components/NotesListContent";
 import JournalEntries from "../../components/JournalEntries";
 import "./notesListPage.css";
+import useUIStateStore from "../../contexts/useUiStateStore";
 
 interface NotesListPageProps {
   contentId: string;
 }
 
 export default function NotesListPage({ contentId }: NotesListPageProps) {
-  const { showToast, setShowToast } = useNotesList();
-
   const { handleSliding } = useSliding();
   const [currentView, setCurrentView] = useState<"note" | "journal">("note");
 
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
+
+  const { toast, setToast } = useUIStateStore(); // Use the toast store
 
   return (
     <IonPage className="ion-page-black-background">
@@ -42,10 +42,10 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
         </IonContent>
       </IonMenu>
       <IonToast
-        isOpen={!!showToast}
-        message={showToast!}
+        isOpen={!!toast.message}
+        message={toast.message!}
         duration={3000}
-        onDidDismiss={() => setShowToast(null)}
+        onDidDismiss={() => setToast(null)}
       />
     </IonPage>
   );
