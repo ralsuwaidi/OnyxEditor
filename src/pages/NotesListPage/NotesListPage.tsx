@@ -5,7 +5,7 @@ import NotesListHeader from "../../components/NotesListHeader/NoteListHeader";
 import NotesListContent from "../../components/NotesListContent";
 import JournalEntries from "../../components/JournalEntries";
 import "./notesListPage.css";
-import useUIStateStore from "../../contexts/useUiStateStore";
+import useUIStateStore from "../../contexts/useUIStateStore";
 
 interface NotesListPageProps {
   contentId: string;

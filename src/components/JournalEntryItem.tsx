@@ -18,7 +18,7 @@ const JournalEntryItem: React.FC<JournalEntryItemProps> = ({ entry }) => {
       <div
         className={classNames("rounded-lg p-3 hover:cursor-pointer mb-2", {
           "border border-dracula-400 bg-dracula-100 dark:border-dracula-800 dark:bg-dracula-950": hasDreamTag,
-          "border dark:border-gray-700": !hasDreamTag,
+          "border dark:border-gray-700 dark:bg-background-dark dark:border-none": !hasDreamTag,
         })}
         onClick={() => selectDocument(entry.id)}
       >

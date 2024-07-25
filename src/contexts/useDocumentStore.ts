@@ -9,7 +9,7 @@ import {
   debouncedUpdateDocument,
 } from "../libs/api";
 import { extractTags } from "../libs/utils";
-import useUIStateStore from "./useUiStateStore";
+import useUIStateStore from "./useUIStateStore";
 
 interface DocumentStore {
   documents: Documents[];
