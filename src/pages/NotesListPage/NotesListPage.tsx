@@ -1,7 +1,6 @@
 // components/NotesListPage.tsx
 import { IonMenu, IonToast, IonContent, IonPage } from "@ionic/react";
 import { useRef, useState } from "react";
-import { useSliding } from "../../hooks/useSliding";
 import NotesListHeader from "../../components/NotesListHeader/NoteListHeader";
 import NotesListContent from "../../components/NotesListContent";
 import JournalEntries from "../../components/JournalEntries";
@@ -13,7 +12,6 @@ interface NotesListPageProps {
 }
 
 export default function NotesListPage({ contentId }: NotesListPageProps) {
-  const { handleSliding } = useSliding();
   const [currentView, setCurrentView] = useState<"note" | "journal">("note");
 
   const menuRef = useRef<HTMLIonMenuElement | null>(null);
@@ -35,7 +33,7 @@ export default function NotesListPage({ contentId }: NotesListPageProps) {
 
         <IonContent className="ion-padding">
           {currentView === "note" ? (
-            <NotesListContent handleSliding={handleSliding} />
+            <NotesListContent />
           ) : (
             <JournalEntries />
           )}

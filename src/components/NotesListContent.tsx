@@ -11,20 +11,19 @@ import {
 import NoteItem from "./NoteItem";
 import useDocumentStore from "../contexts/useDocumentStore";
 import useFilteredNoteList from "../hooks/useFilteredNoteList";
+import { useSliding } from "../hooks/useSliding";
 
-interface NotesListContentProps {
-  handleSliding: (id: string) => void;
-}
 
-const NotesListContent: React.FC<NotesListContentProps> = React.memo(
-  ({ handleSliding }) => {
+
+const NotesListContent: React.FC = React.memo(
+  () => {
     const {
       loadDocuments,
       selectDocument,
       togglePin,
       deleteDocument,
     } = useDocumentStore();
-
+    const { handleSliding } = useSliding()
     const filteredDocs = useFilteredNoteList();
 
     // Create a ref to store references to all sliding items
