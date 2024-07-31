@@ -4,7 +4,10 @@ import debounce from "lodash/debounce";
 
 export async function fetchDocuments(): Promise<Array<Documents>> {
   console.log("Fetching all documents");
-  const { data, error } = await supabase.from("documents").select("*");
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching documents:", error.message);

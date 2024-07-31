@@ -13,6 +13,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import NoteTitle from "../../components/NoteTitle";
 import EditorWrapper from "../../components/EditorWrapper";
 import useDocumentStore from "../../contexts/useDocumentStore";
+import QuickActionModal from "../../components/QuickNoteModal";
 
 const EditorPage: React.FC = () => {
   const {
@@ -32,7 +33,8 @@ const EditorPage: React.FC = () => {
   return (
     <>
       <NotesListPage contentId="main-content" />
-      <Sidebar ref={sidebarMenuRef} />
+      <Sidebar ref={sidebarMenuRef} />]
+
       <IonPage id="main-content">
         {isPlatform("desktop") ? (
           <EditorDesktopHeader />
@@ -51,6 +53,7 @@ const EditorPage: React.FC = () => {
               <Editor />
             </EditorWrapper>
           </div>
+          <QuickActionModal />
         </IonContent>
 
         {isKeyboardVisible && isPlatform("ios") && <KeyboardToolbar />}

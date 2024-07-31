@@ -4,6 +4,7 @@ import { BookmarkIcon } from "@heroicons/react/16/solid";
 import SmallBadge from "./common/SmallBadge";
 import { formatDateWithoutYear } from "../libs/utils";
 import { Documents } from "../types/document.types";
+import useFilterStore from "../contexts/useFilterStore";
 
 interface NoteItemProps {
   document: Documents;
@@ -11,8 +12,15 @@ interface NoteItemProps {
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({ document, handleSelectNote }) => {
+  const { clearFilters } = useFilterStore()
+
+  const handleSelectClear = (id: string) => {
+    clearFilters()
+    handleSelectNote(id);
+  };
+
   return (
-    <IonItem button={true} onClick={() => handleSelectNote(document.id)}>
+    <IonItem button={true} onClick={() => handleSelectClear(document.id)}>
       <IonLabel>
         <h2 className=" md:text-lg md:font-bold">
           {document.title === "" ? "(No Title)" : document.title}

@@ -46,4 +46,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
+    func application(_ application: UIApplication, performActionFor shortcutItem: 
+        UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        let bridge = (self.window?.rootViewController as! CAPBridgeViewController).bridge
+        // print("Holy Cow! a quick action has been pressed!")
+        bridge?.webView?.evaluateJavaScript("handleQuickAction('"+shortcutItem.type+"')")
+        completionHandler(true)
+    }
+
 }

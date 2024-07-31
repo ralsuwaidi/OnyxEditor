@@ -45,5 +45,14 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>quick note</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Quick Note</string>
+		</dict>
+	</array>
 </dict>
 </plist>
