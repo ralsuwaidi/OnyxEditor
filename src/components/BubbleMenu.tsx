@@ -1,6 +1,6 @@
 import React from "react";
 import { BubbleMenu as TiptapBubbleMenu } from "@tiptap/react";
-import ButtonGroup from "../common/ButtonGroup";
+import ButtonGroup from "./ButtonGroup";
 
 interface BubbleMenuProps {
   editor: any;

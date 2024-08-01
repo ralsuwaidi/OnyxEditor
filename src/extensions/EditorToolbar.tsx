@@ -1,5 +1,5 @@
 import React from "react";
-import ButtonGroup from "../components/common/ButtonGroup";
+import ButtonGroup from "../components/ButtonGroup";
 
 interface EditorToolbarProps {
   editor: any;
