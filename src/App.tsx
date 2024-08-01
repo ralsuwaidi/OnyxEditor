@@ -1,10 +1,11 @@
 // import "./App.css";
 
-import { IonApp, setupIonicReact } from "@ionic/react";
-import EditorPage from "./pages/EditorPage/EditorPage";
+import { IonApp, isPlatform, setupIonicReact } from "@ionic/react";
+import EditorPage from "./pages/Mobile/EditorPage";
 import { useEffect } from "react";
 import { useKeyboardSetup } from "./hooks/useKeyboardSetup";
 import useDocumentStore from "./contexts/useDocumentStore";
+import DesktopPage from "./pages/Desktop/DesktopPage";
 
 setupIonicReact();
 
@@ -46,7 +47,7 @@ function App() {
   return (
     <>
       <IonApp>
-        <EditorPage />
+        {isPlatform("desktop") ? <DesktopPage /> : <EditorPage />}
       </IonApp>
     </>
   );
