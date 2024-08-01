@@ -5,7 +5,7 @@ import TitleToolbar from "./TitleToolbar";
 import ViewSwitcherPopover from "./ViewSwitcherPopover";
 import SearchToolbar from "./SearchToolbar";
 import { Collapse } from "@mui/material";
-import DatePicker from "../../mobile/DatePicker";
+import DatePicker from "./DatePicker";
 
 interface NotesListHeaderProps {
   currentView: "note" | "journal";

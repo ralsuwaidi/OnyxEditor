@@ -1,10 +1,10 @@
 import React from "react";
 import { IonItem, IonLabel } from "@ionic/react";
 import { BookmarkIcon } from "@heroicons/react/16/solid";
-import SmallBadge from "../common/SmallBadge";
-import { formatDateWithoutYear } from "../../libs/utils";
-import { Documents } from "../../types/document.types";
-import useFilterStore from "../../contexts/useFilterStore";
+import SmallBadge from "../../../../components/common/SmallBadge";
+import { formatDateWithoutYear } from "../../../../libs/utils";
+import { Documents } from "../../../../types/document.types";
+import useFilterStore from "../../../../contexts/useFilterStore";
 
 interface NoteItemProps {
   document: Documents;

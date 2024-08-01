@@ -1,6 +1,6 @@
 import { Book, Hash, NotePencil, Tray } from '@phosphor-icons/react'
 
-import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '../common/navbar'
+import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '../../../../components/common/navbar'
 import {
   Sidebar,
   SidebarBody,
@@ -9,8 +9,8 @@ import {
   SidebarItem,
   SidebarLabel,
   SidebarSection,
-} from '../common/sidebar'
-import { SidebarLayout } from '../common/sidebar-layout'
+} from '../../../../components/common/sidebar'
+import { SidebarLayout } from '../../../../components/common/sidebar-layout'
 
 import {
   InboxIcon,

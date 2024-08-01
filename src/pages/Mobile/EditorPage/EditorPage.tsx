@@ -1,17 +1,17 @@
 // EditorPage.tsx
 import React from "react";
 import { IonPage, IonContent } from "@ionic/react";
-import EditorMobileHeader from "../../components/mobile/EditorMobileHeader";
-import Editor from "../../components/mobile/Editor";
-import NotesListPage from "./NotesListPage";
-import KeyboardToolbar from "../../components/mobile/KeyboardToolbar/KeyboardToolbar";
-import LoadingModal from "../../components/mobile/LoadingModal";
-import { useEditorPageLogic } from "../../hooks/useEditorPageLogic";
-import LoadingSpinner from "../../components/mobile/LoadingSpinner";
-import NoteTitle from "../../components/mobile/NoteTitle";
-import EditorWrapper from "../../components/mobile/EditorWrapper";
-import useDocumentStore from "../../contexts/useDocumentStore";
-import QuickActionModal from "../../components/mobile/QuickNoteModal";
+import EditorMobileHeader from "./components/EditorMobileHeader";
+import Editor from "./components/Editor";
+import NotesListPage from "../NotesListPage/NotesListPage";
+import KeyboardToolbar from "./components/KeyboardToolbar";
+import LoadingModal from "../../../components/common/LoadingModal";
+import { useEditorPageLogic } from "../../../hooks/useEditorPageLogic";
+import LoadingSpinner from "../../../components/common/LoadingSpinner";
+import NoteTitle from "./components/NoteTitle";
+import EditorWrapper from "./components/EditorWrapper";
+import useDocumentStore from "../../../contexts/useDocumentStore";
+import QuickActionModal from "./components/QuickNoteModal";
 
 const EditorPage: React.FC = () => {
   const {

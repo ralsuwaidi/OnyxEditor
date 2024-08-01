@@ -28,18 +28,18 @@ import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import TaskList from "@tiptap/extension-task-list";
 import CodeBlock from "@tiptap/extension-code-block";
 import TaskItem from "@tiptap/extension-task-item";
-import CustomHighlight from "../../extensions/highlight";
-import CustomCode from "../../extensions/code";
+import CustomHighlight from "../../../../extensions/highlight";
+import CustomCode from "../../../../extensions/code";
 import Link from "@tiptap/extension-link";
 import { IonSpinner } from "@ionic/react";
 import TableOfContents, {
   getHierarchicalIndexes,
 } from "@tiptap-pro/extension-table-of-contents";
-import container from "../../extensions/container";
-import Tag from "../../extensions/tag";
-import spoiler from "../../extensions/spoiler";
-import useDocumentStore from "../../contexts/useDocumentStore";
-import useEditorStore from "../../contexts/useEditorStore";
+import container from "../../../../extensions/container";
+import Tag from "../../../../extensions/tag";
+import spoiler from "../../../../extensions/spoiler";
+import useDocumentStore from "../../../../contexts/useDocumentStore";
+import useEditorStore from "../../../../contexts/useEditorStore";
 
 const Editor = () => {
   const { setEditor } = useEditorStore();

@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import { IonModal, IonButton, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons } from '@ionic/react';
-import useUIStateStore from '../../contexts/useUIStateStore';
+import useUIStateStore from '../../../../contexts/useUIStateStore';
 import Editor from './Editor';
-import useDocumentStore from '../../contexts/useDocumentStore';
+import useDocumentStore from '../../../../contexts/useDocumentStore';
 
 const QuickActionModal: React.FC = () => {
     const isOpen = useUIStateStore(state => state.quickActionModal);

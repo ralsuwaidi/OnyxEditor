@@ -1,11 +1,11 @@
 // components/NotesListPage.tsx
 import { IonMenu, IonToast, IonContent, IonPage } from "@ionic/react";
 import { useRef, useState } from "react";
-import NotesListHeader from "../../components/mobile/NotesListHeader/NoteListHeader";
-import NotesListContent from "../../components/mobile/NotesListContent";
-import JournalEntries from "../../components/mobile/JournalEntries";
+import NotesListHeader from "./components/NoteListHeader";
+import JournalEntries from "./components/JournalEntries";
 import "./notesListPage.css";
-import useUIStateStore from "../../contexts/useUIStateStore";
+import useUIStateStore from "../../../contexts/useUIStateStore";
+import NotesListContent from "./components/NotesListContent";
 
 interface NotesListPageProps {
   contentId: string;

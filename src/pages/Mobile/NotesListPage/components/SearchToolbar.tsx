@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo } from "react";
 import { IonSearchbar, IonToolbar } from "@ionic/react";
-import useFilterStore from "../../../contexts/useFilterStore";
+import useFilterStore from "../../../../contexts/useFilterStore";
 import {
   countTagOccurrences,
   moveSelectedTagsToFront,
   sortTagsByFrequency,
 } from "./utils";
-import useDocumentStore from "../../../contexts/useDocumentStore";
-import TagRibbon from "../../mobile/TagRibbon";
+import useDocumentStore from "../../../../contexts/useDocumentStore";
+import TagRibbon from "./TagRibbon";
 
 const SearchToolbar: React.FC<{
   currentView: "note" | "journal";

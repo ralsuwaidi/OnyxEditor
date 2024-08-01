@@ -1,11 +1,11 @@
 // import "./App.css";
 
 import { IonApp, isPlatform, setupIonicReact } from "@ionic/react";
-import EditorPage from "./pages/Mobile/EditorPage";
+import EditorPage from "./pages/Mobile/EditorPage/EditorPage";
 import { useEffect } from "react";
 import { useKeyboardSetup } from "./hooks/useKeyboardSetup";
 import useDocumentStore from "./contexts/useDocumentStore";
-import DesktopPage from "./pages/Desktop/DesktopPage";
+import DesktopPage from "./pages/Desktop/DesktopPage/DesktopPage";
 
 setupIonicReact();
 

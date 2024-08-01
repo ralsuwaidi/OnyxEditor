@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IonHeader, IonToolbar, IonTextarea } from "@ionic/react";
-import useDocumentStore from "../../contexts/useDocumentStore";
+import useDocumentStore from "../../../../contexts/useDocumentStore";
 
 const NoteTitle: React.FC = () => {
   const [initialTitle, setInitialTitle] = useState(" ");

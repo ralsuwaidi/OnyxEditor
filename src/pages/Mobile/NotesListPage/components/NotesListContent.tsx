@@ -9,9 +9,9 @@ import {
   IonMenuToggle,
 } from "@ionic/react";
 import NoteItem from "./NoteItem";
-import useDocumentStore from "../../contexts/useDocumentStore";
-import useFilteredNoteList from "../../hooks/useFilteredNoteList";
-import { useSliding } from "../../hooks/useSliding";
+import useDocumentStore from "../../../../contexts/useDocumentStore";
+import useFilteredNoteList from "../../../../hooks/useFilteredNoteList";
+import { useSliding } from "../../../../hooks/useSliding";
 
 const NotesListContent: React.FC = React.memo(() => {
   const { loadDocuments, selectDocument, togglePin, deleteDocument } = useDocumentStore();

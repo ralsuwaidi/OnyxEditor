@@ -1,4 +1,4 @@
-import DesktopSidebar from "../../components/desktop/DesktopSidebar";
+import DesktopSidebar from "./components/DesktopSidebar";
 
 
 

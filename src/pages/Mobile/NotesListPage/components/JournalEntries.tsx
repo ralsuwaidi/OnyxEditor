@@ -2,9 +2,9 @@
 import React from "react";
 import { IonRefresher, IonRefresherContent } from "@ionic/react";
 import JournalEntryItem from "./JournalEntryItem";
-import useDocumentStore from "../../contexts/useDocumentStore";
-import useFilterStore from "../../contexts/useFilterStore";
-import { Documents } from "../../types/document.types";
+import useDocumentStore from "../../../../contexts/useDocumentStore";
+import useFilterStore from "../../../../contexts/useFilterStore";
+import { Documents } from "../../../../types/document.types";
 import dayjs from "dayjs";
 
 interface JournalEntriesProps { }

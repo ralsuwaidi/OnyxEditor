@@ -14,8 +14,8 @@ import {
   IonItem,
 } from "@ionic/react";
 import { chevronBack, ellipsisVertical, trash } from "ionicons/icons";
-import useDocumentStore from "../../contexts/useDocumentStore";
-import { Documents } from "../../types/document.types";
+import useDocumentStore from "../../../../contexts/useDocumentStore";
+import { Documents } from "../../../../types/document.types";
 
 interface HeaderProps {
   loading: boolean;

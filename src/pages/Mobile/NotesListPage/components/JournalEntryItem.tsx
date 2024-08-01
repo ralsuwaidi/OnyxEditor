@@ -1,8 +1,8 @@
 import React from "react";
 import { IonMenuToggle } from "@ionic/react";
 import classNames from "classnames";
-import { Documents } from "../../types/document.types";
-import useDocumentStore from "../../contexts/useDocumentStore";
+import { Documents } from "../../../../types/document.types";
+import useDocumentStore from "../../../../contexts/useDocumentStore";
 
 interface JournalEntryItemProps {
   entry: Documents;

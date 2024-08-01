@@ -1,9 +1,9 @@
 // KeyboardToolbar.tsx
 import React from "react";
 import { toolbarIcons } from "./toolbarIcons";
-import { ToolbarIcon } from "../../../types/KeyboardToolbarType";
-import { useKeyboardEditorState } from "../../../hooks/useKeyboardEditorState";
-import useEditorStore from "../../../contexts/useEditorStore";
+import { ToolbarIcon } from "../../../../types/KeyboardToolbarType";
+import { useKeyboardEditorState } from "../../../../hooks/useKeyboardEditorState";
+import useEditorStore from "../../../../contexts/useEditorStore";
 
 interface ToolbarButtonProps {
   icon: ToolbarIcon["icon"];

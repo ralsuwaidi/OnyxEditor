@@ -1,4 +1,4 @@
-import { Documents } from "../../../types/document.types";
+import { Documents } from "../../../../types/document.types";
 
 const countTagOccurrences = (documents: Documents[]) => {
   const tagCounts: { [key: string]: number } = {};

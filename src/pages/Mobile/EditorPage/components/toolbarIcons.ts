@@ -15,7 +15,7 @@ import {
   TextHFour,
 } from "@phosphor-icons/react";
 import { Editor } from "@tiptap/core";
-import { ToolbarIcon } from "../../../types/KeyboardToolbarType";
+import { ToolbarIcon } from "../../../../types/KeyboardToolbarType";
 
 export const toolbarIcons: ToolbarIcon[] = [
   {

@@ -6,7 +6,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { Plus, CaretDown, Calendar } from "@phosphor-icons/react";
-import useDocumentStore from "../../../contexts/useDocumentStore";
+import useDocumentStore from "../../../../contexts/useDocumentStore";
 
 const TitleToolbar: React.FC<{
   currentView: "note" | "journal";
