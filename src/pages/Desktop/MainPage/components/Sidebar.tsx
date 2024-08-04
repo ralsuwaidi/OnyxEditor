@@ -16,7 +16,7 @@ import {
   InboxIcon,
   PencilSquareIcon,
 } from '@heroicons/react/20/solid'
-import NoteSidebarItem from './NoteSidebarItem'
+import NoteListWrapper from './NoteListWrapper'
 
 export default function DesktopSidebar({ children }: { children: React.ReactNode }) {
   return (
@@ -54,12 +54,7 @@ export default function DesktopSidebar({ children }: { children: React.ReactNode
           </SidebarHeader>
           <SidebarBody>
             <SidebarSection>
-              <SidebarItem href="/">
-                <NoteSidebarItem title="My Note" description='This is my note' />
-              </SidebarItem>
-              <SidebarItem href="/">
-                <NoteSidebarItem title="My Note" description='This is my note' />
-              </SidebarItem>
+              <NoteListWrapper />
             </SidebarSection>
           </SidebarBody>
           <SidebarFooter className="max-lg:hidden">
@@ -79,8 +74,12 @@ export default function DesktopSidebar({ children }: { children: React.ReactNode
         </Sidebar>
       }
     >
+      <div className="flex justify-center">
+        <div className="max-w-4xl w-full">
+          {children}
+        </div>
+      </div>
 
-      {children}
     </SidebarLayout>
   )
 }

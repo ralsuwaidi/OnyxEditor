@@ -13,7 +13,7 @@ import useUIStateStore from "./useUIStateStore";
 
 interface DocumentStore {
   documents: Documents[];
-  setDocuments: (documents: Documents[]) => void;
+  getNotes: () => Documents[];
   clearDocuments: () => void;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
@@ -22,7 +22,6 @@ interface DocumentStore {
   selectedDocument: Documents | null;
   setSelectedDocument: (document: Documents | null) => void;
   updateContent: (id: string, content: string) => void;
-
   loadDocuments: () => Promise<void>;
   setSearchText: (searchText: string) => void;
   searchText: string;
@@ -40,7 +39,7 @@ interface DocumentStore {
 
 const useDocumentStore = create<DocumentStore>((set, get) => ({
   documents: [],
-  setDocuments: (documents) => set({ documents }),
+  getNotes: () => get().documents.filter((doc) => doc.type === "note"),
   clearDocuments: () => set({ documents: [] }),
   isLoading: false,
   setIsLoading: (isLoading) => set({ isLoading }),
