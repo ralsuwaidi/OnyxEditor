@@ -1,3 +1,5 @@
+import { MergeDeep } from "type-fest";
 import { Tables } from "./database.types";
 
-export type Documents = Tables<"documents">;
+// or using MergeDeep if you prefer that approach
+export type Documents = MergeDeep<Tables<"documents">, { updated_at: string }>;

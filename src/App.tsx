@@ -1,11 +1,10 @@
-// import "./App.css";
-
 import { IonApp, isPlatform, setupIonicReact } from "@ionic/react";
-import EditorPage from "./pages/Mobile/EditorPage/EditorPage";
 import { useEffect } from "react";
+import EditorPage from "./pages/Mobile/EditorPage/EditorPage";
+import DesktopPage from "./pages/Desktop/MainPage/MainPage";
 import { useKeyboardSetup } from "./hooks/useKeyboardSetup";
 import useDocumentStore from "./contexts/useDocumentStore";
-import DesktopPage from "./pages/Desktop/MainPage/MainPage";
+import { getMostRecentDocument } from "./utils/documents";
 
 setupIonicReact();
 
@@ -20,36 +19,28 @@ function App() {
   useKeyboardSetup();
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (selectedDocument == null) {
-        loadDocuments();
-        const firstNote = documents.find((doc) => doc.type === "note");
-        if (firstNote) {
-          selectDocument(firstNote.id);
-        }
+    const initializeApp = async () => {
+      if (!documents.length) {
+        await loadDocuments();
       }
     };
-    fetchData();
-  }, []);
+    initializeApp();
+  }, [loadDocuments, documents.length]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (selectedDocument == null) {
-        const firstNote = documents.find((doc) => doc.type === "note");
-        if (firstNote) {
-          selectDocument(firstNote.id);
-        }
+    if (!selectedDocument && documents.length) {
+      console.log("selecting first note");
+      const firstNote = getMostRecentDocument(documents.filter((doc) => doc.type === "note"));
+      if (firstNote) {
+        selectDocument(firstNote.id);
       }
-    };
-    fetchData();
-  }, [documents]);
+    }
+  }, [documents, selectedDocument, selectDocument]);
 
   return (
-    <>
-      <IonApp>
-        {isPlatform("desktop") ? <DesktopPage /> : <EditorPage />}
-      </IonApp>
-    </>
+    <IonApp>
+      {isPlatform("desktop") ? <DesktopPage /> : <EditorPage />}
+    </IonApp>
   );
 }
 

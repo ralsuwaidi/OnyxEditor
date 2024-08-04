@@ -91,6 +91,7 @@
     "supabase": "^1.183.5",
     "tiptap-footnotes": "^1.1.1",
     "tiptap-markdown": "^0.8.10",
+    "type-fest": "^4.23.0",
     "zustand": "^4.5.4"
   },
   "devDependencies": {

@@ -37,8 +37,8 @@ const useFilteredNoteList = () => {
       if (!a.pinned && b.pinned) return 1;
 
       // If both are pinned or both are unpinned, sort by updated_at
-      const dateA = a.updated_at ? new Date(a.updated_at).getTime() : 0;
-      const dateB = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+      const dateA = new Date(a.updated_at).getTime();
+      const dateB = new Date(b.updated_at).getTime();
 
       return dateB - dateA;
     });

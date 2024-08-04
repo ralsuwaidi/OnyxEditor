@@ -15,6 +15,7 @@ export async function fetchDocuments(): Promise<Array<Documents>> {
   }
 
   console.log(`Fetched ${data?.length || 0} documents`);
+
   return data || [];
 }
 
