@@ -1,4 +1,4 @@
-import { Book, Hash, NotePencil, Tray } from '@phosphor-icons/react'
+import { Book, NotePencil, Tray } from '@phosphor-icons/react'
 
 import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '../../../../components/navbar'
 import {
@@ -17,6 +17,7 @@ import {
   PencilSquareIcon,
 } from '@heroicons/react/20/solid'
 import NoteListWrapper from './NoteListWrapper'
+import TagList from './TagList'
 
 export default function DesktopSidebar({ children }: { children: React.ReactNode }) {
   return (
@@ -58,18 +59,7 @@ export default function DesktopSidebar({ children }: { children: React.ReactNode
             </SidebarSection>
           </SidebarBody>
           <SidebarFooter className="max-lg:hidden">
-            <SidebarItem href="/">
-              <Hash size={20} />
-              <SidebarLabel>Home</SidebarLabel>
-            </SidebarItem>
-            <SidebarItem href="/">
-              <Hash size={20} />
-              <SidebarLabel>Home</SidebarLabel>
-            </SidebarItem>
-            <SidebarItem href="/">
-              <Hash size={20} />
-              <SidebarLabel>Home</SidebarLabel>
-            </SidebarItem>
+            <TagList />
           </SidebarFooter>
         </Sidebar>
       }
